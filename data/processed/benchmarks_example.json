@@ -1,0 +1,26 @@
+{
+  "national_avg_loss_rate_pct": {
+    "Maize": 14.2,
+    "Beans": 9.8,
+    "Irish Potato": 17.5
+  },
+  "district_avg_loss_rate_pct": {
+    "Nyagatare": {
+      "Maize": 16.1,
+      "Beans": 8.7
+    },
+    "Musanze": {
+      "Irish Potato": 19.3,
+      "Maize": 12.4
+    }
+  },
+  "district_season_avg_loss_rate_pct": {
+    "Nyagatare|2025A": {
+      "Maize": 15.4,
+      "Beans": 9.1
+    },
+    "Musanze|2025B": {
+      "Irish Potato": 20.7
+    }
+  }
+}
