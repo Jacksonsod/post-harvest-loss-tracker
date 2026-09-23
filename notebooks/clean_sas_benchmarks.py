@@ -1,133 +1,226 @@
 """
 clean_sas_benchmarks.py
 
-Purpose:
-    Ingest raw NISR Seasonal Agricultural Survey (SAS) data, clean it,
-    and compute post-harvest loss benchmarks per crop / district / season.
-    Outputs a static JSON file that the frontend/app consumes directly —
-    no live data pipeline needed for the hackathon demo.
+Cleans and combines the real NISR Seasonal Agricultural Survey (SAS) 2024 and
+2025 Production files (Seasons A/B/C) into:
+  1. data/processed/cleaned_production.csv — row-level cleaned data, used to
+     train the predictive model (predict_loss_risk.py)
+  2. data/processed/benchmarks.json — aggregated loss-rate benchmarks by
+     national / district / district+season, plus average selling price, used
+     to power the app's comparison dashboard
+
+Key methodology decisions (see docs/DATA.md for the full reasoning):
+  - `total_loss` is computed as the sum of individual loss-cause columns
+    (s2q41-s2q50), NOT the s2q39 "total loss" field. s2q39 does not exist at
+    all in the 2025 questionnaire, so the cause-sum is the only loss measure
+    consistent across both years. This also directly powers the
+    cause-of-loss breakdown and recommendation engine.
+  - District and crop names come pre-decoded as text in the raw files (not
+    numeric codes), but contain a few known typos/junk values that we clean.
+  - National/district benchmarks are weighted by `plot_weight` (the survey's
+    sampling weight) rather than a plain average, since a plain average
+    would over/under-represent districts based on how many plots were
+    sampled there rather than their true share of production.
 
 Usage:
-    python clean_sas_benchmarks.py --input raw_sas_data.csv --output benchmarks.json
-
-Expected raw input columns (adjust to match actual SAS file structure once downloaded):
-    district, season, crop, area_planted_ha, production_tonnes,
-    quantity_lost_tonnes  (or a loss-rate column if SAS provides one directly)
-
-If SAS doesn't publish loss rates directly, pair it with FAO / post-harvest
-loss study estimates as your baseline loss-rate assumptions per crop, and
-note that assumption clearly in your repo's README (judges will want to see
-the methodology, not just the numbers).
+    python clean_sas_benchmarks.py --data-dir ../data/raw --output-dir ../data/processed
 """
 
 import argparse
+import glob
 import json
+import os
+
 import pandas as pd
+import numpy as np
+
+CAUSE_COLS = ["s2q41", "s2q42", "s2q43", "s2q44", "s2q45",
+              "s2q46", "s2q47", "s2q48", "s2q49", "s2q50"]
+
+CAUSE_LABELS = {
+    "s2q41": "theft",
+    "s2q42": "insects_pests",
+    "s2q43": "birds_animals",
+    "s2q44": "stalks_fallen",
+    "s2q45": "harvesting_damage",
+    "s2q46": "transport",
+    "s2q47": "storage",
+    "s2q48": "processing",
+    "s2q49": "packaging",
+    "s2q50": "sale",
+}
+
+DISTRICT_FIXES = {
+    "Nyarugenege": "Nyarugenge",  # known typo found in 2025 Season A data
+}
+
+KNOWN_STORAGE_CATEGORIES = {
+    "Own storage",
+    "Storage owned by Cooperatives/private companies",
+    "Public storage",
+    "Other storage(specify)",
+}
 
 
-def load_raw_data(path: str) -> pd.DataFrame:
-    df = pd.read_csv(path)
-    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+def find_production_files(data_dir: str) -> list:
+    """
+    Expects a folder layout like:
+        data/raw/2024/Season A/Rwa_raw_SeasonA2024_Production.csv
+        data/raw/2025/Season B/Rwa_raw_SeasonB2025_Production.csv
+    but will also work with any nested layout as long as filenames contain
+    'Production' and a 4-digit year.
+    """
+    pattern = os.path.join(data_dir, "**", "*Production*.csv")
+    return sorted(glob.glob(pattern, recursive=True))
+
+
+def load_one_file(path: str) -> pd.DataFrame:
+    df = pd.read_csv(path, sep="\t", low_memory=False)
+
+    # Infer year and season from the filename, e.g. Rwa_raw_SeasonA2025_Production.csv
+    fname = os.path.basename(path)
+    year = next((y for y in ["2024", "2025", "2026"] if y in fname), "unknown")
+    season = next((s for s in ["SeasonA", "SeasonB", "SeasonC"] if s in fname), "unknown")
+
+    df["survey_year"] = int(year) if year != "unknown" else np.nan
+    df["season"] = season.replace("Season", "") if season != "unknown" else "unknown"
     return df
 
 
-def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    # Drop rows missing core fields
-    required = ["district", "season", "crop", "production_tonnes"]
-    df = df.dropna(subset=[c for c in required if c in df.columns])
+def clean(df: pd.DataFrame) -> pd.DataFrame:
+    # Normalize district names: strip whitespace, fix known typos
+    df["s1q2"] = df["s1q2"].astype(str).str.strip()
+    df["s1q2"] = df["s1q2"].replace(DISTRICT_FIXES)
 
-    # Normalize text fields
-    for col in ["district", "season", "crop"]:
-        if col in df.columns:
-            df[col] = df[col].astype(str).str.strip().str.title()
+    # Normalize crop category
+    df["CropCategory"] = df["CropCategory"].astype(str).str.strip()
 
-    # Guard against negative or nonsensical values
-    numeric_cols = [c for c in df.columns if "tonnes" in c or "ha" in c]
+    # Storage type: some rows contain leftover numeric codes instead of the
+    # decoded label (a small data-entry artifact) — treat those as Unknown
+    # rather than a fabricated guess.
+    df["storage_type_clean"] = df["s2q37"].where(
+        df["s2q37"].isin(KNOWN_STORAGE_CATEGORIES), other=np.nan
+    )
+
+    # Ensure numeric columns are numeric (coerce junk to NaN)
+    numeric_cols = CAUSE_COLS + ["s2q21", "s2q28", "plot_weight"]
     for col in numeric_cols:
-        df = df[df[col] >= 0]
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    # s2q28 (selling price) uses missing-value sentinels: 9999 ("don't know" /
+    # not applicable, ~38% of non-null entries) and 0 (crop wasn't sold, not
+    # a real price of zero). Both would badly distort a price average if left
+    # in — treat both as missing for pricing purposes.
+    df["s2q28"] = df["s2q28"].replace({9999: np.nan, 0: np.nan})
+
+    # Total loss = sum of cause columns (see module docstring for why)
+    df["total_loss_kg"] = df[CAUSE_COLS].sum(axis=1, skipna=True)
+
+    # Drop rows with no harvest quantity — can't compute a loss rate without it
+    df = df[df["s2q21"].notna() & (df["s2q21"] > 0)].copy()
+
+    df["loss_rate_pct"] = (df["total_loss_kg"] / df["s2q21"] * 100).round(2)
+    # Cap at 100% — a small number of rows report loss > harvest, likely a
+    # data entry or unit-mismatch issue; treat as a data quality ceiling
+    # rather than silently allowing >100% "loss".
+    df["loss_rate_pct"] = df["loss_rate_pct"].clip(upper=100)
 
     return df
 
 
-def compute_loss_rate(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    If quantity_lost_tonnes is present, compute loss rate directly.
-    Otherwise, this is the spot to merge in external baseline loss-rate
-    assumptions per crop (document the source in your README).
-    """
-    if "quantity_lost_tonnes" in df.columns:
-        df["loss_rate_pct"] = (
-            df["quantity_lost_tonnes"] / df["production_tonnes"].replace(0, pd.NA)
-        ) * 100
-    else:
-        raise ValueError(
-            "No quantity_lost_tonnes column found — merge in external "
-            "loss-rate assumptions before proceeding. See docstring."
-        )
-
-    df["loss_rate_pct"] = df["loss_rate_pct"].round(2)
-    return df
+def weighted_avg(df: pd.DataFrame, value_col: str, weight_col: str = "plot_weight") -> float:
+    d = df.dropna(subset=[value_col, weight_col])
+    if len(d) == 0 or d[weight_col].sum() == 0:
+        return None
+    return round(float((d[value_col] * d[weight_col]).sum() / d[weight_col].sum()), 2)
 
 
 def build_benchmarks(df: pd.DataFrame) -> dict:
-    """
-    Aggregates to produce three benchmark levels the app can compare
-    a cooperative's self-reported loss rate against:
-      - national average per crop
-      - district average per crop
-      - district+season average per crop (most specific)
-    """
-    national = (
-        df.groupby("crop")["loss_rate_pct"]
-        .mean()
-        .round(2)
-        .to_dict()
-    )
+    national = {}
+    district = {}
+    district_season = {}
+    avg_price = {}
+    cause_breakdown = {}
 
-    district = (
-        df.groupby(["district", "crop"])["loss_rate_pct"]
-        .mean()
-        .round(2)
-        .reset_index()
-    )
-    district_lookup = {}
-    for _, row in district.iterrows():
-        district_lookup.setdefault(row["district"], {})[row["crop"]] = row["loss_rate_pct"]
+    for crop, g in df.groupby("CropCategory"):
+        val = weighted_avg(g, "loss_rate_pct")
+        if val is not None:
+            national[crop] = val
 
-    seasonal = (
-        df.groupby(["district", "season", "crop"])["loss_rate_pct"]
-        .mean()
-        .round(2)
-        .reset_index()
-    )
-    seasonal_lookup = {}
-    for _, row in seasonal.iterrows():
-        key = f'{row["district"]}|{row["season"]}'
-        seasonal_lookup.setdefault(key, {})[row["crop"]] = row["loss_rate_pct"]
+        price = weighted_avg(g, "s2q28")
+        if price is not None:
+            avg_price[crop] = price
+
+        # cause-of-loss proportions (share of total_loss attributable to each cause)
+        totals = g[CAUSE_COLS].sum()
+        total_all = totals.sum()
+        if total_all > 0:
+            cause_breakdown[crop] = {
+                CAUSE_LABELS[c]: round(float(totals[c] / total_all * 100), 1)
+                for c in CAUSE_COLS
+            }
+
+    for (dist, crop), g in df.groupby(["s1q2", "CropCategory"]):
+        val = weighted_avg(g, "loss_rate_pct")
+        if val is not None and len(g) >= 5:  # minimum sample size for a district-level claim
+            district.setdefault(dist, {})[crop] = val
+
+    for (dist, season, crop), g in df.groupby(["s1q2", "season", "CropCategory"]):
+        val = weighted_avg(g, "loss_rate_pct")
+        if val is not None and len(g) >= 5:
+            key = f"{dist}|{season}"
+            district_season.setdefault(key, {})[crop] = val
 
     return {
         "national_avg_loss_rate_pct": national,
-        "district_avg_loss_rate_pct": district_lookup,
-        "district_season_avg_loss_rate_pct": seasonal_lookup,
+        "district_avg_loss_rate_pct": district,
+        "district_season_avg_loss_rate_pct": district_season,
+        "national_avg_selling_price_rwf_per_kg": avg_price,
+        "national_cause_of_loss_breakdown_pct": cause_breakdown,
+        "note": "District-level figures require at least 5 sampled plots; thinner "
+                "combinations fall back to the national or CropCategory average. "
+                "All averages are weighted by the survey's plot_weight.",
     }
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", required=True, help="Path to raw SAS CSV")
-    parser.add_argument("--output", default="benchmarks.json", help="Path to output JSON")
+    parser.add_argument("--data-dir", required=True,
+                         help="Root folder containing raw SAS Production CSVs (searched recursively)")
+    parser.add_argument("--output-dir", default=".", help="Folder to write outputs to")
     args = parser.parse_args()
 
-    df = load_raw_data(args.input)
-    df = clean_data(df)
-    df = compute_loss_rate(df)
-    benchmarks = build_benchmarks(df)
+    files = find_production_files(args.data_dir)
+    if not files:
+        raise SystemExit(f"No *Production*.csv files found under {args.data_dir}")
 
-    with open(args.output, "w") as f:
+    print(f"Found {len(files)} Production files:")
+    for f in files:
+        print(" -", f)
+
+    dfs = [load_one_file(f) for f in files]
+    combined = pd.concat(dfs, ignore_index=True)
+    combined = clean(combined)
+
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    cleaned_path = os.path.join(args.output_dir, "cleaned_production.csv")
+    keep_cols = ["survey_year", "season", "s1q2", "s2q4", "CropCategory",
+                 "s2q21", "s2q28", "storage_type_clean", "plot_weight",
+                 "total_loss_kg", "loss_rate_pct"] + CAUSE_COLS
+    combined[keep_cols].to_csv(cleaned_path, index=False)
+    print(f"\nWrote cleaned row-level data ({len(combined)} rows) to {cleaned_path}")
+
+    benchmarks = build_benchmarks(combined)
+    benchmarks_path = os.path.join(args.output_dir, "benchmarks.json")
+    with open(benchmarks_path, "w") as f:
         json.dump(benchmarks, f, indent=2)
+    print(f"Wrote benchmarks to {benchmarks_path}")
 
-    print(f"Wrote benchmarks for {df['crop'].nunique()} crops "
-          f"across {df['district'].nunique()} districts to {args.output}")
+    nonzero = (combined["total_loss_kg"] > 0).sum()
+    print(f"\nSummary: {len(combined)} total records, "
+          f"{nonzero} ({nonzero/len(combined)*100:.1f}%) with nonzero reported loss")
 
 
 if __name__ == "__main__":

@@ -48,7 +48,38 @@ and it's what directly powers the cause-of-loss breakdown feature anyway.
   benchmark. Fall back to `CropCategory`-level or national benchmarks for those,
   and say so plainly in the app rather than presenting a shaky number as precise.
 
-## Combined dataset size (2024 + 2025, Seasons A+B+C)
+- `s2q28` (selling price, RWF/kg) uses missing-value sentinels: `9999`
+  ("don't know"/not applicable — ~38% of non-null entries) and `0` (crop
+  wasn't sold). Both are excluded before computing price benchmarks;
+  otherwise the average price comes out wildly inflated.
 
-- ~146,000 total crop-plot records
-- ~37,900 records with nonzero loss (cause-sum method)
+## Combined dataset size (2024 + 2025, Seasons A+B+C, cleaned)
+
+- 134,766 total crop-plot records (after dropping rows with no harvest qty)
+- 37,894 records with nonzero loss (28.1%, cause-sum method)
+
+## Model approach — risk category, not a precise percentage
+
+An initial attempt to train a two-stage model (loss-occurrence classifier +
+severity regressor) directly on district/crop/season/storage-type features
+was tested with temporal validation (train on 2024, test on 2025):
+
+- Loss-occurrence classifier AUC: 0.588 (barely better than random)
+- Loss-severity regressor MAE: 26.5 percentage points (too high to be useful,
+  given most real loss rates fall in the 5-20% range)
+
+**Decision:** these four categorical features don't carry enough signal for a
+reliable precise percentage prediction, and a counterfactual "Action Engine"
+built on top of a weak model produced a counterintuitive, untrustworthy
+result. Rather than present a falsely precise number, the app instead:
+
+1. Uses the real weighted benchmark data (`benchmarks.json`) to classify a
+   cooperative's reported loss into a **Low / Medium / High risk** category
+   relative to their district+crop+season benchmark.
+2. Bases its recommendation (Action Engine) directly on the **cause-of-loss
+   breakdown** for their crop (which cause dominates their losses), not on a
+   simulated counterfactual from an unreliable model.
+
+This is a more honest and defensible approach given what the data supports.
+Richer features (fertilizer use, improved seed use, farm size) could improve
+a future model version — noted as a stretch goal, not MVP.

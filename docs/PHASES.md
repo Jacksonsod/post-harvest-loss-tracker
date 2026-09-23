@@ -2,26 +2,37 @@
 
 Submission deadline: **30 Oct 2026, 23:59**
 
-- [ ] **Phase 1 — Data Pipeline** (target: Sept 25)
-  Clean & merge 2024+2025 Production files, cause-sum loss logic, district typo
-  fix, CropCategory grouping, output `benchmarks.json`.
+- [x] **Phase 1 — Data Pipeline** (done Sept 21)
+  Cleaned & merged real 2024+2025 SAS Production files. Cause-sum loss logic,
+  district typo fix, price sentinel fix (9999/0), weighted benchmarks by
+  national/district/district+season, cause-of-loss breakdown, average
+  selling price. Output: `data/processed/benchmarks.json`,
+  `data/processed/cleaned_production.csv`.
 
-- [ ] **Phase 2 — Predictive Model** (target: Oct 1)
-  Two-stage model (loss yes/no classifier, then severity regression). Validate
-  and document performance honestly.
+- [x] **Phase 2 — Predictive Approach Decided** (done Sept 21)
+  Tested a two-stage ML model with temporal validation (train 2024, test
+  2025) — found too weak to trust (AUC 0.59, MAE 26.5pp). Switched to a
+  **risk-category classification** (Low/Medium/High vs. benchmark) plus a
+  **cause-of-loss-based recommendation engine**, which is defensible with
+  the data actually available. See `docs/DATA.md` for the full reasoning.
 
-- [ ] **Phase 3 — Backend** (target: Oct 6)
-  Cooperative/harvest logging API, wire in benchmarks + prediction endpoint, DB
-  schema.
+- [ ] **Phase 3 — Backend API** (target: Sept 28)
+  FastAPI service exposing:
+  - `GET /benchmark` — district/crop/season benchmark lookup
+  - `POST /assess` — cooperative submits harvest+loss, gets risk category +
+    cause breakdown + recommendation + estimated RWF value of loss
+  - Cooperative/harvest data model + CRUD (SQLite to start)
 
-- [ ] **Phase 4 — Frontend Dashboard** (target: Oct 13)
-  Coop profile + harvest/loss entry forms, dashboard (trend chart, benchmark
-  comparison, cause breakdown, predicted risk).
+- [ ] **Phase 4 — Frontend Dashboard** (target: Oct 10)
+  Coop profile + harvest/loss entry forms; dashboard with risk category,
+  benchmark comparison chart, cause-of-loss breakdown chart, recommendation
+  card, RWF loss estimate.
 
-- [ ] **Phase 5 — Integration + Deployment** (target: Oct 21)
-  Connect frontend/backend/model end-to-end, deploy live.
+- [ ] **Phase 5 — Integration + Deployment** (target: Oct 18)
+  Connect frontend/backend end-to-end, deploy live (Vercel/Render/Railway).
+  Registration deadline (Oct 20) already satisfied — no risk here.
 
-- [ ] **Phase 6 — Polish, Docs, Demo Prep** (target: Oct 28)
+- [ ] **Phase 6 — Polish, Docs, Demo Prep** (target: Oct 27)
   Finalize README/methodology docs, demo rehearsal, bug pass.
 
-- [ ] **Phase 7 — Buffer & Submit** (Oct 29–30)
+- [ ] **Phase 7 — Buffer & Submit** (Oct 28-30)
