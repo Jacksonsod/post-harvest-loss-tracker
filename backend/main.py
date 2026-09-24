@@ -17,8 +17,9 @@ from __future__ import annotations
 import json
 from typing import List, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
 from assessment_service import (
     compute_cause_breakdown_pct,
@@ -29,7 +30,7 @@ from assessment_service import (
     get_recommendation,
 )
 from benchmark_service import get_national_cause_breakdown, lookup_benchmark
-from db import Assessment, Cooperative, get_session, init_db
+from db import Assessment, Cooperative, get_db, init_db
 from models import (
     AssessmentHistoryItem,
     AssessOut,
@@ -108,16 +109,12 @@ def get_benchmark(
 # ---------------------------------------------------------------------------
 
 @app.post("/coop", response_model=CoopOut, status_code=201)
-def create_coop(body: CoopCreate):
-    session = get_session()
-    try:
-        coop = Cooperative(name=body.name, district=body.district)
-        session.add(coop)
-        session.commit()
-        session.refresh(coop)
-        return CoopOut.model_validate(coop)
-    finally:
-        session.close()
+def create_coop(body: CoopCreate, db: Session = Depends(get_db)):
+    coop = Cooperative(name=body.name, district=body.district)
+    db.add(coop)
+    db.commit()
+    db.refresh(coop)
+    return CoopOut.model_validate(coop)
 
 
 # ---------------------------------------------------------------------------
@@ -125,13 +122,9 @@ def create_coop(body: CoopCreate):
 # ---------------------------------------------------------------------------
 
 @app.get("/coops", response_model=List[CoopOut])
-def list_coops():
-    session = get_session()
-    try:
-        coops = session.query(Cooperative).all()
-        return [CoopOut.model_validate(c) for c in coops]
-    finally:
-        session.close()
+def list_coops(db: Session = Depends(get_db)):
+    coops = db.query(Cooperative).all()
+    return [CoopOut.model_validate(c) for c in coops]
 
 
 # ---------------------------------------------------------------------------
@@ -139,7 +132,7 @@ def list_coops():
 # ---------------------------------------------------------------------------
 
 @app.post("/assess", response_model=AssessOut, status_code=201)
-def create_assessment(body: AssessRequest):
+def create_assessment(body: AssessRequest, db: Session = Depends(get_db)):
     # ---- 0. Validate harvested quantity ----
     if body.harvested_qty_kg <= 0:
         raise HTTPException(
@@ -159,6 +152,16 @@ def create_assessment(body: AssessRequest):
         total_loss_kg = sum(body.loss_by_cause_kg.values())
     else:
         total_loss_kg = body.total_loss_kg  # type: ignore[assignment]
+
+    # ---- 2b. Guard: loss cannot exceed harvested quantity ----
+    if total_loss_kg > body.harvested_qty_kg:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Reported total loss ({total_loss_kg} kg) exceeds harvested "
+                f"quantity ({body.harvested_qty_kg} kg). Check your inputs."
+            ),
+        )
 
     # ---- 3. Compute loss rate ----
     loss_rate_pct = round(total_loss_kg / body.harvested_qty_kg * 100, 2)
@@ -204,43 +207,38 @@ def create_assessment(body: AssessRequest):
         )
 
     # ---- 10. Verify coop exists ----
-    session = get_session()
-    try:
-        coop = session.query(Cooperative).filter(Cooperative.id == body.coop_id).first()
-        if coop is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Cooperative with id={body.coop_id} not found.",
-            )
-
-        # ---- 11. Persist assessment ----
-        assessment = Assessment(
-            coop_id=body.coop_id,
-            district=body.district,
-            crop=body.crop,
-            season=body.season,
-            harvested_qty_kg=body.harvested_qty_kg,
-            total_loss_kg=total_loss_kg,
-            loss_rate_pct=loss_rate_pct,
-            benchmark_used_pct=benchmark_loss_rate_pct,
-            benchmark_source=benchmark_source,
-            risk_category=risk_category,
-            dominant_cause=dominant_cause,
-            recommendation_text=recommendation,
-            estimated_loss_value_rwf=estimated_loss_value_rwf,
-            cause_breakdown_json=(
-                json.dumps(body.loss_by_cause_kg) if body.loss_by_cause_kg is not None else None
-            ),
+    coop = db.query(Cooperative).filter(Cooperative.id == body.coop_id).first()
+    if coop is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Cooperative with id={body.coop_id} not found.",
         )
-        session.add(assessment)
-        session.commit()
-        session.refresh(assessment)
-        assessment_id = assessment.id
-    finally:
-        session.close()
+
+    # ---- 11. Persist assessment ----
+    assessment = Assessment(
+        coop_id=body.coop_id,
+        district=body.district,
+        crop=body.crop,
+        season=body.season,
+        harvested_qty_kg=body.harvested_qty_kg,
+        total_loss_kg=total_loss_kg,
+        loss_rate_pct=loss_rate_pct,
+        benchmark_used_pct=benchmark_loss_rate_pct,
+        benchmark_source=benchmark_source,
+        risk_category=risk_category,
+        dominant_cause=dominant_cause,
+        recommendation_text=recommendation,
+        estimated_loss_value_rwf=estimated_loss_value_rwf,
+        cause_breakdown_json=(
+            json.dumps(body.loss_by_cause_kg) if body.loss_by_cause_kg is not None else None
+        ),
+    )
+    db.add(assessment)
+    db.commit()
+    db.refresh(assessment)
 
     return AssessOut(
-        assessment_id=assessment_id,
+        assessment_id=assessment.id,
         loss_rate_pct=loss_rate_pct,
         benchmark_loss_rate_pct=benchmark_loss_rate_pct,
         benchmark_source=benchmark_source,
@@ -258,21 +256,17 @@ def create_assessment(body: AssessRequest):
 # ---------------------------------------------------------------------------
 
 @app.get("/assessments/{coop_id}", response_model=List[AssessmentHistoryItem])
-def get_assessments(coop_id: int):
-    session = get_session()
-    try:
-        coop = session.query(Cooperative).filter(Cooperative.id == coop_id).first()
-        if coop is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Cooperative with id={coop_id} not found.",
-            )
-        assessments = (
-            session.query(Assessment)
-            .filter(Assessment.coop_id == coop_id)
-            .order_by(Assessment.created_at.asc())
-            .all()
+def get_assessments(coop_id: int, db: Session = Depends(get_db)):
+    coop = db.query(Cooperative).filter(Cooperative.id == coop_id).first()
+    if coop is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Cooperative with id={coop_id} not found.",
         )
-        return [AssessmentHistoryItem.model_validate(a) for a in assessments]
-    finally:
-        session.close()
+    assessments = (
+        db.query(Assessment)
+        .filter(Assessment.coop_id == coop_id)
+        .order_by(Assessment.created_at.asc())
+        .all()
+    )
+    return [AssessmentHistoryItem.model_validate(a) for a in assessments]

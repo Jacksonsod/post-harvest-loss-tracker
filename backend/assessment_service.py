@@ -116,9 +116,9 @@ def compute_cause_breakdown_pct(
     """
     Given the per-cause kg values and total loss, compute each cause as a
     percentage of THIS ASSESSMENT's total loss.
-    Returns None if total_loss_kg is 0 to avoid division by zero.
+    Returns None if total_loss_kg is <= 0 to avoid division by zero or negative percentages.
     """
-    if total_loss_kg == 0:
+    if total_loss_kg <= 0:
         return None
     return {
         cause: round(kg / total_loss_kg * 100, 2)

@@ -83,3 +83,18 @@ def init_db() -> None:
 def get_session() -> Session:
     """Return a new SQLAlchemy Session. Caller is responsible for closing it."""
     return Session(engine)
+
+
+def get_db():
+    """
+    FastAPI dependency that yields a SQLAlchemy Session, rolls back on
+    exception, and always closes the session when the request is done.
+    """
+    session = Session(engine)
+    try:
+        yield session
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()

@@ -26,12 +26,15 @@ from typing import Dict, Optional
 # ---------------------------------------------------------------------------
 # Load benchmarks.json once
 # ---------------------------------------------------------------------------
-_BENCHMARKS_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..",
-    "data",
-    "processed",
-    "benchmarks.json",
+_BENCHMARKS_PATH = os.getenv(
+    "BENCHMARKS_PATH",
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "..",
+        "data",
+        "processed",
+        "benchmarks.json",
+    ),
 )
 
 with open(_BENCHMARKS_PATH, "r", encoding="utf-8") as _f:

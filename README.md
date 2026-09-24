@@ -47,7 +47,7 @@ python predict_loss_risk.py --input ../data/raw/<file>.csv --output ../backend/m
 # Backend
 cd ../backend
 pip install -r requirements.txt
-uvicorn api_predict:app --reload --port 8000
+uvicorn main:app --reload --port 8000
 
 # Frontend
 cd ../frontend

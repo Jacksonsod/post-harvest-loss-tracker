@@ -16,12 +16,15 @@ Submission deadline: **30 Oct 2026, 23:59**
   **cause-of-loss-based recommendation engine**, which is defensible with
   the data actually available. See `docs/DATA.md` for the full reasoning.
 
-- [ ] **Phase 3 — Backend API** (target: Sept 28)
-  FastAPI service exposing:
-  - `GET /benchmark` — district/crop/season benchmark lookup
-  - `POST /assess` — cooperative submits harvest+loss, gets risk category +
-    cause breakdown + recommendation + estimated RWF value of loss
-  - Cooperative/harvest data model + CRUD (SQLite to start)
+- [x] **Phase 3 — Backend API** (done Sept 23)
+  FastAPI service built with all 6 endpoints (`/health`, `/benchmark`,
+  `POST /coop`, `GET /coops`, `POST /assess`, `GET /assessments/{coop_id}`),
+  SQLite persistence, risk-category logic, cause-based recommendations, RWF
+  economic translation. Verified against the full Postman collection
+  (11/11 tests passing) after a code review caught and fixed 5 issues
+  (stale README command, missing negative-loss guard, missing over-100%-loss
+  validation, manual session handling, hardcoded benchmarks.json path) and
+  a benchmark-weighting bug in the data pipeline (see `docs/DATA.md`).
 
 - [ ] **Phase 4 — Frontend Dashboard** (target: Oct 10)
   Coop profile + harvest/loss entry forms; dashboard with risk category,

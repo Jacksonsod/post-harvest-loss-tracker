@@ -129,11 +129,31 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def weighted_avg(df: pd.DataFrame, value_col: str, weight_col: str = "plot_weight") -> float:
-    d = df.dropna(subset=[value_col, weight_col])
-    if len(d) == 0 or d[weight_col].sum() == 0:
-        return None
-    return round(float((d[value_col] * d[weight_col]).sum() / d[weight_col].sum()), 2)
+def weighted_avg(df: pd.DataFrame, value_col: str, weight_col: str = "plot_weight",
+                  max_weight_share: float = 0.25) -> tuple:
+    """
+    Returns (value, n_used) — n_used is the count of rows actually usable
+    after dropping missing weight/value, which may be less than len(df) if
+    some rows have NaN weight. Callers must gate their minimum-sample-size
+    check on n_used, not len(df).
+
+    Caps any single row's weight at `max_weight_share` of the group's total
+    weight (default 25%). Without this, a small number of highly-weighted
+    survey responses can dominate an otherwise reasonably-sized sample —
+    e.g. a district/crop/season group with n=29 was found to have its
+    average pulled to 93.98% by just 3 high-weight rows reporting 100%
+    loss, even though most of the other 26 rows reported under 15% loss.
+    This is a standard "weight capping" technique used to limit the
+    influence of individually over-weighted survey responses.
+    """
+    d = df.dropna(subset=[value_col, weight_col]).copy()
+    if len(d) == 0 or d[weight_col].sum() <= 0:
+        return None, 0
+    total_weight = d[weight_col].sum()
+    cap = max_weight_share * total_weight
+    d[weight_col] = d[weight_col].clip(upper=cap)
+    capped_total = d[weight_col].sum()
+    return round(float((d[value_col] * d[weight_col]).sum() / capped_total), 2), len(d)
 
 
 def build_benchmarks(df: pd.DataFrame) -> dict:
@@ -143,12 +163,14 @@ def build_benchmarks(df: pd.DataFrame) -> dict:
     avg_price = {}
     cause_breakdown = {}
 
+    MIN_SAMPLE = 5  # minimum usable (non-missing-weight) records for a benchmark claim
+
     for crop, g in df.groupby("CropCategory"):
-        val = weighted_avg(g, "loss_rate_pct")
+        val, n = weighted_avg(g, "loss_rate_pct")
         if val is not None:
             national[crop] = val
 
-        price = weighted_avg(g, "s2q28")
+        price, n_price = weighted_avg(g, "s2q28")
         if price is not None:
             avg_price[crop] = price
 
@@ -162,13 +184,13 @@ def build_benchmarks(df: pd.DataFrame) -> dict:
             }
 
     for (dist, crop), g in df.groupby(["s1q2", "CropCategory"]):
-        val = weighted_avg(g, "loss_rate_pct")
-        if val is not None and len(g) >= 5:  # minimum sample size for a district-level claim
+        val, n = weighted_avg(g, "loss_rate_pct")
+        if val is not None and n >= MIN_SAMPLE:  # gate on usable (non-missing-weight) records
             district.setdefault(dist, {})[crop] = val
 
     for (dist, season, crop), g in df.groupby(["s1q2", "season", "CropCategory"]):
-        val = weighted_avg(g, "loss_rate_pct")
-        if val is not None and len(g) >= 5:
+        val, n = weighted_avg(g, "loss_rate_pct")
+        if val is not None and n >= MIN_SAMPLE:
             key = f"{dist}|{season}"
             district_season.setdefault(key, {})[crop] = val
 
@@ -178,9 +200,13 @@ def build_benchmarks(df: pd.DataFrame) -> dict:
         "district_season_avg_loss_rate_pct": district_season,
         "national_avg_selling_price_rwf_per_kg": avg_price,
         "national_cause_of_loss_breakdown_pct": cause_breakdown,
-        "note": "District-level figures require at least 5 sampled plots; thinner "
-                "combinations fall back to the national or CropCategory average. "
-                "All averages are weighted by the survey's plot_weight.",
+        "note": "District-level figures require at least 5 records with a usable "
+                "sampling weight (not just 5 raw rows — rows with missing weight "
+                "are excluded before this count). Any single row's weight is also "
+                "capped at 25% of its group's total weight, to prevent a small "
+                "number of highly-weighted survey responses from dominating an "
+                "otherwise reasonably-sized sample. Thinner combinations fall back "
+                "to the national or CropCategory average.",
     }
 
 
