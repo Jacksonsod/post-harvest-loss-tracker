@@ -22,6 +22,7 @@
     "Vegetables": 10.46,
     "Wheat": 6.64
   },
+  "overall_national_avg_loss_rate_pct": 10.22,
   "district_avg_loss_rate_pct": {
     "Bugesera": {
       "Banana for beer": 7.17,
@@ -1958,6 +1959,124 @@
       "Bush bean": 1.55,
       "Sweet potato": 4.52,
       "Vegetables": 9.11
+    }
+  },
+  "avg_loss_rate_by_storage_type_pct": {
+    "Bush bean": {
+      "Other storage(specify)": {
+        "avg_loss_rate_pct": 1.77,
+        "n_records": 7
+      },
+      "Own storage": {
+        "avg_loss_rate_pct": 17.49,
+        "n_records": 1940
+      },
+      "Public storage": {
+        "avg_loss_rate_pct": 7.17,
+        "n_records": 25
+      },
+      "Storage owned by Cooperatives/private companies": {
+        "avg_loss_rate_pct": 39.3,
+        "n_records": 9
+      }
+    },
+    "Cassava": {
+      "Own storage": {
+        "avg_loss_rate_pct": 11.74,
+        "n_records": 126
+      }
+    },
+    "Climbing bean": {
+      "Own storage": {
+        "avg_loss_rate_pct": 15.9,
+        "n_records": 905
+      },
+      "Public storage": {
+        "avg_loss_rate_pct": 3.93,
+        "n_records": 7
+      }
+    },
+    "Fodder crops": {
+      "Own storage": {
+        "avg_loss_rate_pct": 0.03,
+        "n_records": 9
+      }
+    },
+    "Groundnut": {
+      "Own storage": {
+        "avg_loss_rate_pct": 12.03,
+        "n_records": 53
+      }
+    },
+    "Irish potato": {
+      "Own storage": {
+        "avg_loss_rate_pct": 13.29,
+        "n_records": 65
+      }
+    },
+    "Maize": {
+      "Other storage(specify)": {
+        "avg_loss_rate_pct": 13.61,
+        "n_records": 8
+      },
+      "Own storage": {
+        "avg_loss_rate_pct": 21.27,
+        "n_records": 1513
+      },
+      "Public storage": {
+        "avg_loss_rate_pct": 25.75,
+        "n_records": 21
+      },
+      "Storage owned by Cooperatives/private companies": {
+        "avg_loss_rate_pct": 55.63,
+        "n_records": 17
+      }
+    },
+    "Other cereals": {
+      "Own storage": {
+        "avg_loss_rate_pct": 14.11,
+        "n_records": 35
+      }
+    },
+    "Pea": {
+      "Own storage": {
+        "avg_loss_rate_pct": 25.42,
+        "n_records": 18
+      }
+    },
+    "Sorghum": {
+      "Own storage": {
+        "avg_loss_rate_pct": 11.79,
+        "n_records": 240
+      }
+    },
+    "Soybean": {
+      "Own storage": {
+        "avg_loss_rate_pct": 9.85,
+        "n_records": 184
+      }
+    },
+    "Sweet potato": {
+      "Other storage(specify)": {
+        "avg_loss_rate_pct": 6.36,
+        "n_records": 7
+      },
+      "Own storage": {
+        "avg_loss_rate_pct": 5.08,
+        "n_records": 16
+      }
+    },
+    "Vegetables": {
+      "Own storage": {
+        "avg_loss_rate_pct": 46.01,
+        "n_records": 5
+      }
+    },
+    "Wheat": {
+      "Own storage": {
+        "avg_loss_rate_pct": 7.41,
+        "n_records": 15
+      }
     }
   },
   "national_avg_selling_price_rwf_per_kg": {

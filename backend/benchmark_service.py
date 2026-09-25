@@ -45,6 +45,8 @@ _DISTRICT_LOSS: Dict[str, Dict[str, float]] = _DATA["district_avg_loss_rate_pct"
 _DISTRICT_SEASON_LOSS: Dict[str, Dict[str, float]] = _DATA["district_season_avg_loss_rate_pct"]
 _NATIONAL_PRICE: Dict[str, float] = _DATA["national_avg_selling_price_rwf_per_kg"]
 _NATIONAL_CAUSE: Dict[str, Dict[str, float]] = _DATA["national_cause_of_loss_breakdown_pct"]
+_OVERALL_NATIONAL_LOSS_RATE: float = _DATA["overall_national_avg_loss_rate_pct"]
+_STORAGE_TYPE_LOSS: Dict[str, Dict] = _DATA.get("avg_loss_rate_by_storage_type_pct", {})
 
 
 # ---------------------------------------------------------------------------
@@ -114,3 +116,34 @@ def get_options() -> dict:
         "districts": sorted(_DISTRICT_LOSS.keys()),
         "crops": sorted(_NATIONAL_LOSS.keys()),
     }
+
+
+def get_overall_national_loss_rate() -> float:
+    """
+    Return the single blended national average loss rate across all crops,
+    derived from the NISR survey data (overall_national_avg_loss_rate_pct).
+    """
+    return _OVERALL_NATIONAL_LOSS_RATE
+
+
+def get_storage_comparison(crop: str) -> Optional[list]:
+    """
+    Return the survey-derived per-storage-type loss data for the given crop,
+    sorted ascending by avg_loss_rate_pct (best storage type first).
+
+    Each element: {"storage_type": str, "avg_loss_rate_pct": float, "n_records": int}
+
+    Returns None if no storage-type breakdown is available for that crop.
+    """
+    crop_data = _STORAGE_TYPE_LOSS.get(crop)
+    if not crop_data:
+        return None
+    rows = [
+        {
+            "storage_type": st,
+            "avg_loss_rate_pct": vals["avg_loss_rate_pct"],
+            "n_records": vals["n_records"],
+        }
+        for st, vals in crop_data.items()
+    ]
+    return sorted(rows, key=lambda r: r["avg_loss_rate_pct"])

@@ -194,10 +194,22 @@ def build_benchmarks(df: pd.DataFrame) -> dict:
             key = f"{dist}|{season}"
             district_season.setdefault(key, {})[crop] = val
 
+    # --- Overall national loss rate (single blended figure, all crops combined) ---
+    overall_val, overall_n = weighted_avg(df, "loss_rate_pct")
+
+    # --- Loss rate by storage type, per crop (for a real, data-driven storage comparison) ---
+    storage_comparison = {}
+    for (crop, storage), g in df.dropna(subset=["storage_type_clean"]).groupby(["CropCategory", "storage_type_clean"]):
+        val, n = weighted_avg(g, "loss_rate_pct")
+        if val is not None and n >= MIN_SAMPLE:
+            storage_comparison.setdefault(crop, {})[storage] = {"avg_loss_rate_pct": val, "n_records": n}
+
     return {
         "national_avg_loss_rate_pct": national,
+        "overall_national_avg_loss_rate_pct": overall_val,
         "district_avg_loss_rate_pct": district,
         "district_season_avg_loss_rate_pct": district_season,
+        "avg_loss_rate_by_storage_type_pct": storage_comparison,
         "national_avg_selling_price_rwf_per_kg": avg_price,
         "national_cause_of_loss_breakdown_pct": cause_breakdown,
         "note": "District-level figures require at least 5 records with a usable "

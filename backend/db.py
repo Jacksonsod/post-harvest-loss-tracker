@@ -67,9 +67,44 @@ class Assessment(Base):
     recommendation_text = Column(Text)
     estimated_loss_value_rwf = Column(Float, nullable=True)
     cause_breakdown_json = Column(Text)  # JSON-encoded dict of input cause breakdown
+    action_notes = Column(Text, nullable=True)  # free-text: what changed since last assessment
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     cooperative = relationship("Cooperative", back_populates="assessments")
+
+
+# ---------------------------------------------------------------------------
+# Schema migration helper (additive-only, safe to call on every startup)
+# ---------------------------------------------------------------------------
+
+def _migrate_columns() -> None:
+    """
+    Inspect the live assessments table and ADD any ORM-declared columns that
+    do not yet exist (e.g. action_notes added in a later phase).
+    Uses raw SQLite PRAGMA so it works without alembic or other migration tools.
+    Silently skips columns that are already present.
+    """
+    import sqlite3 as _sqlite3
+
+    db_path = str(engine.url).replace("sqlite:///", "")
+    try:
+        conn = _sqlite3.connect(db_path)
+        cur = conn.cursor()
+        cur.execute("PRAGMA table_info(assessments)")
+        existing = {row[1] for row in cur.fetchall()}
+
+        # Map ORM column name -> SQLite type for each new nullable column
+        new_columns: dict = {
+            "action_notes": "TEXT",
+        }
+        for col_name, col_type in new_columns.items():
+            if col_name not in existing:
+                cur.execute(f"ALTER TABLE assessments ADD COLUMN {col_name} {col_type}")
+                conn.commit()
+        conn.close()
+    except Exception:
+        # Non-fatal: server still starts; bad queries will surface the real error.
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -78,6 +113,10 @@ class Assessment(Base):
 
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
+    # Lightweight column migrations: add any new nullable columns to an existing
+    # app.db without dropping it (SQLite does not support ALTER TABLE DROP COLUMN
+    # in older versions, but ADD COLUMN is always safe).
+    _migrate_columns()
 
 
 def get_session() -> Session:
