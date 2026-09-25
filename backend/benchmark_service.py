@@ -98,3 +98,19 @@ def lookup_benchmark(
 def get_national_cause_breakdown(crop: str) -> Optional[Dict[str, float]]:
     """Return the national cause-of-loss breakdown for a crop, or None."""
     return _NATIONAL_CAUSE.get(crop)
+
+
+def get_options() -> dict:
+    """
+    Return the sorted list of valid district names and crop category names,
+    derived from data already loaded at import time.
+
+    districts → keys of district_avg_loss_rate_pct  (the per-district lookup table)
+    crops     → keys of national_avg_loss_rate_pct   (the national superset)
+
+    Both lists are alphabetically sorted so the frontend can render them as-is.
+    """
+    return {
+        "districts": sorted(_DISTRICT_LOSS.keys()),
+        "crops": sorted(_NATIONAL_LOSS.keys()),
+    }

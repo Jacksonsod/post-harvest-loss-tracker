@@ -29,7 +29,7 @@ from assessment_service import (
     find_dominant_cause_from_national,
     get_recommendation,
 )
-from benchmark_service import get_national_cause_breakdown, lookup_benchmark
+from benchmark_service import get_national_cause_breakdown, get_options, lookup_benchmark
 from db import Assessment, Cooperative, get_db, init_db
 from models import (
     AssessmentHistoryItem,
@@ -71,6 +71,20 @@ def startup_event():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+# ---------------------------------------------------------------------------
+# GET /options
+# ---------------------------------------------------------------------------
+
+@app.get("/options")
+def options():
+    """
+    Returns the sorted list of valid district and crop names drawn directly
+    from benchmarks.json.  Use these to populate dropdowns so that
+    GET /benchmark and POST /assess never receive a typo-driven 404.
+    """
+    return get_options()
 
 
 # ---------------------------------------------------------------------------
