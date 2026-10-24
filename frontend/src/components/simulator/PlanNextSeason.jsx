@@ -21,14 +21,11 @@ export default function PlanNextSeason({ selectedCoop }) {
                 Plan Next Season
               </h2>
               <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-                PREDICTIVE YIELD FORECASTER
-              </span>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05]">
-                NST2 ≤5.0% TARGET ALIGNED
+                NST2 ≤5.0% TARGET
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">
-              Forecast expected post-harvest loss volume and economic risk prior to harvest, and evaluate storage infrastructure dividends.
+              Simulate pre-harvest loss risks, compare storage infrastructure efficacy, and review district extension priorities.
             </p>
           </div>
         </div>
@@ -40,10 +37,11 @@ export default function PlanNextSeason({ selectedCoop }) {
         <div className="lg:col-span-7 flex flex-col">
           <BentoPreHarvestSimulator 
             selectedDistrict={selectedDistrict} 
+            onDistrictChange={setSelectedDistrict}
           />
         </div>
 
-        {/* Right Column: Storage Technology Efficacy Matrix & Dispatch Alerts (Span 5) */}
+        {/* Right Column: Storage Technology Efficacy Matrix & Extension Priorities (Span 5) */}
         <div className="lg:col-span-5 flex flex-col space-y-6">
           <BentoStorageComparison />
           <BentoDispatchCard selectedDistrict={selectedDistrict} />

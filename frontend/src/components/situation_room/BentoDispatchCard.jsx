@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/client';
-import { Radio, CheckCircle2, Send, AlertTriangle, ShieldAlert, BellRing } from 'lucide-react';
+import { Lightbulb, CheckCircle2, Copy, AlertTriangle } from 'lucide-react';
 
 export default function BentoDispatchCard({ selectedDistrict }) {
   const [triggers, setTriggers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [dispatchedId, setDispatchedId] = useState(null);
+  const [copiedIdx, setCopiedIdx] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -34,11 +34,14 @@ export default function BentoDispatchCard({ selectedDistrict }) {
     };
   }, [selectedDistrict]);
 
-  const handleSimulateDispatch = (idx) => {
-    setDispatchedId(idx);
+  const handleCopy = (idx, text) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+    }
+    setCopiedIdx(idx);
     setTimeout(() => {
-      setDispatchedId(null);
-    }, 2800);
+      setCopiedIdx(null);
+    }, 2000);
   };
 
   return (
@@ -47,19 +50,19 @@ export default function BentoDispatchCard({ selectedDistrict }) {
         {/* Card Header */}
         <div className="flex items-center justify-between pb-3 border-b border-black/[0.05] mb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-700 flex items-center justify-center shrink-0">
-              <Radio className="w-4 h-4 animate-pulse text-rose-600" />
+            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center shrink-0">
+              <Lightbulb className="w-4 h-4 text-amber-700" />
             </div>
             <div>
               <span className="text-xs font-mono font-bold tracking-tight text-slate-900 uppercase block">
-                MINAGRI / RAB Dispatch Triggers
+                Extension Priorities & Interventions
               </span>
               <span className="text-[10px] text-slate-400 font-mono block">
-                Automated field response & extension alerts
+                Top loss causes and recommended field actions
               </span>
             </div>
           </div>
-          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200/80 font-bold uppercase shrink-0">
+          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-black/[0.05] font-bold uppercase shrink-0">
             {selectedDistrict ? selectedDistrict.toUpperCase() : 'NATIONAL'}
           </span>
         </div>
@@ -67,12 +70,12 @@ export default function BentoDispatchCard({ selectedDistrict }) {
         {/* Triggers Feed */}
         {loading ? (
           <div className="h-44 flex items-center justify-center text-xs font-mono text-slate-400 animate-pulse">
-            Checking district loss trigger conditions...
+            Loading district loss priorities...
           </div>
         ) : triggers.length > 0 ? (
           <div className="space-y-2.5">
             {triggers.slice(0, 3).map((item, idx) => {
-              const isDispatched = dispatchedId === idx;
+              const isCopied = copiedIdx === idx;
               return (
                 <div
                   key={item.dominant_cause || idx}
@@ -80,14 +83,14 @@ export default function BentoDispatchCard({ selectedDistrict }) {
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-mono font-bold text-slate-900 text-xs capitalize flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-md bg-rose-100 text-rose-700 text-[10px] flex items-center justify-center font-black">
+                      <span className="w-4 h-4 rounded-md bg-amber-100 text-amber-800 text-[10px] flex items-center justify-center font-black">
                         {idx + 1}
                       </span>
                       {String(item.dominant_cause).replace(/_/g, ' ')}
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200/60 font-extrabold flex items-center gap-1">
-                      <AlertTriangle className="w-2.5 h-2.5" />
-                      {item.count} Incidents
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/60 font-bold flex items-center gap-1">
+                      <AlertTriangle className="w-2.5 h-2.5 text-amber-600" />
+                      {item.count} Reports
                     </span>
                   </div>
 
@@ -100,23 +103,23 @@ export default function BentoDispatchCard({ selectedDistrict }) {
                       Target: Extension Workers & Cooperatives
                     </span>
                     <button
-                      onClick={() => handleSimulateDispatch(idx)}
-                      disabled={isDispatched}
-                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border transition-all flex items-center gap-1 ${
-                        isDispatched
-                          ? 'bg-emerald-500 text-white border-emerald-600'
-                          : 'bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 border-black/[0.08] active:scale-95'
+                      type="button"
+                      onClick={() => handleCopy(idx, `${String(item.dominant_cause).replace(/_/g, ' ')}: ${item.suggested_intervention}`)}
+                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border transition-all flex items-center gap-1 cursor-pointer ${
+                        isCopied
+                          ? 'bg-emerald-600 text-white border-emerald-700 shadow-2xs'
+                          : 'bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border-black/[0.08] active:scale-95'
                       }`}
                     >
-                      {isDispatched ? (
+                      {isCopied ? (
                         <>
                           <CheckCircle2 className="w-3 h-3 text-white" />
-                          <span>SMS Broadcast Sent!</span>
+                          <span>Copied!</span>
                         </>
                       ) : (
                         <>
-                          <Send className="w-2.5 h-2.5" />
-                          <span>Dispatch Advisory</span>
+                          <Copy className="w-2.5 h-2.5 text-slate-500" />
+                          <span>Copy Action</span>
                         </>
                       )}
                     </button>
@@ -128,20 +131,16 @@ export default function BentoDispatchCard({ selectedDistrict }) {
         ) : (
           <div className="h-44 flex flex-col items-center justify-center text-xs font-mono text-slate-400 gap-1.5">
             <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-            <span>No critical dispatch alerts active in this sector.</span>
+            <span>No critical loss triggers recorded in this sector.</span>
           </div>
         )}
       </div>
 
       {/* Action Footer */}
       <div className="pt-3 border-t border-black/[0.05] flex items-center justify-between text-[10px] font-mono text-slate-500">
-        <span className="text-emerald-800 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/70 flex items-center gap-1.5">
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-          <span>RAB Extension Grid Synced</span>
-        </span>
-        <span className="text-slate-400 font-semibold flex items-center gap-1">
-          <BellRing className="w-3 h-3 text-slate-400" />
-          Auto-escalation active
+        <span>NISR SAS 2024–2025 Reported Causes</span>
+        <span className="text-slate-700 font-semibold bg-slate-100 px-2 py-0.5 rounded-full border border-black/[0.04]">
+          Top 3 Priorities
         </span>
       </div>
     </div>
