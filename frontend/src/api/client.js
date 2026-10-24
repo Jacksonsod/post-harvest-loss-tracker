@@ -69,4 +69,27 @@ export const api = {
   getOutliers: (thresholdMultiplier = 1.5) => request(`/overview/outliers?threshold_multiplier=${thresholdMultiplier}`),
   getPolicyAlignment: () => request('/overview/policy-alignment'),
   getStorageComparison: (crop) => request(`/overview/storage-comparison?crop=${encodeURIComponent(crop)}`),
+  getNationalSummary: () => request('/overview/national-summary'),
+  getMap: (season, crop) => {
+    const params = new URLSearchParams();
+    if (season && season !== 'all') params.append('season', season);
+    if (crop) params.append('crop', crop);
+    const qs = params.toString();
+    return request(qs ? `/overview/map?${qs}` : '/overview/map');
+  },
+  getByCrop: (district, season) => {
+    const params = new URLSearchParams();
+    if (district) params.append('district', district);
+    if (season && season !== 'all') params.append('season', season);
+    const qs = params.toString();
+    return request(qs ? `/overview/by-crop?${qs}` : '/overview/by-crop');
+  },
+  getTopRisk: (season, limit = 10, minRecords = 30) => {
+    const params = new URLSearchParams();
+    if (season && season !== 'all') params.append('season', season);
+    if (limit) params.append('limit', limit);
+    if (minRecords) params.append('min_records', minRecords);
+    return request(`/overview/top-risk?${params.toString()}`);
+  },
+  getAboutData: () => request('/about-data'),
 };

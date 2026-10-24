@@ -66,3 +66,16 @@ export const CAUSES_ORDER = [
   "insects_pests", "theft", "stalks_fallen", "birds_animals",
   "harvesting_damage", "processing", "storage", "transport", "packaging", "sale"
 ];
+
+export const CAUSE_LABELS = {
+  insects_pests: { name: "Insects & Pests", icon: "Bug", description: "Bruchids, weevils, borers, and field pests" },
+  theft: { name: "Theft", icon: "ShieldAlert", description: "Crop theft from field, transit, or farm stores" },
+  stalks_fallen: { name: "Fallen Stalks / Lodging", icon: "TrendingDown", description: "Stalks knocked down by wind, rain, or weak stems" },
+  birds_animals: { name: "Birds & Animals", icon: "Bird", description: "Depredation by birds, rodents, and wild animals" },
+  harvesting_damage: { name: "Harvesting Damage", icon: "Scissors", description: "Mechanical damage during cutting, digging, or picking" },
+  processing: { name: "Processing Losses", icon: "Cog", description: "Losses during threshing, shelling, or dehusking" },
+  storage: { name: "Storage Spoilage", icon: "Warehouse", description: "Rot, moisture damage, and mold in storage" },
+  transport: { name: "Transport Damage", icon: "Truck", description: "Bruising and spillage during transit" },
+  packaging: { name: "Packaging Losses", icon: "Package", description: "Bag tearing, poor bagging, and container leakage" },
+  sale: { name: "Sale / Market Rejection", icon: "ShoppingBag", description: "Post-harvest quality rejection at market point" }
+};
