@@ -2356,5 +2356,2703 @@
       "sale": 0.5
     }
   },
-  "note": "District-level figures require at least 5 records with a usable sampling weight (not just 5 raw rows \u2014 rows with missing weight are excluded before this count). Any single row's weight is also capped at 25% of its group's total weight, to prevent a small number of highly-weighted survey responses from dominating an otherwise reasonably-sized sample. Thinner combinations fall back to the national or CropCategory average."
+  "note": "District-level figures require at least 5 records with a usable sampling weight (not just 5 raw rows \u2014 rows with missing weight are excluded before this count). Any single row's weight is also capped at 25% of its group's total weight, to prevent a small number of highly-weighted survey responses from dominating an otherwise reasonably-sized sample. Thinner combinations fall back to the national or CropCategory average.",
+  "national_n_records": {
+    "Banana for beer": 12256,
+    "Bush bean": 21261,
+    "Cassava": 6992,
+    "Climbing bean": 12270,
+    "Cooking banana": 10510,
+    "Dessert banana": 9771,
+    "Fodder crops": 1094,
+    "Fruits": 827,
+    "Groundnut": 1822,
+    "Irish potato": 5878,
+    "Maize": 21325,
+    "Other cereals": 720,
+    "Other crops": 2320,
+    "Paddy rice": 813,
+    "Pea": 1587,
+    "Sorghum": 5423,
+    "Soybean": 4318,
+    "Sweet potato": 8350,
+    "Taro & Yams": 1799,
+    "Vegetables": 3198,
+    "Wheat": 349
+  },
+  "district_n_records": {
+    "Bugesera": {
+      "Banana for beer": 460,
+      "Bush bean": 1875,
+      "Cassava": 529,
+      "Climbing bean": 36,
+      "Cooking banana": 474,
+      "Dessert banana": 408,
+      "Fodder crops": 88,
+      "Fruits": 60,
+      "Groundnut": 392,
+      "Irish potato": 117,
+      "Maize": 1466,
+      "Other cereals": 29,
+      "Other crops": 92,
+      "Paddy rice": 68,
+      "Pea": 17,
+      "Sorghum": 473,
+      "Soybean": 139,
+      "Sweet potato": 258,
+      "Taro & Yams": 49,
+      "Vegetables": 115
+    },
+    "Burera": {
+      "Banana for beer": 86,
+      "Bush bean": 84,
+      "Cassava": 6,
+      "Climbing bean": 793,
+      "Cooking banana": 173,
+      "Dessert banana": 50,
+      "Fodder crops": 41,
+      "Irish potato": 587,
+      "Maize": 713,
+      "Other crops": 9,
+      "Pea": 177,
+      "Sorghum": 259,
+      "Sweet potato": 431,
+      "Taro & Yams": 10,
+      "Vegetables": 52,
+      "Wheat": 52
+    },
+    "Gakenke": {
+      "Banana for beer": 653,
+      "Bush bean": 222,
+      "Cassava": 168,
+      "Climbing bean": 778,
+      "Cooking banana": 380,
+      "Dessert banana": 469,
+      "Fodder crops": 13,
+      "Fruits": 35,
+      "Groundnut": 22,
+      "Irish potato": 148,
+      "Maize": 491,
+      "Other cereals": 21,
+      "Other crops": 135,
+      "Paddy rice": 8,
+      "Pea": 75,
+      "Sorghum": 12,
+      "Soybean": 97,
+      "Sweet potato": 486,
+      "Taro & Yams": 121,
+      "Vegetables": 80,
+      "Wheat": 5
+    },
+    "Gasabo": {
+      "Banana for beer": 336,
+      "Bush bean": 729,
+      "Cassava": 184,
+      "Climbing bean": 56,
+      "Cooking banana": 419,
+      "Dessert banana": 407,
+      "Fodder crops": 135,
+      "Fruits": 51,
+      "Groundnut": 40,
+      "Irish potato": 108,
+      "Maize": 638,
+      "Other crops": 43,
+      "Paddy rice": 17,
+      "Pea": 18,
+      "Sorghum": 177,
+      "Soybean": 94,
+      "Sweet potato": 214,
+      "Taro & Yams": 26,
+      "Vegetables": 145
+    },
+    "Gatsibo": {
+      "Banana for beer": 555,
+      "Bush bean": 1639,
+      "Cassava": 209,
+      "Climbing bean": 230,
+      "Cooking banana": 968,
+      "Dessert banana": 702,
+      "Fodder crops": 57,
+      "Groundnut": 132,
+      "Irish potato": 268,
+      "Maize": 1604,
+      "Other cereals": 52,
+      "Other crops": 95,
+      "Paddy rice": 29,
+      "Pea": 45,
+      "Sorghum": 478,
+      "Soybean": 149,
+      "Sweet potato": 245,
+      "Taro & Yams": 30,
+      "Vegetables": 113
+    },
+    "Gicumbi": {
+      "Banana for beer": 398,
+      "Bush bean": 432,
+      "Cassava": 148,
+      "Climbing bean": 921,
+      "Cooking banana": 438,
+      "Dessert banana": 463,
+      "Fodder crops": 46,
+      "Fruits": 13,
+      "Groundnut": 40,
+      "Irish potato": 376,
+      "Maize": 627,
+      "Other cereals": 12,
+      "Other crops": 46,
+      "Pea": 168,
+      "Sorghum": 377,
+      "Soybean": 58,
+      "Sweet potato": 451,
+      "Taro & Yams": 21,
+      "Vegetables": 118,
+      "Wheat": 61
+    },
+    "Gisagara": {
+      "Banana for beer": 463,
+      "Bush bean": 1363,
+      "Cassava": 486,
+      "Climbing bean": 225,
+      "Cooking banana": 280,
+      "Dessert banana": 372,
+      "Fruits": 5,
+      "Groundnut": 63,
+      "Irish potato": 36,
+      "Maize": 792,
+      "Other cereals": 126,
+      "Other crops": 38,
+      "Paddy rice": 91,
+      "Pea": 9,
+      "Sorghum": 205,
+      "Soybean": 262,
+      "Sweet potato": 301,
+      "Taro & Yams": 105,
+      "Vegetables": 95
+    },
+    "Huye": {
+      "Banana for beer": 197,
+      "Bush bean": 701,
+      "Cassava": 230,
+      "Climbing bean": 467,
+      "Cooking banana": 173,
+      "Dessert banana": 242,
+      "Fodder crops": 10,
+      "Fruits": 21,
+      "Groundnut": 23,
+      "Irish potato": 51,
+      "Maize": 516,
+      "Other cereals": 60,
+      "Other crops": 49,
+      "Paddy rice": 109,
+      "Pea": 72,
+      "Sorghum": 192,
+      "Soybean": 277,
+      "Sweet potato": 284,
+      "Taro & Yams": 23,
+      "Vegetables": 118
+    },
+    "Kamonyi": {
+      "Banana for beer": 721,
+      "Bush bean": 1153,
+      "Cassava": 475,
+      "Climbing bean": 228,
+      "Cooking banana": 300,
+      "Dessert banana": 405,
+      "Fodder crops": 6,
+      "Fruits": 7,
+      "Groundnut": 100,
+      "Irish potato": 49,
+      "Maize": 834,
+      "Other cereals": 6,
+      "Other crops": 84,
+      "Paddy rice": 17,
+      "Pea": 27,
+      "Sorghum": 139,
+      "Soybean": 406,
+      "Sweet potato": 326,
+      "Taro & Yams": 82,
+      "Vegetables": 127
+    },
+    "Karongi": {
+      "Banana for beer": 755,
+      "Bush bean": 262,
+      "Cassava": 199,
+      "Climbing bean": 736,
+      "Cooking banana": 274,
+      "Dessert banana": 377,
+      "Fodder crops": 40,
+      "Fruits": 16,
+      "Groundnut": 15,
+      "Irish potato": 50,
+      "Maize": 496,
+      "Other crops": 65,
+      "Pea": 46,
+      "Sorghum": 86,
+      "Soybean": 244,
+      "Sweet potato": 362,
+      "Taro & Yams": 88,
+      "Vegetables": 96
+    },
+    "Kayonza": {
+      "Banana for beer": 274,
+      "Bush bean": 1223,
+      "Cassava": 251,
+      "Climbing bean": 26,
+      "Cooking banana": 593,
+      "Dessert banana": 366,
+      "Fodder crops": 52,
+      "Fruits": 115,
+      "Groundnut": 58,
+      "Irish potato": 261,
+      "Maize": 1154,
+      "Other cereals": 58,
+      "Other crops": 117,
+      "Paddy rice": 60,
+      "Pea": 12,
+      "Sorghum": 430,
+      "Soybean": 68,
+      "Sweet potato": 118,
+      "Taro & Yams": 25,
+      "Vegetables": 102
+    },
+    "Kicukiro": {
+      "Banana for beer": 189,
+      "Bush bean": 508,
+      "Cassava": 121,
+      "Climbing bean": 9,
+      "Cooking banana": 175,
+      "Dessert banana": 190,
+      "Fodder crops": 15,
+      "Fruits": 16,
+      "Groundnut": 18,
+      "Maize": 419,
+      "Other crops": 14,
+      "Sorghum": 71,
+      "Soybean": 40,
+      "Sweet potato": 108,
+      "Taro & Yams": 94,
+      "Vegetables": 54
+    },
+    "Kirehe": {
+      "Banana for beer": 679,
+      "Bush bean": 1323,
+      "Cassava": 312,
+      "Climbing bean": 510,
+      "Cooking banana": 893,
+      "Dessert banana": 517,
+      "Fruits": 8,
+      "Groundnut": 117,
+      "Irish potato": 294,
+      "Maize": 1267,
+      "Other cereals": 53,
+      "Other crops": 132,
+      "Paddy rice": 37,
+      "Pea": 29,
+      "Sorghum": 412,
+      "Soybean": 68,
+      "Sweet potato": 142,
+      "Taro & Yams": 122,
+      "Vegetables": 91
+    },
+    "Muhanga": {
+      "Banana for beer": 831,
+      "Bush bean": 457,
+      "Cassava": 287,
+      "Climbing bean": 451,
+      "Cooking banana": 395,
+      "Dessert banana": 518,
+      "Fodder crops": 40,
+      "Fruits": 15,
+      "Groundnut": 7,
+      "Irish potato": 54,
+      "Maize": 281,
+      "Other cereals": 6,
+      "Other crops": 52,
+      "Paddy rice": 27,
+      "Pea": 47,
+      "Sorghum": 10,
+      "Soybean": 327,
+      "Sweet potato": 423,
+      "Taro & Yams": 198,
+      "Vegetables": 81,
+      "Wheat": 5
+    },
+    "Musanze": {
+      "Banana for beer": 131,
+      "Bush bean": 48,
+      "Cassava": 20,
+      "Climbing bean": 848,
+      "Cooking banana": 125,
+      "Dessert banana": 170,
+      "Fodder crops": 42,
+      "Fruits": 21,
+      "Irish potato": 435,
+      "Maize": 510,
+      "Other crops": 98,
+      "Pea": 38,
+      "Sorghum": 194,
+      "Soybean": 14,
+      "Sweet potato": 216,
+      "Taro & Yams": 22,
+      "Vegetables": 136,
+      "Wheat": 32
+    },
+    "Ngoma": {
+      "Banana for beer": 721,
+      "Bush bean": 1489,
+      "Cassava": 406,
+      "Climbing bean": 190,
+      "Cooking banana": 944,
+      "Dessert banana": 556,
+      "Fodder crops": 40,
+      "Fruits": 104,
+      "Groundnut": 159,
+      "Irish potato": 213,
+      "Maize": 1075,
+      "Other cereals": 154,
+      "Other crops": 92,
+      "Paddy rice": 36,
+      "Pea": 14,
+      "Sorghum": 275,
+      "Soybean": 103,
+      "Sweet potato": 184,
+      "Taro & Yams": 36,
+      "Vegetables": 132
+    },
+    "Ngororero": {
+      "Banana for beer": 741,
+      "Bush bean": 150,
+      "Cassava": 128,
+      "Climbing bean": 914,
+      "Cooking banana": 182,
+      "Dessert banana": 370,
+      "Fodder crops": 21,
+      "Irish potato": 154,
+      "Maize": 528,
+      "Other crops": 39,
+      "Pea": 72,
+      "Sorghum": 13,
+      "Soybean": 254,
+      "Sweet potato": 558,
+      "Taro & Yams": 125,
+      "Vegetables": 68,
+      "Wheat": 25
+    },
+    "Nyabihu": {
+      "Banana for beer": 111,
+      "Bush bean": 28,
+      "Cassava": 24,
+      "Climbing bean": 645,
+      "Cooking banana": 56,
+      "Dessert banana": 78,
+      "Fodder crops": 11,
+      "Fruits": 17,
+      "Irish potato": 762,
+      "Maize": 491,
+      "Other crops": 93,
+      "Pea": 142,
+      "Sorghum": 20,
+      "Sweet potato": 276,
+      "Vegetables": 76,
+      "Wheat": 74
+    },
+    "Nyagatare": {
+      "Banana for beer": 322,
+      "Bush bean": 1629,
+      "Cassava": 82,
+      "Climbing bean": 102,
+      "Cooking banana": 596,
+      "Dessert banana": 400,
+      "Fodder crops": 35,
+      "Fruits": 75,
+      "Groundnut": 111,
+      "Irish potato": 66,
+      "Maize": 2023,
+      "Other cereals": 39,
+      "Other crops": 19,
+      "Paddy rice": 61,
+      "Pea": 8,
+      "Sorghum": 401,
+      "Soybean": 232,
+      "Sweet potato": 149,
+      "Taro & Yams": 12,
+      "Vegetables": 109
+    },
+    "Nyamagabe": {
+      "Banana for beer": 314,
+      "Bush bean": 186,
+      "Cassava": 109,
+      "Climbing bean": 605,
+      "Cooking banana": 121,
+      "Dessert banana": 155,
+      "Fodder crops": 15,
+      "Fruits": 5,
+      "Irish potato": 224,
+      "Maize": 352,
+      "Other cereals": 5,
+      "Other crops": 88,
+      "Paddy rice": 6,
+      "Pea": 147,
+      "Sorghum": 175,
+      "Soybean": 130,
+      "Sweet potato": 461,
+      "Taro & Yams": 69,
+      "Vegetables": 55,
+      "Wheat": 51
+    },
+    "Nyamasheke": {
+      "Banana for beer": 334,
+      "Bush bean": 220,
+      "Cassava": 413,
+      "Climbing bean": 565,
+      "Cooking banana": 268,
+      "Dessert banana": 264,
+      "Fodder crops": 7,
+      "Fruits": 14,
+      "Groundnut": 75,
+      "Irish potato": 13,
+      "Maize": 379,
+      "Other cereals": 8,
+      "Other crops": 175,
+      "Paddy rice": 25,
+      "Pea": 10,
+      "Soybean": 147,
+      "Sweet potato": 346,
+      "Taro & Yams": 104,
+      "Vegetables": 105
+    },
+    "Nyanza": {
+      "Banana for beer": 450,
+      "Bush bean": 1236,
+      "Cassava": 422,
+      "Climbing bean": 280,
+      "Cooking banana": 297,
+      "Dessert banana": 332,
+      "Fodder crops": 21,
+      "Fruits": 7,
+      "Groundnut": 91,
+      "Irish potato": 43,
+      "Maize": 852,
+      "Other cereals": 37,
+      "Other crops": 59,
+      "Paddy rice": 97,
+      "Pea": 77,
+      "Sorghum": 263,
+      "Soybean": 252,
+      "Sweet potato": 250,
+      "Taro & Yams": 116,
+      "Vegetables": 94
+    },
+    "Nyarugenge": {
+      "Banana for beer": 205,
+      "Bush bean": 331,
+      "Cassava": 129,
+      "Climbing bean": 16,
+      "Cooking banana": 162,
+      "Dessert banana": 154,
+      "Fodder crops": 8,
+      "Groundnut": 13,
+      "Irish potato": 8,
+      "Maize": 223,
+      "Other crops": 15,
+      "Sorghum": 36,
+      "Soybean": 58,
+      "Sweet potato": 101,
+      "Taro & Yams": 15,
+      "Vegetables": 68
+    },
+    "Nyaruguru": {
+      "Banana for beer": 156,
+      "Bush bean": 164,
+      "Cassava": 199,
+      "Climbing bean": 525,
+      "Cooking banana": 151,
+      "Dessert banana": 144,
+      "Fodder crops": 36,
+      "Irish potato": 203,
+      "Maize": 232,
+      "Other cereals": 10,
+      "Other crops": 40,
+      "Paddy rice": 8,
+      "Pea": 54,
+      "Sorghum": 118,
+      "Soybean": 82,
+      "Sweet potato": 390,
+      "Taro & Yams": 49,
+      "Vegetables": 43,
+      "Wheat": 11
+    },
+    "Rubavu": {
+      "Banana for beer": 96,
+      "Bush bean": 135,
+      "Cassava": 20,
+      "Climbing bean": 641,
+      "Cooking banana": 126,
+      "Dessert banana": 81,
+      "Fodder crops": 33,
+      "Irish potato": 554,
+      "Maize": 264,
+      "Other crops": 107,
+      "Pea": 73,
+      "Sorghum": 10,
+      "Soybean": 40,
+      "Sweet potato": 121,
+      "Taro & Yams": 20,
+      "Vegetables": 240
+    },
+    "Ruhango": {
+      "Banana for beer": 587,
+      "Bush bean": 807,
+      "Cassava": 285,
+      "Climbing bean": 256,
+      "Cooking banana": 137,
+      "Dessert banana": 275,
+      "Fodder crops": 37,
+      "Groundnut": 114,
+      "Irish potato": 18,
+      "Maize": 400,
+      "Other cereals": 17,
+      "Other crops": 76,
+      "Paddy rice": 33,
+      "Pea": 21,
+      "Sorghum": 112,
+      "Soybean": 378,
+      "Sweet potato": 242,
+      "Taro & Yams": 48,
+      "Vegetables": 62
+    },
+    "Rulindo": {
+      "Banana for beer": 412,
+      "Bush bean": 392,
+      "Cassava": 134,
+      "Climbing bean": 447,
+      "Cooking banana": 271,
+      "Dessert banana": 342,
+      "Fodder crops": 7,
+      "Fruits": 8,
+      "Groundnut": 11,
+      "Irish potato": 259,
+      "Maize": 415,
+      "Other crops": 63,
+      "Pea": 59,
+      "Sorghum": 154,
+      "Soybean": 64,
+      "Sweet potato": 313,
+      "Taro & Yams": 16,
+      "Vegetables": 163,
+      "Wheat": 18
+    },
+    "Rusizi": {
+      "Banana for beer": 283,
+      "Bush bean": 1047,
+      "Cassava": 667,
+      "Climbing bean": 286,
+      "Cooking banana": 221,
+      "Dessert banana": 171,
+      "Fodder crops": 9,
+      "Fruits": 65,
+      "Groundnut": 47,
+      "Irish potato": 41,
+      "Maize": 726,
+      "Other crops": 165,
+      "Paddy rice": 28,
+      "Pea": 9,
+      "Sorghum": 16,
+      "Soybean": 107,
+      "Sweet potato": 150,
+      "Taro & Yams": 68,
+      "Vegetables": 129
+    },
+    "Rutsiro": {
+      "Banana for beer": 476,
+      "Bush bean": 101,
+      "Cassava": 128,
+      "Climbing bean": 444,
+      "Cooking banana": 181,
+      "Dessert banana": 270,
+      "Fodder crops": 24,
+      "Irish potato": 359,
+      "Maize": 473,
+      "Other crops": 110,
+      "Pea": 111,
+      "Sorghum": 12,
+      "Soybean": 125,
+      "Sweet potato": 222,
+      "Taro & Yams": 54,
+      "Vegetables": 44
+    },
+    "Rwamagana": {
+      "Banana for beer": 320,
+      "Bush bean": 1327,
+      "Cassava": 221,
+      "Climbing bean": 40,
+      "Cooking banana": 737,
+      "Dessert banana": 523,
+      "Fodder crops": 202,
+      "Fruits": 128,
+      "Groundnut": 172,
+      "Irish potato": 126,
+      "Maize": 1084,
+      "Other cereals": 16,
+      "Other crops": 110,
+      "Paddy rice": 48,
+      "Pea": 9,
+      "Sorghum": 299,
+      "Soybean": 97,
+      "Sweet potato": 222,
+      "Taro & Yams": 47,
+      "Vegetables": 287
+    }
+  },
+  "district_season_n_records": {
+    "Bugesera|A": {
+      "Banana for beer": 205,
+      "Bush bean": 774,
+      "Cassava": 264,
+      "Climbing bean": 15,
+      "Cooking banana": 204,
+      "Dessert banana": 164,
+      "Fodder crops": 51,
+      "Fruits": 40,
+      "Groundnut": 167,
+      "Irish potato": 55,
+      "Maize": 789,
+      "Other cereals": 7,
+      "Other crops": 29,
+      "Paddy rice": 37,
+      "Sorghum": 306,
+      "Soybean": 53,
+      "Sweet potato": 170,
+      "Taro & Yams": 6,
+      "Vegetables": 44
+    },
+    "Bugesera|B": {
+      "Banana for beer": 255,
+      "Bush bean": 1065,
+      "Cassava": 265,
+      "Climbing bean": 21,
+      "Cooking banana": 270,
+      "Dessert banana": 244,
+      "Fodder crops": 37,
+      "Fruits": 20,
+      "Groundnut": 225,
+      "Irish potato": 56,
+      "Maize": 677,
+      "Other cereals": 22,
+      "Other crops": 63,
+      "Paddy rice": 31,
+      "Pea": 10,
+      "Sorghum": 167,
+      "Soybean": 73,
+      "Sweet potato": 75,
+      "Taro & Yams": 43,
+      "Vegetables": 45
+    },
+    "Bugesera|C": {
+      "Bush bean": 36,
+      "Irish potato": 6,
+      "Soybean": 13,
+      "Sweet potato": 13,
+      "Vegetables": 26
+    },
+    "Burera|A": {
+      "Banana for beer": 38,
+      "Bush bean": 43,
+      "Climbing bean": 407,
+      "Cooking banana": 74,
+      "Dessert banana": 29,
+      "Fodder crops": 21,
+      "Irish potato": 252,
+      "Maize": 529,
+      "Other crops": 5,
+      "Pea": 105,
+      "Sorghum": 38,
+      "Sweet potato": 205,
+      "Vegetables": 21,
+      "Wheat": 23
+    },
+    "Burera|B": {
+      "Banana for beer": 48,
+      "Bush bean": 40,
+      "Climbing bean": 385,
+      "Cooking banana": 99,
+      "Dessert banana": 21,
+      "Fodder crops": 20,
+      "Irish potato": 235,
+      "Maize": 184,
+      "Pea": 71,
+      "Sorghum": 221,
+      "Sweet potato": 215,
+      "Taro & Yams": 6,
+      "Vegetables": 23,
+      "Wheat": 29
+    },
+    "Burera|C": {
+      "Irish potato": 100,
+      "Sweet potato": 11,
+      "Vegetables": 8
+    },
+    "Gakenke|A": {
+      "Banana for beer": 321,
+      "Bush bean": 137,
+      "Cassava": 58,
+      "Climbing bean": 358,
+      "Cooking banana": 169,
+      "Dessert banana": 214,
+      "Fodder crops": 7,
+      "Fruits": 20,
+      "Groundnut": 21,
+      "Irish potato": 81,
+      "Maize": 388,
+      "Other cereals": 21,
+      "Other crops": 36,
+      "Pea": 43,
+      "Soybean": 56,
+      "Sweet potato": 187,
+      "Taro & Yams": 27,
+      "Vegetables": 36
+    },
+    "Gakenke|B": {
+      "Banana for beer": 332,
+      "Bush bean": 85,
+      "Cassava": 110,
+      "Climbing bean": 420,
+      "Cooking banana": 211,
+      "Dessert banana": 255,
+      "Fodder crops": 6,
+      "Fruits": 15,
+      "Irish potato": 59,
+      "Maize": 103,
+      "Other crops": 99,
+      "Pea": 32,
+      "Sorghum": 12,
+      "Soybean": 38,
+      "Sweet potato": 271,
+      "Taro & Yams": 94,
+      "Vegetables": 34,
+      "Wheat": 5
+    },
+    "Gakenke|C": {
+      "Irish potato": 8,
+      "Sweet potato": 28,
+      "Vegetables": 10
+    },
+    "Gasabo|A": {
+      "Banana for beer": 173,
+      "Bush bean": 422,
+      "Cassava": 63,
+      "Climbing bean": 28,
+      "Cooking banana": 207,
+      "Dessert banana": 191,
+      "Fodder crops": 75,
+      "Fruits": 26,
+      "Groundnut": 21,
+      "Irish potato": 66,
+      "Maize": 422,
+      "Other crops": 14,
+      "Paddy rice": 9,
+      "Pea": 11,
+      "Soybean": 56,
+      "Sweet potato": 68,
+      "Taro & Yams": 6,
+      "Vegetables": 67
+    },
+    "Gasabo|B": {
+      "Banana for beer": 163,
+      "Bush bean": 307,
+      "Cassava": 121,
+      "Climbing bean": 28,
+      "Cooking banana": 212,
+      "Dessert banana": 216,
+      "Fodder crops": 60,
+      "Fruits": 25,
+      "Groundnut": 19,
+      "Irish potato": 42,
+      "Maize": 216,
+      "Other crops": 29,
+      "Paddy rice": 8,
+      "Pea": 7,
+      "Sorghum": 177,
+      "Soybean": 38,
+      "Sweet potato": 144,
+      "Taro & Yams": 20,
+      "Vegetables": 62
+    },
+    "Gasabo|C": {
+      "Vegetables": 16
+    },
+    "Gatsibo|A": {
+      "Banana for beer": 251,
+      "Bush bean": 847,
+      "Cassava": 27,
+      "Climbing bean": 108,
+      "Cooking banana": 457,
+      "Dessert banana": 310,
+      "Fodder crops": 28,
+      "Groundnut": 45,
+      "Irish potato": 121,
+      "Maize": 981,
+      "Other cereals": 29,
+      "Paddy rice": 15,
+      "Pea": 29,
+      "Sorghum": 158,
+      "Soybean": 59,
+      "Sweet potato": 75,
+      "Taro & Yams": 5,
+      "Vegetables": 40
+    },
+    "Gatsibo|B": {
+      "Banana for beer": 304,
+      "Bush bean": 792,
+      "Cassava": 182,
+      "Climbing bean": 122,
+      "Cooking banana": 511,
+      "Dessert banana": 392,
+      "Fodder crops": 29,
+      "Groundnut": 87,
+      "Irish potato": 144,
+      "Maize": 623,
+      "Other cereals": 23,
+      "Other crops": 91,
+      "Paddy rice": 14,
+      "Pea": 16,
+      "Sorghum": 320,
+      "Soybean": 90,
+      "Sweet potato": 138,
+      "Taro & Yams": 25,
+      "Vegetables": 44
+    },
+    "Gatsibo|C": {
+      "Sweet potato": 32,
+      "Vegetables": 29
+    },
+    "Gicumbi|A": {
+      "Banana for beer": 186,
+      "Bush bean": 238,
+      "Cassava": 74,
+      "Climbing bean": 495,
+      "Cooking banana": 219,
+      "Dessert banana": 200,
+      "Fodder crops": 22,
+      "Fruits": 5,
+      "Groundnut": 20,
+      "Irish potato": 190,
+      "Maize": 437,
+      "Other cereals": 8,
+      "Other crops": 7,
+      "Pea": 120,
+      "Sorghum": 25,
+      "Soybean": 32,
+      "Sweet potato": 206,
+      "Taro & Yams": 7,
+      "Vegetables": 65,
+      "Wheat": 23
+    },
+    "Gicumbi|B": {
+      "Banana for beer": 212,
+      "Bush bean": 182,
+      "Cassava": 74,
+      "Climbing bean": 426,
+      "Cooking banana": 219,
+      "Dessert banana": 263,
+      "Fodder crops": 24,
+      "Fruits": 8,
+      "Groundnut": 20,
+      "Irish potato": 175,
+      "Maize": 190,
+      "Other crops": 39,
+      "Pea": 48,
+      "Sorghum": 352,
+      "Soybean": 25,
+      "Sweet potato": 222,
+      "Taro & Yams": 14,
+      "Vegetables": 46,
+      "Wheat": 38
+    },
+    "Gicumbi|C": {
+      "Bush bean": 12,
+      "Irish potato": 11,
+      "Sweet potato": 23,
+      "Vegetables": 7
+    },
+    "Gisagara|A": {
+      "Banana for beer": 205,
+      "Bush bean": 718,
+      "Cassava": 74,
+      "Climbing bean": 72,
+      "Cooking banana": 141,
+      "Dessert banana": 158,
+      "Groundnut": 19,
+      "Irish potato": 16,
+      "Maize": 551,
+      "Other cereals": 34,
+      "Paddy rice": 46,
+      "Sorghum": 55,
+      "Soybean": 125,
+      "Sweet potato": 107,
+      "Taro & Yams": 30,
+      "Vegetables": 36
+    },
+    "Gisagara|B": {
+      "Banana for beer": 258,
+      "Bush bean": 601,
+      "Cassava": 412,
+      "Climbing bean": 153,
+      "Cooking banana": 139,
+      "Dessert banana": 214,
+      "Groundnut": 44,
+      "Irish potato": 17,
+      "Maize": 241,
+      "Other cereals": 92,
+      "Other crops": 38,
+      "Paddy rice": 45,
+      "Sorghum": 150,
+      "Soybean": 131,
+      "Sweet potato": 155,
+      "Taro & Yams": 75,
+      "Vegetables": 22
+    },
+    "Gisagara|C": {
+      "Bush bean": 44,
+      "Soybean": 6,
+      "Sweet potato": 39,
+      "Vegetables": 37
+    },
+    "Huye|A": {
+      "Banana for beer": 80,
+      "Bush bean": 395,
+      "Cassava": 43,
+      "Climbing bean": 210,
+      "Cooking banana": 79,
+      "Dessert banana": 116,
+      "Fodder crops": 5,
+      "Fruits": 11,
+      "Groundnut": 9,
+      "Irish potato": 27,
+      "Maize": 406,
+      "Other cereals": 25,
+      "Paddy rice": 55,
+      "Pea": 33,
+      "Soybean": 146,
+      "Sweet potato": 93,
+      "Taro & Yams": 7,
+      "Vegetables": 50
+    },
+    "Huye|B": {
+      "Banana for beer": 117,
+      "Bush bean": 287,
+      "Cassava": 187,
+      "Climbing bean": 257,
+      "Cooking banana": 94,
+      "Dessert banana": 126,
+      "Fodder crops": 5,
+      "Fruits": 10,
+      "Groundnut": 14,
+      "Irish potato": 22,
+      "Maize": 110,
+      "Other cereals": 35,
+      "Other crops": 49,
+      "Paddy rice": 54,
+      "Pea": 36,
+      "Sorghum": 192,
+      "Soybean": 130,
+      "Sweet potato": 145,
+      "Taro & Yams": 16,
+      "Vegetables": 41
+    },
+    "Huye|C": {
+      "Bush bean": 19,
+      "Sweet potato": 46,
+      "Vegetables": 27
+    },
+    "Kamonyi|A": {
+      "Banana for beer": 345,
+      "Bush bean": 600,
+      "Cassava": 173,
+      "Climbing bean": 92,
+      "Cooking banana": 142,
+      "Dessert banana": 185,
+      "Groundnut": 35,
+      "Irish potato": 25,
+      "Maize": 589,
+      "Other cereals": 5,
+      "Paddy rice": 7,
+      "Pea": 8,
+      "Soybean": 219,
+      "Sweet potato": 109,
+      "Taro & Yams": 19,
+      "Vegetables": 47
+    },
+    "Kamonyi|B": {
+      "Banana for beer": 376,
+      "Bush bean": 540,
+      "Cassava": 302,
+      "Climbing bean": 136,
+      "Cooking banana": 158,
+      "Dessert banana": 220,
+      "Groundnut": 65,
+      "Irish potato": 24,
+      "Maize": 245,
+      "Other crops": 81,
+      "Paddy rice": 10,
+      "Pea": 15,
+      "Sorghum": 139,
+      "Soybean": 184,
+      "Sweet potato": 192,
+      "Taro & Yams": 63,
+      "Vegetables": 46
+    },
+    "Kamonyi|C": {
+      "Bush bean": 13,
+      "Sweet potato": 25,
+      "Vegetables": 34
+    },
+    "Karongi|A": {
+      "Banana for beer": 377,
+      "Bush bean": 157,
+      "Cassava": 38,
+      "Climbing bean": 328,
+      "Cooking banana": 141,
+      "Dessert banana": 188,
+      "Fodder crops": 20,
+      "Fruits": 8,
+      "Irish potato": 31,
+      "Maize": 432,
+      "Other crops": 13,
+      "Pea": 24,
+      "Soybean": 115,
+      "Sweet potato": 107,
+      "Taro & Yams": 13,
+      "Vegetables": 38
+    },
+    "Karongi|B": {
+      "Banana for beer": 378,
+      "Bush bean": 105,
+      "Cassava": 161,
+      "Climbing bean": 408,
+      "Cooking banana": 133,
+      "Dessert banana": 189,
+      "Fodder crops": 20,
+      "Fruits": 8,
+      "Groundnut": 11,
+      "Irish potato": 12,
+      "Maize": 64,
+      "Other crops": 52,
+      "Pea": 20,
+      "Sorghum": 86,
+      "Soybean": 129,
+      "Sweet potato": 239,
+      "Taro & Yams": 75,
+      "Vegetables": 41
+    },
+    "Karongi|C": {
+      "Irish potato": 7,
+      "Sweet potato": 16,
+      "Vegetables": 17
+    },
+    "Kayonza|A": {
+      "Banana for beer": 128,
+      "Bush bean": 626,
+      "Cassava": 71,
+      "Climbing bean": 15,
+      "Cooking banana": 285,
+      "Dessert banana": 163,
+      "Fodder crops": 31,
+      "Fruits": 60,
+      "Groundnut": 28,
+      "Irish potato": 155,
+      "Maize": 773,
+      "Other cereals": 33,
+      "Other crops": 47,
+      "Paddy rice": 29,
+      "Pea": 10,
+      "Sorghum": 99,
+      "Soybean": 45,
+      "Sweet potato": 43,
+      "Vegetables": 43
+    },
+    "Kayonza|B": {
+      "Banana for beer": 146,
+      "Bush bean": 594,
+      "Cassava": 180,
+      "Climbing bean": 11,
+      "Cooking banana": 308,
+      "Dessert banana": 203,
+      "Fodder crops": 21,
+      "Fruits": 55,
+      "Groundnut": 30,
+      "Irish potato": 106,
+      "Maize": 381,
+      "Other cereals": 25,
+      "Other crops": 70,
+      "Paddy rice": 31,
+      "Sorghum": 331,
+      "Soybean": 23,
+      "Sweet potato": 61,
+      "Taro & Yams": 22,
+      "Vegetables": 37
+    },
+    "Kayonza|C": {
+      "Sweet potato": 14,
+      "Vegetables": 22
+    },
+    "Kicukiro|A": {
+      "Banana for beer": 86,
+      "Bush bean": 259,
+      "Cassava": 15,
+      "Climbing bean": 6,
+      "Cooking banana": 79,
+      "Dessert banana": 87,
+      "Fodder crops": 8,
+      "Fruits": 11,
+      "Groundnut": 6,
+      "Maize": 276,
+      "Other crops": 6,
+      "Soybean": 23,
+      "Sweet potato": 69,
+      "Taro & Yams": 5,
+      "Vegetables": 17
+    },
+    "Kicukiro|B": {
+      "Banana for beer": 103,
+      "Bush bean": 233,
+      "Cassava": 106,
+      "Cooking banana": 96,
+      "Dessert banana": 103,
+      "Fodder crops": 7,
+      "Fruits": 5,
+      "Groundnut": 11,
+      "Maize": 143,
+      "Other crops": 8,
+      "Sorghum": 71,
+      "Soybean": 15,
+      "Sweet potato": 23,
+      "Taro & Yams": 89,
+      "Vegetables": 17
+    },
+    "Kicukiro|C": {
+      "Bush bean": 16,
+      "Sweet potato": 16,
+      "Vegetables": 20
+    },
+    "Kirehe|A": {
+      "Banana for beer": 319,
+      "Bush bean": 709,
+      "Cassava": 144,
+      "Climbing bean": 95,
+      "Cooking banana": 410,
+      "Dessert banana": 238,
+      "Groundnut": 42,
+      "Irish potato": 159,
+      "Maize": 1132,
+      "Other cereals": 12,
+      "Paddy rice": 26,
+      "Pea": 11,
+      "Sorghum": 110,
+      "Soybean": 28,
+      "Sweet potato": 67,
+      "Taro & Yams": 19,
+      "Vegetables": 31
+    },
+    "Kirehe|B": {
+      "Banana for beer": 360,
+      "Bush bean": 609,
+      "Cassava": 168,
+      "Climbing bean": 414,
+      "Cooking banana": 483,
+      "Dessert banana": 279,
+      "Fruits": 6,
+      "Groundnut": 75,
+      "Irish potato": 127,
+      "Maize": 135,
+      "Other cereals": 41,
+      "Other crops": 131,
+      "Paddy rice": 11,
+      "Pea": 17,
+      "Sorghum": 302,
+      "Soybean": 40,
+      "Sweet potato": 55,
+      "Taro & Yams": 103,
+      "Vegetables": 26
+    },
+    "Kirehe|C": {
+      "Bush bean": 5,
+      "Irish potato": 8,
+      "Sweet potato": 20,
+      "Vegetables": 34
+    },
+    "Muhanga|A": {
+      "Banana for beer": 395,
+      "Bush bean": 262,
+      "Cassava": 142,
+      "Climbing bean": 225,
+      "Cooking banana": 182,
+      "Dessert banana": 255,
+      "Fodder crops": 16,
+      "Fruits": 7,
+      "Irish potato": 24,
+      "Maize": 200,
+      "Other cereals": 6,
+      "Other crops": 9,
+      "Paddy rice": 13,
+      "Pea": 18,
+      "Sorghum": 5,
+      "Soybean": 163,
+      "Sweet potato": 99,
+      "Taro & Yams": 28,
+      "Vegetables": 27
+    },
+    "Muhanga|B": {
+      "Banana for beer": 436,
+      "Bush bean": 182,
+      "Cassava": 145,
+      "Climbing bean": 226,
+      "Cooking banana": 213,
+      "Dessert banana": 263,
+      "Fodder crops": 24,
+      "Fruits": 8,
+      "Irish potato": 21,
+      "Maize": 81,
+      "Other crops": 43,
+      "Paddy rice": 14,
+      "Pea": 21,
+      "Sorghum": 5,
+      "Soybean": 155,
+      "Sweet potato": 287,
+      "Taro & Yams": 170,
+      "Vegetables": 28,
+      "Wheat": 5
+    },
+    "Muhanga|C": {
+      "Bush bean": 13,
+      "Irish potato": 9,
+      "Pea": 8,
+      "Soybean": 9,
+      "Sweet potato": 37,
+      "Vegetables": 26
+    },
+    "Musanze|A": {
+      "Banana for beer": 68,
+      "Bush bean": 22,
+      "Cassava": 5,
+      "Climbing bean": 483,
+      "Cooking banana": 55,
+      "Dessert banana": 88,
+      "Fodder crops": 21,
+      "Fruits": 10,
+      "Irish potato": 197,
+      "Maize": 369,
+      "Other crops": 58,
+      "Pea": 25,
+      "Sorghum": 69,
+      "Soybean": 9,
+      "Sweet potato": 81,
+      "Vegetables": 62,
+      "Wheat": 25
+    },
+    "Musanze|B": {
+      "Banana for beer": 63,
+      "Bush bean": 25,
+      "Cassava": 15,
+      "Climbing bean": 364,
+      "Cooking banana": 70,
+      "Dessert banana": 82,
+      "Fodder crops": 21,
+      "Fruits": 11,
+      "Irish potato": 182,
+      "Maize": 141,
+      "Other crops": 40,
+      "Pea": 12,
+      "Sorghum": 125,
+      "Soybean": 5,
+      "Sweet potato": 121,
+      "Taro & Yams": 19,
+      "Vegetables": 58,
+      "Wheat": 7
+    },
+    "Musanze|C": {
+      "Irish potato": 56,
+      "Sweet potato": 14,
+      "Vegetables": 16
+    },
+    "Ngoma|A": {
+      "Banana for beer": 321,
+      "Bush bean": 755,
+      "Cassava": 114,
+      "Climbing bean": 79,
+      "Cooking banana": 422,
+      "Dessert banana": 231,
+      "Fodder crops": 19,
+      "Fruits": 52,
+      "Groundnut": 55,
+      "Irish potato": 148,
+      "Maize": 882,
+      "Other cereals": 52,
+      "Paddy rice": 18,
+      "Pea": 7,
+      "Sorghum": 30,
+      "Soybean": 48,
+      "Sweet potato": 73,
+      "Taro & Yams": 16,
+      "Vegetables": 56
+    },
+    "Ngoma|B": {
+      "Banana for beer": 400,
+      "Bush bean": 718,
+      "Cassava": 292,
+      "Climbing bean": 111,
+      "Cooking banana": 522,
+      "Dessert banana": 325,
+      "Fodder crops": 21,
+      "Fruits": 52,
+      "Groundnut": 104,
+      "Irish potato": 62,
+      "Maize": 193,
+      "Other cereals": 102,
+      "Other crops": 88,
+      "Paddy rice": 18,
+      "Pea": 6,
+      "Sorghum": 245,
+      "Soybean": 55,
+      "Sweet potato": 95,
+      "Taro & Yams": 20,
+      "Vegetables": 55
+    },
+    "Ngoma|C": {
+      "Bush bean": 16,
+      "Sweet potato": 16,
+      "Vegetables": 21
+    },
+    "Ngororero|A": {
+      "Banana for beer": 359,
+      "Bush bean": 99,
+      "Cassava": 46,
+      "Climbing bean": 552,
+      "Cooking banana": 88,
+      "Dessert banana": 187,
+      "Fodder crops": 9,
+      "Irish potato": 78,
+      "Maize": 289,
+      "Other crops": 8,
+      "Pea": 39,
+      "Sorghum": 13,
+      "Soybean": 130,
+      "Sweet potato": 191,
+      "Taro & Yams": 15,
+      "Vegetables": 37,
+      "Wheat": 10
+    },
+    "Ngororero|B": {
+      "Banana for beer": 382,
+      "Bush bean": 51,
+      "Cassava": 82,
+      "Climbing bean": 362,
+      "Cooking banana": 94,
+      "Dessert banana": 183,
+      "Fodder crops": 12,
+      "Irish potato": 70,
+      "Maize": 239,
+      "Other crops": 31,
+      "Pea": 33,
+      "Soybean": 117,
+      "Sweet potato": 345,
+      "Taro & Yams": 110,
+      "Vegetables": 28,
+      "Wheat": 15
+    },
+    "Ngororero|C": {
+      "Irish potato": 6,
+      "Soybean": 7,
+      "Sweet potato": 22
+    },
+    "Nyabihu|A": {
+      "Banana for beer": 56,
+      "Bush bean": 21,
+      "Cassava": 9,
+      "Climbing bean": 470,
+      "Cooking banana": 23,
+      "Dessert banana": 34,
+      "Fodder crops": 5,
+      "Fruits": 8,
+      "Irish potato": 337,
+      "Maize": 216,
+      "Other crops": 75,
+      "Pea": 84,
+      "Sorghum": 20,
+      "Sweet potato": 103,
+      "Vegetables": 33,
+      "Wheat": 16
+    },
+    "Nyabihu|B": {
+      "Banana for beer": 55,
+      "Bush bean": 7,
+      "Cassava": 15,
+      "Climbing bean": 174,
+      "Cooking banana": 33,
+      "Dessert banana": 44,
+      "Fodder crops": 6,
+      "Fruits": 9,
+      "Irish potato": 345,
+      "Maize": 275,
+      "Other crops": 18,
+      "Pea": 58,
+      "Sweet potato": 173,
+      "Vegetables": 37,
+      "Wheat": 58
+    },
+    "Nyabihu|C": {
+      "Irish potato": 80,
+      "Vegetables": 6
+    },
+    "Nyagatare|A": {
+      "Banana for beer": 139,
+      "Bush bean": 689,
+      "Cassava": 23,
+      "Climbing bean": 54,
+      "Cooking banana": 284,
+      "Dessert banana": 194,
+      "Fodder crops": 15,
+      "Fruits": 40,
+      "Groundnut": 39,
+      "Irish potato": 38,
+      "Maize": 1004,
+      "Other cereals": 38,
+      "Other crops": 5,
+      "Paddy rice": 35,
+      "Pea": 7,
+      "Sorghum": 259,
+      "Soybean": 89,
+      "Sweet potato": 53,
+      "Vegetables": 44
+    },
+    "Nyagatare|B": {
+      "Banana for beer": 183,
+      "Bush bean": 938,
+      "Cassava": 59,
+      "Climbing bean": 48,
+      "Cooking banana": 312,
+      "Dessert banana": 206,
+      "Fodder crops": 20,
+      "Fruits": 35,
+      "Groundnut": 72,
+      "Irish potato": 27,
+      "Maize": 1019,
+      "Other crops": 14,
+      "Paddy rice": 26,
+      "Sorghum": 142,
+      "Soybean": 143,
+      "Sweet potato": 80,
+      "Taro & Yams": 8,
+      "Vegetables": 46
+    },
+    "Nyagatare|C": {
+      "Sweet potato": 16,
+      "Vegetables": 19
+    },
+    "Nyamagabe|A": {
+      "Banana for beer": 147,
+      "Bush bean": 134,
+      "Cassava": 22,
+      "Climbing bean": 291,
+      "Cooking banana": 61,
+      "Dessert banana": 82,
+      "Fodder crops": 6,
+      "Irish potato": 136,
+      "Maize": 291,
+      "Other crops": 5,
+      "Pea": 84,
+      "Soybean": 71,
+      "Sweet potato": 134,
+      "Taro & Yams": 7,
+      "Vegetables": 24
+    },
+    "Nyamagabe|B": {
+      "Banana for beer": 167,
+      "Bush bean": 42,
+      "Cassava": 87,
+      "Climbing bean": 314,
+      "Cooking banana": 60,
+      "Dessert banana": 73,
+      "Fodder crops": 9,
+      "Irish potato": 73,
+      "Maize": 61,
+      "Other crops": 83,
+      "Pea": 60,
+      "Sorghum": 175,
+      "Soybean": 57,
+      "Sweet potato": 289,
+      "Taro & Yams": 62,
+      "Vegetables": 24,
+      "Wheat": 51
+    },
+    "Nyamagabe|C": {
+      "Bush bean": 10,
+      "Irish potato": 15,
+      "Sweet potato": 38,
+      "Vegetables": 7
+    },
+    "Nyamasheke|A": {
+      "Banana for beer": 167,
+      "Bush bean": 127,
+      "Cassava": 91,
+      "Climbing bean": 244,
+      "Cooking banana": 135,
+      "Dessert banana": 125,
+      "Groundnut": 33,
+      "Irish potato": 8,
+      "Maize": 342,
+      "Other cereals": 8,
+      "Other crops": 16,
+      "Paddy rice": 13,
+      "Pea": 6,
+      "Soybean": 68,
+      "Sweet potato": 121,
+      "Taro & Yams": 18,
+      "Vegetables": 52
+    },
+    "Nyamasheke|B": {
+      "Banana for beer": 167,
+      "Bush bean": 93,
+      "Cassava": 322,
+      "Climbing bean": 321,
+      "Cooking banana": 133,
+      "Dessert banana": 139,
+      "Fruits": 10,
+      "Groundnut": 42,
+      "Irish potato": 5,
+      "Maize": 37,
+      "Other crops": 159,
+      "Paddy rice": 12,
+      "Soybean": 79,
+      "Sweet potato": 211,
+      "Taro & Yams": 86,
+      "Vegetables": 44
+    },
+    "Nyamasheke|C": {
+      "Sweet potato": 14,
+      "Vegetables": 9
+    },
+    "Nyanza|A": {
+      "Banana for beer": 214,
+      "Bush bean": 661,
+      "Cassava": 131,
+      "Climbing bean": 131,
+      "Cooking banana": 128,
+      "Dessert banana": 142,
+      "Fodder crops": 12,
+      "Groundnut": 33,
+      "Irish potato": 22,
+      "Maize": 574,
+      "Other cereals": 11,
+      "Paddy rice": 45,
+      "Pea": 25,
+      "Sorghum": 36,
+      "Soybean": 131,
+      "Sweet potato": 98,
+      "Taro & Yams": 20,
+      "Vegetables": 40
+    },
+    "Nyanza|B": {
+      "Banana for beer": 236,
+      "Bush bean": 561,
+      "Cassava": 291,
+      "Climbing bean": 148,
+      "Cooking banana": 169,
+      "Dessert banana": 190,
+      "Fodder crops": 9,
+      "Groundnut": 58,
+      "Irish potato": 21,
+      "Maize": 278,
+      "Other cereals": 26,
+      "Other crops": 56,
+      "Paddy rice": 52,
+      "Pea": 26,
+      "Sorghum": 227,
+      "Soybean": 116,
+      "Sweet potato": 132,
+      "Taro & Yams": 96,
+      "Vegetables": 30
+    },
+    "Nyanza|C": {
+      "Bush bean": 14,
+      "Pea": 26,
+      "Soybean": 5,
+      "Sweet potato": 20,
+      "Vegetables": 24
+    },
+    "Nyarugenge|A": {
+      "Banana for beer": 101,
+      "Bush bean": 170,
+      "Cassava": 29,
+      "Climbing bean": 5,
+      "Cooking banana": 81,
+      "Dessert banana": 72,
+      "Groundnut": 5,
+      "Irish potato": 6,
+      "Maize": 133,
+      "Soybean": 25,
+      "Sweet potato": 46,
+      "Vegetables": 28
+    },
+    "Nyarugenge|B": {
+      "Banana for beer": 104,
+      "Bush bean": 153,
+      "Cassava": 100,
+      "Climbing bean": 11,
+      "Cooking banana": 81,
+      "Dessert banana": 82,
+      "Fodder crops": 5,
+      "Groundnut": 8,
+      "Maize": 90,
+      "Other crops": 11,
+      "Sorghum": 36,
+      "Soybean": 23,
+      "Sweet potato": 43,
+      "Taro & Yams": 13,
+      "Vegetables": 21
+    },
+    "Nyarugenge|C": {
+      "Bush bean": 8,
+      "Soybean": 10,
+      "Sweet potato": 12,
+      "Vegetables": 19
+    },
+    "Nyaruguru|A": {
+      "Banana for beer": 72,
+      "Bush bean": 82,
+      "Cassava": 29,
+      "Climbing bean": 257,
+      "Cooking banana": 71,
+      "Dessert banana": 71,
+      "Fodder crops": 18,
+      "Irish potato": 109,
+      "Maize": 211,
+      "Other cereals": 6,
+      "Pea": 31,
+      "Soybean": 32,
+      "Sweet potato": 147,
+      "Taro & Yams": 20,
+      "Vegetables": 13
+    },
+    "Nyaruguru|B": {
+      "Banana for beer": 84,
+      "Bush bean": 63,
+      "Cassava": 170,
+      "Climbing bean": 268,
+      "Cooking banana": 80,
+      "Dessert banana": 73,
+      "Fodder crops": 18,
+      "Irish potato": 86,
+      "Maize": 21,
+      "Other crops": 37,
+      "Paddy rice": 5,
+      "Pea": 23,
+      "Sorghum": 117,
+      "Soybean": 49,
+      "Sweet potato": 210,
+      "Taro & Yams": 29,
+      "Vegetables": 18,
+      "Wheat": 8
+    },
+    "Nyaruguru|C": {
+      "Bush bean": 19,
+      "Irish potato": 8,
+      "Sweet potato": 33,
+      "Vegetables": 12
+    },
+    "Rubavu|A": {
+      "Banana for beer": 47,
+      "Bush bean": 61,
+      "Climbing bean": 346,
+      "Cooking banana": 60,
+      "Dessert banana": 37,
+      "Fodder crops": 12,
+      "Irish potato": 259,
+      "Maize": 157,
+      "Other crops": 46,
+      "Pea": 30,
+      "Soybean": 16,
+      "Sweet potato": 33,
+      "Vegetables": 97
+    },
+    "Rubavu|B": {
+      "Banana for beer": 49,
+      "Bush bean": 74,
+      "Cassava": 20,
+      "Climbing bean": 294,
+      "Cooking banana": 66,
+      "Dessert banana": 44,
+      "Fodder crops": 21,
+      "Irish potato": 286,
+      "Maize": 107,
+      "Other crops": 61,
+      "Pea": 42,
+      "Sorghum": 7,
+      "Soybean": 24,
+      "Sweet potato": 78,
+      "Taro & Yams": 17,
+      "Vegetables": 125
+    },
+    "Rubavu|C": {
+      "Irish potato": 9,
+      "Sweet potato": 10,
+      "Vegetables": 18
+    },
+    "Ruhango|A": {
+      "Banana for beer": 291,
+      "Bush bean": 444,
+      "Cassava": 133,
+      "Climbing bean": 105,
+      "Cooking banana": 54,
+      "Dessert banana": 135,
+      "Fodder crops": 16,
+      "Groundnut": 19,
+      "Irish potato": 7,
+      "Maize": 321,
+      "Other cereals": 5,
+      "Other crops": 9,
+      "Paddy rice": 12,
+      "Pea": 7,
+      "Soybean": 181,
+      "Sweet potato": 52,
+      "Taro & Yams": 10,
+      "Vegetables": 27
+    },
+    "Ruhango|B": {
+      "Banana for beer": 296,
+      "Bush bean": 354,
+      "Cassava": 152,
+      "Climbing bean": 151,
+      "Cooking banana": 83,
+      "Dessert banana": 140,
+      "Fodder crops": 21,
+      "Groundnut": 95,
+      "Irish potato": 10,
+      "Maize": 79,
+      "Other cereals": 12,
+      "Other crops": 67,
+      "Paddy rice": 21,
+      "Pea": 12,
+      "Sorghum": 108,
+      "Soybean": 197,
+      "Sweet potato": 146,
+      "Taro & Yams": 38,
+      "Vegetables": 18
+    },
+    "Ruhango|C": {
+      "Bush bean": 9,
+      "Sweet potato": 44,
+      "Vegetables": 17
+    },
+    "Rulindo|A": {
+      "Banana for beer": 208,
+      "Bush bean": 254,
+      "Cassava": 65,
+      "Climbing bean": 231,
+      "Cooking banana": 128,
+      "Dessert banana": 166,
+      "Groundnut": 7,
+      "Irish potato": 157,
+      "Maize": 314,
+      "Other crops": 17,
+      "Pea": 42,
+      "Soybean": 42,
+      "Sweet potato": 138,
+      "Taro & Yams": 6,
+      "Vegetables": 71,
+      "Wheat": 11
+    },
+    "Rulindo|B": {
+      "Banana for beer": 204,
+      "Bush bean": 137,
+      "Cassava": 69,
+      "Climbing bean": 216,
+      "Cooking banana": 143,
+      "Dessert banana": 176,
+      "Fruits": 5,
+      "Irish potato": 91,
+      "Maize": 101,
+      "Other crops": 44,
+      "Pea": 17,
+      "Sorghum": 154,
+      "Soybean": 19,
+      "Sweet potato": 151,
+      "Taro & Yams": 10,
+      "Vegetables": 68,
+      "Wheat": 7
+    },
+    "Rulindo|C": {
+      "Irish potato": 11,
+      "Sweet potato": 24,
+      "Vegetables": 24
+    },
+    "Rusizi|A": {
+      "Banana for beer": 129,
+      "Bush bean": 568,
+      "Cassava": 31,
+      "Climbing bean": 127,
+      "Cooking banana": 95,
+      "Dessert banana": 75,
+      "Fruits": 40,
+      "Groundnut": 23,
+      "Irish potato": 26,
+      "Maize": 650,
+      "Other crops": 6,
+      "Paddy rice": 14,
+      "Pea": 6,
+      "Sorghum": 6,
+      "Soybean": 47,
+      "Sweet potato": 37,
+      "Taro & Yams": 18,
+      "Vegetables": 62
+    },
+    "Rusizi|B": {
+      "Banana for beer": 154,
+      "Bush bean": 464,
+      "Cassava": 636,
+      "Climbing bean": 159,
+      "Cooking banana": 126,
+      "Dessert banana": 96,
+      "Fodder crops": 5,
+      "Fruits": 25,
+      "Groundnut": 24,
+      "Irish potato": 10,
+      "Maize": 76,
+      "Other crops": 159,
+      "Paddy rice": 14,
+      "Sorghum": 10,
+      "Soybean": 60,
+      "Sweet potato": 94,
+      "Taro & Yams": 50,
+      "Vegetables": 42
+    },
+    "Rusizi|C": {
+      "Bush bean": 15,
+      "Irish potato": 5,
+      "Sweet potato": 19,
+      "Vegetables": 25
+    },
+    "Rutsiro|A": {
+      "Banana for beer": 238,
+      "Bush bean": 65,
+      "Cassava": 19,
+      "Climbing bean": 202,
+      "Cooking banana": 84,
+      "Dessert banana": 131,
+      "Fodder crops": 13,
+      "Irish potato": 194,
+      "Maize": 387,
+      "Other crops": 18,
+      "Pea": 68,
+      "Soybean": 63,
+      "Sweet potato": 84,
+      "Taro & Yams": 20,
+      "Vegetables": 20
+    },
+    "Rutsiro|B": {
+      "Banana for beer": 238,
+      "Bush bean": 36,
+      "Cassava": 109,
+      "Climbing bean": 242,
+      "Cooking banana": 97,
+      "Dessert banana": 139,
+      "Fodder crops": 11,
+      "Irish potato": 161,
+      "Maize": 86,
+      "Other crops": 92,
+      "Pea": 42,
+      "Sorghum": 11,
+      "Soybean": 62,
+      "Sweet potato": 127,
+      "Taro & Yams": 34,
+      "Vegetables": 19
+    },
+    "Rutsiro|C": {
+      "Sweet potato": 11,
+      "Vegetables": 5
+    },
+    "Rwamagana|A": {
+      "Banana for beer": 152,
+      "Bush bean": 759,
+      "Cassava": 44,
+      "Climbing bean": 17,
+      "Cooking banana": 347,
+      "Dessert banana": 243,
+      "Fodder crops": 91,
+      "Fruits": 59,
+      "Groundnut": 79,
+      "Irish potato": 62,
+      "Maize": 805,
+      "Other cereals": 12,
+      "Other crops": 42,
+      "Paddy rice": 25,
+      "Soybean": 54,
+      "Sweet potato": 90,
+      "Taro & Yams": 22,
+      "Vegetables": 141
+    },
+    "Rwamagana|B": {
+      "Banana for beer": 168,
+      "Bush bean": 562,
+      "Cassava": 177,
+      "Climbing bean": 23,
+      "Cooking banana": 390,
+      "Dessert banana": 280,
+      "Fodder crops": 111,
+      "Fruits": 69,
+      "Groundnut": 93,
+      "Irish potato": 63,
+      "Maize": 279,
+      "Other crops": 68,
+      "Paddy rice": 23,
+      "Pea": 6,
+      "Sorghum": 298,
+      "Soybean": 43,
+      "Sweet potato": 123,
+      "Taro & Yams": 25,
+      "Vegetables": 116
+    },
+    "Rwamagana|C": {
+      "Bush bean": 6,
+      "Sweet potato": 9,
+      "Vegetables": 30
+    }
+  },
+  "district_overall_avg_loss_rate_pct": {
+    "Bugesera": {
+      "avg_loss_rate_pct": 9.51,
+      "n_records": 7145
+    },
+    "Burera": {
+      "avg_loss_rate_pct": 6.18,
+      "n_records": 3531
+    },
+    "Gakenke": {
+      "avg_loss_rate_pct": 8.59,
+      "n_records": 4419
+    },
+    "Gasabo": {
+      "avg_loss_rate_pct": 12.85,
+      "n_records": 3839
+    },
+    "Gatsibo": {
+      "avg_loss_rate_pct": 13.27,
+      "n_records": 7605
+    },
+    "Gicumbi": {
+      "avg_loss_rate_pct": 9.78,
+      "n_records": 5214
+    },
+    "Gisagara": {
+      "avg_loss_rate_pct": 10.35,
+      "n_records": 5317
+    },
+    "Huye": {
+      "avg_loss_rate_pct": 11.15,
+      "n_records": 3815
+    },
+    "Kamonyi": {
+      "avg_loss_rate_pct": 15.02,
+      "n_records": 5492
+    },
+    "Karongi": {
+      "avg_loss_rate_pct": 10.96,
+      "n_records": 4211
+    },
+    "Kayonza": {
+      "avg_loss_rate_pct": 8.42,
+      "n_records": 5364
+    },
+    "Kicukiro": {
+      "avg_loss_rate_pct": 12.32,
+      "n_records": 2048
+    },
+    "Kirehe": {
+      "avg_loss_rate_pct": 8.1,
+      "n_records": 7012
+    },
+    "Muhanga": {
+      "avg_loss_rate_pct": 5.59,
+      "n_records": 4512
+    },
+    "Musanze": {
+      "avg_loss_rate_pct": 12.36,
+      "n_records": 3100
+    },
+    "Ngoma": {
+      "avg_loss_rate_pct": 12.1,
+      "n_records": 6923
+    },
+    "Ngororero": {
+      "avg_loss_rate_pct": 10.8,
+      "n_records": 4347
+    },
+    "Nyabihu": {
+      "avg_loss_rate_pct": 10.41,
+      "n_records": 2911
+    },
+    "Nyagatare": {
+      "avg_loss_rate_pct": 15.76,
+      "n_records": 6472
+    },
+    "Nyamagabe": {
+      "avg_loss_rate_pct": 9.13,
+      "n_records": 3273
+    },
+    "Nyamasheke": {
+      "avg_loss_rate_pct": 12.82,
+      "n_records": 3476
+    },
+    "Nyanza": {
+      "avg_loss_rate_pct": 6.94,
+      "n_records": 5276
+    },
+    "Nyarugenge": {
+      "avg_loss_rate_pct": 7.53,
+      "n_records": 1542
+    },
+    "Nyaruguru": {
+      "avg_loss_rate_pct": 9.76,
+      "n_records": 2620
+    },
+    "Rubavu": {
+      "avg_loss_rate_pct": 7.5,
+      "n_records": 2565
+    },
+    "Ruhango": {
+      "avg_loss_rate_pct": 7.65,
+      "n_records": 3907
+    },
+    "Rulindo": {
+      "avg_loss_rate_pct": 11.78,
+      "n_records": 3556
+    },
+    "Rusizi": {
+      "avg_loss_rate_pct": 9.1,
+      "n_records": 4235
+    },
+    "Rutsiro": {
+      "avg_loss_rate_pct": 13.14,
+      "n_records": 3141
+    },
+    "Rwamagana": {
+      "avg_loss_rate_pct": 4.35,
+      "n_records": 6015
+    }
+  },
+  "district_season_overall_avg_loss_rate_pct": {
+    "Bugesera|A": {
+      "avg_loss_rate_pct": 10.39,
+      "n_records": 3383
+    },
+    "Bugesera|B": {
+      "avg_loss_rate_pct": 8.79,
+      "n_records": 3664
+    },
+    "Bugesera|C": {
+      "avg_loss_rate_pct": 4.29,
+      "n_records": 98
+    },
+    "Burera|A": {
+      "avg_loss_rate_pct": 7.38,
+      "n_records": 1801
+    },
+    "Burera|B": {
+      "avg_loss_rate_pct": 4.49,
+      "n_records": 1608
+    },
+    "Burera|C": {
+      "avg_loss_rate_pct": 13.24,
+      "n_records": 122
+    },
+    "Gakenke|A": {
+      "avg_loss_rate_pct": 11.56,
+      "n_records": 2184
+    },
+    "Gakenke|B": {
+      "avg_loss_rate_pct": 5.56,
+      "n_records": 2186
+    },
+    "Gakenke|C": {
+      "avg_loss_rate_pct": 6.57,
+      "n_records": 49
+    },
+    "Gasabo|A": {
+      "avg_loss_rate_pct": 14.49,
+      "n_records": 1927
+    },
+    "Gasabo|B": {
+      "avg_loss_rate_pct": 11.21,
+      "n_records": 1894
+    },
+    "Gasabo|C": {
+      "avg_loss_rate_pct": 3.01,
+      "n_records": 18
+    },
+    "Gatsibo|A": {
+      "avg_loss_rate_pct": 12.38,
+      "n_records": 3592
+    },
+    "Gatsibo|B": {
+      "avg_loss_rate_pct": 14.1,
+      "n_records": 3949
+    },
+    "Gatsibo|C": {
+      "avg_loss_rate_pct": 8.57,
+      "n_records": 64
+    },
+    "Gicumbi|A": {
+      "avg_loss_rate_pct": 12.4,
+      "n_records": 2579
+    },
+    "Gicumbi|B": {
+      "avg_loss_rate_pct": 7.19,
+      "n_records": 2581
+    },
+    "Gicumbi|C": {
+      "avg_loss_rate_pct": 5.62,
+      "n_records": 54
+    },
+    "Gisagara|A": {
+      "avg_loss_rate_pct": 12.6,
+      "n_records": 2393
+    },
+    "Gisagara|B": {
+      "avg_loss_rate_pct": 8.29,
+      "n_records": 2792
+    },
+    "Gisagara|C": {
+      "avg_loss_rate_pct": 11.92,
+      "n_records": 132
+    },
+    "Huye|A": {
+      "avg_loss_rate_pct": 13.72,
+      "n_records": 1790
+    },
+    "Huye|B": {
+      "avg_loss_rate_pct": 8.98,
+      "n_records": 1927
+    },
+    "Huye|C": {
+      "avg_loss_rate_pct": 4.8,
+      "n_records": 98
+    },
+    "Kamonyi|A": {
+      "avg_loss_rate_pct": 19.09,
+      "n_records": 2610
+    },
+    "Kamonyi|B": {
+      "avg_loss_rate_pct": 11.29,
+      "n_records": 2803
+    },
+    "Kamonyi|C": {
+      "avg_loss_rate_pct": 10.74,
+      "n_records": 79
+    },
+    "Karongi|A": {
+      "avg_loss_rate_pct": 12.78,
+      "n_records": 2034
+    },
+    "Karongi|B": {
+      "avg_loss_rate_pct": 9.26,
+      "n_records": 2135
+    },
+    "Karongi|C": {
+      "avg_loss_rate_pct": 1.79,
+      "n_records": 42
+    },
+    "Kayonza|A": {
+      "avg_loss_rate_pct": 7.96,
+      "n_records": 2688
+    },
+    "Kayonza|B": {
+      "avg_loss_rate_pct": 8.9,
+      "n_records": 2637
+    },
+    "Kayonza|C": {
+      "avg_loss_rate_pct": 1.12,
+      "n_records": 39
+    },
+    "Kicukiro|A": {
+      "avg_loss_rate_pct": 14.69,
+      "n_records": 956
+    },
+    "Kicukiro|B": {
+      "avg_loss_rate_pct": 10.56,
+      "n_records": 1037
+    },
+    "Kicukiro|C": {
+      "avg_loss_rate_pct": 1.26,
+      "n_records": 55
+    },
+    "Kirehe|A": {
+      "avg_loss_rate_pct": 8.96,
+      "n_records": 3559
+    },
+    "Kirehe|B": {
+      "avg_loss_rate_pct": 7.16,
+      "n_records": 3384
+    },
+    "Kirehe|C": {
+      "avg_loss_rate_pct": 3.62,
+      "n_records": 69
+    },
+    "Muhanga|A": {
+      "avg_loss_rate_pct": 6.35,
+      "n_records": 2079
+    },
+    "Muhanga|B": {
+      "avg_loss_rate_pct": 4.94,
+      "n_records": 2331
+    },
+    "Muhanga|C": {
+      "avg_loss_rate_pct": 4.15,
+      "n_records": 102
+    },
+    "Musanze|A": {
+      "avg_loss_rate_pct": 12.63,
+      "n_records": 1650
+    },
+    "Musanze|B": {
+      "avg_loss_rate_pct": 12.26,
+      "n_records": 1361
+    },
+    "Musanze|C": {
+      "avg_loss_rate_pct": 1.5,
+      "n_records": 89
+    },
+    "Ngoma|A": {
+      "avg_loss_rate_pct": 13.1,
+      "n_records": 3382
+    },
+    "Ngoma|B": {
+      "avg_loss_rate_pct": 11.18,
+      "n_records": 3484
+    },
+    "Ngoma|C": {
+      "avg_loss_rate_pct": 8.7,
+      "n_records": 57
+    },
+    "Ngororero|A": {
+      "avg_loss_rate_pct": 11.82,
+      "n_records": 2152
+    },
+    "Ngororero|B": {
+      "avg_loss_rate_pct": 9.82,
+      "n_records": 2157
+    },
+    "Ngororero|C": {
+      "avg_loss_rate_pct": 0.08,
+      "n_records": 38
+    },
+    "Nyabihu|A": {
+      "avg_loss_rate_pct": 13.5,
+      "n_records": 1513
+    },
+    "Nyabihu|B": {
+      "avg_loss_rate_pct": 7.22,
+      "n_records": 1311
+    },
+    "Nyabihu|C": {
+      "avg_loss_rate_pct": 4.07,
+      "n_records": 87
+    },
+    "Nyagatare|A": {
+      "avg_loss_rate_pct": 16.57,
+      "n_records": 3053
+    },
+    "Nyagatare|B": {
+      "avg_loss_rate_pct": 15.05,
+      "n_records": 3381
+    },
+    "Nyagatare|C": {
+      "avg_loss_rate_pct": 14.88,
+      "n_records": 38
+    },
+    "Nyamagabe|A": {
+      "avg_loss_rate_pct": 11.19,
+      "n_records": 1501
+    },
+    "Nyamagabe|B": {
+      "avg_loss_rate_pct": 7.46,
+      "n_records": 1697
+    },
+    "Nyamagabe|C": {
+      "avg_loss_rate_pct": 1.31,
+      "n_records": 75
+    },
+    "Nyamasheke|A": {
+      "avg_loss_rate_pct": 14.64,
+      "n_records": 1583
+    },
+    "Nyamasheke|B": {
+      "avg_loss_rate_pct": 11.2,
+      "n_records": 1870
+    },
+    "Nyamasheke|C": {
+      "avg_loss_rate_pct": 11.21,
+      "n_records": 23
+    },
+    "Nyanza|A": {
+      "avg_loss_rate_pct": 9.69,
+      "n_records": 2461
+    },
+    "Nyanza|B": {
+      "avg_loss_rate_pct": 4.52,
+      "n_records": 2725
+    },
+    "Nyanza|C": {
+      "avg_loss_rate_pct": 7.63,
+      "n_records": 90
+    },
+    "Nyarugenge|A": {
+      "avg_loss_rate_pct": 9.34,
+      "n_records": 710
+    },
+    "Nyarugenge|B": {
+      "avg_loss_rate_pct": 6.06,
+      "n_records": 782
+    },
+    "Nyarugenge|C": {
+      "avg_loss_rate_pct": 4.4,
+      "n_records": 50
+    },
+    "Nyaruguru|A": {
+      "avg_loss_rate_pct": 11.59,
+      "n_records": 1181
+    },
+    "Nyaruguru|B": {
+      "avg_loss_rate_pct": 8.4,
+      "n_records": 1366
+    },
+    "Nyaruguru|C": {
+      "avg_loss_rate_pct": 4.52,
+      "n_records": 73
+    },
+    "Rubavu|A": {
+      "avg_loss_rate_pct": 8.11,
+      "n_records": 1209
+    },
+    "Rubavu|B": {
+      "avg_loss_rate_pct": 7.0,
+      "n_records": 1317
+    },
+    "Rubavu|C": {
+      "avg_loss_rate_pct": 1.11,
+      "n_records": 39
+    },
+    "Ruhango|A": {
+      "avg_loss_rate_pct": 9.74,
+      "n_records": 1832
+    },
+    "Ruhango|B": {
+      "avg_loss_rate_pct": 5.77,
+      "n_records": 2002
+    },
+    "Ruhango|C": {
+      "avg_loss_rate_pct": 16.41,
+      "n_records": 73
+    },
+    "Rulindo|A": {
+      "avg_loss_rate_pct": 15.53,
+      "n_records": 1867
+    },
+    "Rulindo|B": {
+      "avg_loss_rate_pct": 7.21,
+      "n_records": 1624
+    },
+    "Rulindo|C": {
+      "avg_loss_rate_pct": 27.37,
+      "n_records": 65
+    },
+    "Rusizi|A": {
+      "avg_loss_rate_pct": 11.82,
+      "n_records": 1964
+    },
+    "Rusizi|B": {
+      "avg_loss_rate_pct": 6.81,
+      "n_records": 2207
+    },
+    "Rusizi|C": {
+      "avg_loss_rate_pct": 4.79,
+      "n_records": 64
+    },
+    "Rutsiro|A": {
+      "avg_loss_rate_pct": 14.44,
+      "n_records": 1609
+    },
+    "Rutsiro|B": {
+      "avg_loss_rate_pct": 11.84,
+      "n_records": 1511
+    },
+    "Rutsiro|C": {
+      "avg_loss_rate_pct": 0.55,
+      "n_records": 21
+    },
+    "Rwamagana|A": {
+      "avg_loss_rate_pct": 5.38,
+      "n_records": 3048
+    },
+    "Rwamagana|B": {
+      "avg_loss_rate_pct": 3.21,
+      "n_records": 2921
+    },
+    "Rwamagana|C": {
+      "avg_loss_rate_pct": 7.45,
+      "n_records": 46
+    }
+  },
+  "season_overall_avg_loss_rate_pct": {
+    "A": {
+      "avg_loss_rate_pct": 11.92,
+      "n_records": 64290
+    },
+    "B": {
+      "avg_loss_rate_pct": 8.62,
+      "n_records": 66644
+    },
+    "C": {
+      "avg_loss_rate_pct": 7.37,
+      "n_records": 1949
+    }
+  },
+  "national_cause_of_loss_breakdown_all_crops_pct": {
+    "theft": 7.1,
+    "insects_pests": 24.0,
+    "birds_animals": 11.7,
+    "stalks_fallen": 14.2,
+    "harvesting_damage": 24.2,
+    "transport": 3.8,
+    "storage": 0.2,
+    "processing": 13.0,
+    "packaging": 0.9,
+    "sale": 1.0
+  },
+  "high_volatility_benchmarks": {
+    "Bugesera|A": {
+      "Fruits": {
+        "share_plots_total_loss_pct": 17.5,
+        "n_records": 40
+      }
+    },
+    "Burera|C": {
+      "Sweet potato": {
+        "share_plots_total_loss_pct": 18.2,
+        "n_records": 11
+      }
+    },
+    "Gasabo|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 19.4,
+        "n_records": 191
+      },
+      "Pea": {
+        "share_plots_total_loss_pct": 18.2,
+        "n_records": 11
+      }
+    },
+    "Gasabo|B": {
+      "Pea": {
+        "share_plots_total_loss_pct": 57.1,
+        "n_records": 7
+      }
+    },
+    "Gatsibo|B": {
+      "Pea": {
+        "share_plots_total_loss_pct": 31.2,
+        "n_records": 16
+      }
+    },
+    "Gicumbi|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 200
+      },
+      "Fruits": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 5
+      }
+    },
+    "Gisagara|A": {
+      "Vegetables": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 36
+      }
+    },
+    "Huye|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 16.4,
+        "n_records": 116
+      }
+    },
+    "Karongi|A": {
+      "Other crops": {
+        "share_plots_total_loss_pct": 15.4,
+        "n_records": 13
+      }
+    },
+    "Kayonza|A": {
+      "Paddy rice": {
+        "share_plots_total_loss_pct": 17.2,
+        "n_records": 29
+      }
+    },
+    "Kicukiro|A": {
+      "Other crops": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 6
+      }
+    },
+    "Kicukiro|B": {
+      "Fruits": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 5
+      }
+    },
+    "Kirehe|A": {
+      "Paddy rice": {
+        "share_plots_total_loss_pct": 50.0,
+        "n_records": 26
+      },
+      "Pea": {
+        "share_plots_total_loss_pct": 18.2,
+        "n_records": 11
+      }
+    },
+    "Musanze|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 26.1,
+        "n_records": 88
+      },
+      "Fruits": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 10
+      }
+    },
+    "Musanze|B": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 17.1,
+        "n_records": 82
+      },
+      "Soybean": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 5
+      }
+    },
+    "Ngoma|B": {
+      "Pea": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 6
+      }
+    },
+    "Ngororero|B": {
+      "Fodder crops": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 12
+      }
+    },
+    "Nyagatare|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 22.2,
+        "n_records": 194
+      }
+    },
+    "Nyagatare|B": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 21.8,
+        "n_records": 206
+      },
+      "Fruits": {
+        "share_plots_total_loss_pct": 48.6,
+        "n_records": 35
+      }
+    },
+    "Nyamasheke|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 26.4,
+        "n_records": 125
+      }
+    },
+    "Nyamasheke|B": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 20.1,
+        "n_records": 139
+      }
+    },
+    "Nyarugenge|A": {
+      "Climbing bean": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 5
+      }
+    },
+    "Nyaruguru|A": {
+      "Fodder crops": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 18
+      },
+      "Other cereals": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 6
+      }
+    },
+    "Rubavu|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 16.2,
+        "n_records": 37
+      },
+      "Soybean": {
+        "share_plots_total_loss_pct": 18.8,
+        "n_records": 16
+      }
+    },
+    "Ruhango|B": {
+      "Pea": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 12
+      }
+    },
+    "Rulindo|C": {
+      "Sweet potato": {
+        "share_plots_total_loss_pct": 16.7,
+        "n_records": 24
+      }
+    },
+    "Rusizi|A": {
+      "Fruits": {
+        "share_plots_total_loss_pct": 20.0,
+        "n_records": 40
+      }
+    },
+    "Rusizi|B": {
+      "Fruits": {
+        "share_plots_total_loss_pct": 24.0,
+        "n_records": 25
+      }
+    },
+    "Rutsiro|A": {
+      "Dessert banana": {
+        "share_plots_total_loss_pct": 19.8,
+        "n_records": 131
+      }
+    },
+    "Rwamagana|A": {
+      "Other crops": {
+        "share_plots_total_loss_pct": 21.4,
+        "n_records": 42
+      }
+    }
+  },
+  "metadata": {
+    "source": "NISR Seasonal Agricultural Survey (SAS) 2024 and 2025, Production files, Seasons A/B/C",
+    "survey_years": [
+      2024,
+      2025
+    ],
+    "n_records": 134766,
+    "n_records_with_loss": 37894,
+    "share_records_with_loss_pct": 28.1,
+    "n_districts": 30,
+    "n_crop_categories": 21,
+    "years_note": "2024 and 2025 are pooled. Benchmarks vary by season (A/B/C), not by year."
+  }
 }

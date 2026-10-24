@@ -83,3 +83,17 @@ result. Rather than present a falsely precise number, the app instead:
 This is a more honest and defensible approach given what the data supports.
 Richer features (fertilizer use, improved seed use, farm size) could improve
 a future model version — noted as a stretch goal, not MVP.
+
+## Methodology summary
+
+These statements are served verbatim by the API at `GET /about-data`
+(`backend/about_data.py`). Keep the two in sync.
+
+1. Loss is the sum of the 10 itemized loss causes (`s2q41`–`s2q50`), because the total-loss question (`s2q39`) does not exist in the 2025 questionnaire.
+2. Selling-price codes `9999` ("don't know") and `0` (not sold) are treated as missing.
+3. Averages use the survey's plot weights, with any single plot's weight capped at 25% of its group's total weight.
+4. A benchmark needs at least 5 usable plots; otherwise the next level up is used (district and season → district → national).
+5. Risk categories compare your loss rate with the benchmark: Low if at most 85% of it, High if above 115% of it, Medium in between.
+6. A benchmark is flagged as highly variable when at least 15% of its surveyed plots reported losing their whole harvest; it is shown with a caution, not hidden.
+7. A machine-learning model was tested (trained on 2024, tested on 2025) and rejected as too weak (AUC 0.59).
+8. 2024 and 2025 are pooled; benchmarks vary by season (A, B, C), not by year.

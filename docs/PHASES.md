@@ -26,6 +26,12 @@ Submission deadline: **30 Oct 2026, 23:59**
   validation, manual session handling, hardcoded benchmarks.json path) and
   a benchmark-weighting bug in the data pipeline (see `docs/DATA.md`).
 
+- [x] **Phase 3b — Backend for the UX redesign** (done Oct 24)
+  Additive API changes for the redesigned UI: sample size and volatility on `/benchmark`, `/assess`, `/estimate`; new
+  `/overview/national-summary`, `/overview/map`, `/overview/by-crop`,
+  `/overview/top-risk`, `/about-data`; labelled sample cooperatives
+  (`is_sample`, `SEED_DEMO=true`); contract tests in `backend/tests/`.
+
 - [ ] **Phase 4 — Frontend Dashboard** (target: Oct 10)
   Coop profile + harvest/loss entry forms; dashboard with risk category,
   benchmark comparison chart, cause-of-loss breakdown chart, recommendation

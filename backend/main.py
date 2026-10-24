@@ -17,18 +17,28 @@ Endpoints:
   GET  /overview/outliers               Task 5
   GET  /overview/policy-alignment       Task 6
   GET  /overview/storage-comparison     Task 7
+  GET  /overview/national-summary
+  GET  /overview/map
+  GET  /overview/by-crop
+  GET  /overview/top-risk
+  GET  /about-data
+
+Set SEED_DEMO=true to create clearly labelled sample cooperatives on startup
+when the database is empty (see seed_demo.py).
 """
 
 from __future__ import annotations
 
 import json
+import os
 from collections import Counter
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
+from about_data import METHODOLOGY, SOURCES
 from assessment_service import (
     compute_cause_breakdown_pct,
     compute_estimated_loss_value,
@@ -38,29 +48,39 @@ from assessment_service import (
     get_recommendation,
 )
 from benchmark_service import (
+    get_by_crop,
+    get_district_map,
+    get_metadata,
     get_national_cause_breakdown,
+    get_national_summary,
     get_options,
     get_overall_national_loss_rate,
     get_storage_comparison,
+    get_top_risk,
     lookup_benchmark,
 )
 from db import Assessment, Cooperative, get_db, init_db
 from models import (
+    AboutDataOut,
     AssessmentHistoryItem,
     AssessOut,
     AssessRequest,
     BenchmarkOut,
+    ByCropOut,
     CoopCreate,
     CoopOut,
     DispatchTriggerItem,
     DispatchTriggersOut,
     EstimateOut,
+    MapOut,
+    NationalSummaryOut,
     OutlierItem,
     OutliersOut,
     PolicyAlignmentOut,
     StorageComparisonOut,
     StorageTypeItem,
     SummaryOut,
+    TopRiskOut,
 )
 
 # ---------------------------------------------------------------------------
@@ -85,6 +105,9 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_event():
     init_db()
+    if os.getenv("SEED_DEMO", "").lower() == "true":
+        from seed_demo import seed_if_empty
+        seed_if_empty()
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +189,9 @@ def get_benchmark(
         benchmark_source=result["benchmark_source"],
         avg_selling_price_rwf_per_kg=result["avg_selling_price_rwf_per_kg"],
         cause_of_loss_breakdown_pct=result["cause_of_loss_breakdown_pct"],
+        benchmark_n_records=result["benchmark_n_records"],
+        high_volatility=result["high_volatility"],
+        volatility_share_total_loss_pct=result["volatility_share_total_loss_pct"],
     )
 
 
@@ -215,6 +241,7 @@ def get_estimate(
         expected_loss_kg=expected_loss_kg,
         expected_loss_value_rwf=expected_loss_value_rwf,
         avg_selling_price_rwf_per_kg=price_per_kg,
+        benchmark_n_records=result["benchmark_n_records"],
     )
 
 
@@ -363,6 +390,9 @@ def create_assessment(body: AssessRequest, db: Session = Depends(get_db)):
         recommendation=recommendation,
         estimated_loss_value_rwf=estimated_loss_value_rwf,
         cause_of_loss_breakdown_pct=cause_of_loss_breakdown_pct,
+        benchmark_n_records=bm["benchmark_n_records"],
+        high_volatility=bm["high_volatility"],
+        volatility_share_total_loss_pct=bm["volatility_share_total_loss_pct"],
     )
 
 
@@ -553,3 +583,85 @@ def storage_comparison(
         crop=crop,
         storage_types=[StorageTypeItem(**r) for r in rows],
     )
+
+
+# ===========================================================================
+# GET /overview/national-summary
+# ===========================================================================
+
+@app.get("/overview/national-summary", response_model=NationalSummaryOut)
+def national_summary():
+    return NationalSummaryOut(
+        **get_national_summary(),
+        nst2={
+            "baseline_2023_pct": _NST2_BASELINE_2023_PCT,
+            "target_2029_pct": _NST2_TARGET_2029_PCT,
+            "source": _NST2_SOURCE,
+        },
+    )
+
+
+# ===========================================================================
+# GET /overview/map
+# ===========================================================================
+
+@app.get("/overview/map", response_model=MapOut)
+def district_map(
+    season: Optional[Literal["A", "B", "C"]] = Query(None, description="Season: A, B, or C; omit for all seasons"),
+    crop: Optional[str] = Query(None, description="NISR crop category name; omit for all crops"),
+):
+    if crop is not None and crop not in get_options()["crops"]:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown crop='{crop}'. Use GET /options for the valid crop names.",
+        )
+    return MapOut(**get_district_map(season=season, crop=crop))
+
+
+# ===========================================================================
+# GET /overview/by-crop
+# ===========================================================================
+
+@app.get("/overview/by-crop", response_model=ByCropOut)
+def by_crop(
+    district: Optional[str] = Query(None, description="Rwandan district name; omit for national figures"),
+    season: Optional[Literal["A", "B", "C"]] = Query(None, description="Season: A, B, or C (requires district)"),
+):
+    if season is not None and district is None:
+        raise HTTPException(
+            status_code=400,
+            detail="season requires district: the survey data has no national per-crop figure by season.",
+        )
+    rows = get_by_crop(district=district, season=season)
+    if rows is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown district='{district}'. Use GET /options for the valid district names.",
+        )
+    return ByCropOut(district=district, season=season, crops=rows)
+
+
+# ===========================================================================
+# GET /overview/top-risk
+# ===========================================================================
+
+@app.get("/overview/top-risk", response_model=TopRiskOut)
+def top_risk(
+    season: Optional[Literal["A", "B", "C"]] = Query(None, description="Season: A, B, or C; omit for all seasons"),
+    limit: int = Query(10, ge=1, le=50, description="Number of groups to return"),
+    min_records: int = Query(30, ge=5, description="Skip groups with fewer surveyed plots than this"),
+):
+    return TopRiskOut(
+        season=season,
+        min_records=min_records,
+        groups=get_top_risk(season=season, limit=limit, min_records=min_records),
+    )
+
+
+# ===========================================================================
+# GET /about-data
+# ===========================================================================
+
+@app.get("/about-data", response_model=AboutDataOut)
+def about_data():
+    return AboutDataOut(metadata=get_metadata(), methodology=METHODOLOGY, sources=SOURCES)

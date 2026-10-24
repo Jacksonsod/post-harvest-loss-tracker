@@ -22,10 +22,10 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Session, relationship
 
 # ---------------------------------------------------------------------------
-# Engine — file lives at backend/app.db (gitignored)
+# Engine — file lives at backend/app.db (gitignored); override with DATABASE_URL
 # ---------------------------------------------------------------------------
 _DB_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE_URL = f"sqlite:///{os.path.join(_DB_DIR, 'app.db')}"
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(_DB_DIR, 'app.db')}")
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
@@ -44,6 +44,7 @@ class Cooperative(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     district = Column(String, nullable=False)
+    is_sample = Column(Boolean, nullable=False, default=False)  # labelled demo data (seed_demo.py)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     assessments = relationship("Assessment", back_populates="cooperative")
@@ -79,8 +80,8 @@ class Assessment(Base):
 
 def _migrate_columns() -> None:
     """
-    Inspect the live assessments table and ADD any ORM-declared columns that
-    do not yet exist (e.g. action_notes added in a later phase).
+    Inspect the live tables and ADD any ORM-declared columns that do not yet
+    exist (e.g. assessments.action_notes, cooperatives.is_sample).
     Uses raw SQLite PRAGMA so it works without alembic or other migration tools.
     Silently skips columns that are already present.
     """
@@ -90,17 +91,19 @@ def _migrate_columns() -> None:
     try:
         conn = _sqlite3.connect(db_path)
         cur = conn.cursor()
-        cur.execute("PRAGMA table_info(assessments)")
-        existing = {row[1] for row in cur.fetchall()}
 
-        # Map ORM column name -> SQLite type for each new nullable column
+        # Map table -> {ORM column name -> SQLite column definition} for each added column
         new_columns: dict = {
-            "action_notes": "TEXT",
+            "assessments": {"action_notes": "TEXT"},
+            "cooperatives": {"is_sample": "BOOLEAN NOT NULL DEFAULT 0"},
         }
-        for col_name, col_type in new_columns.items():
-            if col_name not in existing:
-                cur.execute(f"ALTER TABLE assessments ADD COLUMN {col_name} {col_type}")
-                conn.commit()
+        for table, columns in new_columns.items():
+            cur.execute(f"PRAGMA table_info({table})")
+            existing = {row[1] for row in cur.fetchall()}
+            for col_name, col_def in columns.items():
+                if col_name not in existing:
+                    cur.execute(f"ALTER TABLE {table} ADD COLUMN {col_name} {col_def}")
+                    conn.commit()
         conn.close()
     except Exception:
         # Non-fatal: server still starts; bad queries will surface the real error.
