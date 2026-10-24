@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TOP_VULNERABLE_CROPS } from '../../data/nationalMetrics';
+import React, { useState, useEffect } from 'react';
+import { api } from '../../api/client';
 import { Wheat, DollarSign, Percent, TrendingUp } from 'lucide-react';
 
 const CROP_ICONS = {
@@ -19,12 +19,37 @@ const CROP_ICONS = {
 
 export default function CropRanking({ activeCause }) {
   const [metricMode, setMetricMode] = useState('loss_pct'); // 'loss_pct' | 'value_at_risk'
+  const [cropsData, setCropsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    api.getByCrop()
+      .then((res) => {
+        if (isMounted && res?.crops) {
+          setCropsData(res.crops);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Calculate Value at Risk per 100 tons (100,000 kg)
-  const cropsWithMetrics = TOP_VULNERABLE_CROPS.map((c) => {
-    const lossValueRwfPer100t = (100000 * (c.loss_rate_pct / 100) * (c.price_rwf_per_kg || 400));
+  const cropsWithMetrics = cropsData.map((c) => {
+    const rate = c.avg_loss_rate_pct || 0;
+    const price = c.avg_selling_price_rwf_per_kg || 480;
+    const lossValueRwfPer100t = (100000 * (rate / 100) * price);
     return {
-      ...c,
+      crop: c.crop,
+      loss_rate_pct: rate,
+      price_rwf_per_kg: price,
+      n_records: c.n_records,
       lossValueRwfPer100t,
       lossValueMillionRwf: (lossValueRwfPer100t / 1000000).toFixed(1),
     };
