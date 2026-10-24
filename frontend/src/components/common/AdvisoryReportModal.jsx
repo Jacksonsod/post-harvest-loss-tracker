@@ -93,15 +93,15 @@ export default function AdvisoryReportModal({ isOpen, onClose, selectedCoop, lat
               <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
                 STATISTICAL BENCHMARK SOURCE
               </span>
-              <strong className="text-slate-900 font-bold block mt-0.5">NISR SAS 2024–2025 Microdata</strong>
-              <span className="text-slate-600">Sample: 134,766 Microdata Plot Surveys</span>
+              <strong className="text-slate-900 font-bold block mt-0.5">NISR SAS 2024–2025 Survey Data</strong>
+              <span className="text-slate-600">Sample: 134,766 Surveyed Plots</span>
             </div>
           </div>
 
           {/* Diagnostic Assessment Findings */}
           <div>
             <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-800 mb-2.5 pb-1 border-b border-black/[0.05]">
-              1. DIAGNOSTIC FINDINGS & ECONOMIC CAPITAL IMPACT
+              1. ASSESSMENT FINDINGS & FINANCIAL LOSS IMPACT
             </h3>
 
             <div className="grid grid-cols-3 gap-3 text-center">

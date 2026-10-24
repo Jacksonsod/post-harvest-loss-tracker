@@ -8,8 +8,7 @@ import {
   DollarSign, 
   RotateCcw,
   CheckCircle2,
-  Scale,
-  Sparkles
+  Scale
 } from 'lucide-react';
 
 export default function AssessmentEngine({ 
@@ -42,7 +41,7 @@ export default function AssessmentEngine({
         onAssessmentCompleted(result);
       }
     } catch (err) {
-      setError(err.message || 'Assessment failed to process. Ensure the backend is reachable.');
+      setError(err.message || 'Assessment failed to process. Ensure service is reachable.');
     } finally {
       setIsSubmitting(false);
     }
@@ -230,7 +229,7 @@ export default function AssessmentEngine({
                   </div>
 
                   <div className="p-3 bg-white rounded-xl border border-rose-200/80 shadow-2xs">
-                    <span className="text-[10px] text-rose-700 font-bold font-mono uppercase block">Forfeited Revenue Loss</span>
+                    <span className="text-[10px] text-rose-700 font-bold font-mono uppercase block">Estimated Financial Loss</span>
                     <span className="text-lg font-mono font-black text-rose-800 block mt-0.5">
                       {(projectedLossRwf / 1000000).toFixed(2)}M RWF
                     </span>

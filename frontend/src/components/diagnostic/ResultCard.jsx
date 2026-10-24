@@ -11,7 +11,6 @@ import {
   Lightbulb, 
   CheckCircle2,
   ArrowRight,
-  Sparkles,
   TrendingUp,
   Clock,
   Layers

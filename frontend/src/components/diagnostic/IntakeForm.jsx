@@ -3,7 +3,7 @@ import { DISTRICTS, CROPS, SEASONS, CAUSES_ORDER, CAUSE_LABELS } from '../../dat
 import { useOptions } from '../../context/OptionsContext';
 import LiveBenchmarkPreview from './LiveBenchmarkPreview';
 import { 
-  Sparkles, 
+  Zap, 
   AlertCircle, 
   Send,
   Activity,
@@ -197,7 +197,7 @@ export default function IntakeForm({
       <div className="space-y-2 pb-4 border-b border-black/[0.05]">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <Zap className="w-3.5 h-3.5 text-emerald-600" />
             <span>1-Click Scenarios:</span>
           </span>
           <span className="text-[10px] font-mono text-slate-400">Zero typing needed</span>
@@ -351,7 +351,7 @@ export default function IntakeForm({
           </div>
         </div>
 
-        {/* Live Microdata Benchmark Reference */}
+        {/* Live Survey Benchmark Reference */}
         <LiveBenchmarkPreview district={district} crop={crop} season={season} />
 
         {/* Itemized 10 Causes Loss Grid */}

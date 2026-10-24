@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/client';
 import { CAUSE_LABELS } from '../../data/staticData';
-import { Wheat, DollarSign, Percent, TrendingUp, Sparkles, Filter } from 'lucide-react';
+import { Wheat, DollarSign, Percent, TrendingUp, Filter } from 'lucide-react';
 
 const CROP_ICONS = {
   Fruits: '🍎',
@@ -130,7 +130,7 @@ export default function CropRanking({
       <div className="space-y-2.5 overflow-y-auto pr-1 flex-1 no-scrollbar">
         {loading ? (
           <div className="h-40 flex items-center justify-center text-xs text-slate-400 font-mono animate-pulse">
-            Loading crop microdata...
+            Loading crop statistics...
           </div>
         ) : (
           topCrops.map((c, idx) => {
@@ -244,7 +244,7 @@ export default function CropRanking({
         </div>
         <p className="text-[10px] text-slate-600 leading-relaxed">
           {metricMode === 'value_at_risk'
-            ? 'Ranking prioritized by financial capital forfeited per 100t harvest. Paddy rice and beans yield heavy economic damage despite moderate physical loss.'
+            ? 'Ranked by total estimated value lost per 100 tonnes harvested. High-value commodities like paddy rice and beans suffer severe financial impact despite moderate physical loss rates.'
             : 'Fruits suffer the highest physical loss volume (18.8%). Switch to RWF Risk above to observe price-weighted financial depletion.'}
         </p>
       </div>

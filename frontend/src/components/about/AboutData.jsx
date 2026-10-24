@@ -16,7 +16,6 @@ import {
   ShieldCheck,
   Scale,
   Layers,
-  Sparkles,
   ArrowRight
 } from 'lucide-react';
 
@@ -191,11 +190,11 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                 OFFICIAL NISR METHODOLOGY
               </span>
               <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-black/[0.05]">
-                INGESTION ENGINE ACTIVE
+                DATA IMPORT READY
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">
-              National survey benchmarks, empirical post-harvest standards, and bulk dataset ingestion pipeline.
+              National survey benchmarks, post-harvest standards, and harvest record imports.
             </p>
           </div>
         </div>
@@ -284,10 +283,10 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                 </div>
                 <div>
                   <h3 className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
-                    Dataset Import & Ingestion Pipeline
+                    Import Cooperative Harvest Records
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    Upload organized cooperative harvest surveys or field records (.csv) to preview benchmark calculations and ingest into the tracker.
+                    Upload organized cooperative harvest surveys or field records (.csv) to review loss calculations and save them to the system.
                   </p>
                 </div>
               </div>
@@ -301,7 +300,7 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-black/[0.06] text-xs font-bold transition-all active:scale-95 cursor-pointer disabled:opacity-50"
                   title="Load 3 sample Rwandan cooperative records for instant testing"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Load Sample Batch</span>
                 </button>
 
@@ -353,10 +352,10 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                 </div>
                 <div>
                   <span className="text-xs font-bold text-slate-900 block">
-                    {previewLoading ? 'Analyzing spreadsheet schema and running dry-run preview...' : 'Drag and drop your harvest returns (.csv) here, or browse files'}
+                    {previewLoading ? 'Analyzing spreadsheet and validating records...' : 'Drag and drop your harvest returns (.csv) here, or browse files'}
                   </span>
                   <span className="text-[11px] text-slate-400 block mt-0.5">
-                    Supports CSV with comma, semicolon, or tab separation • Up to 1,000 rows • Max 2 MB
+                    CSV format (comma, semicolon, or tab) • Up to 1,000 rows • Max 2 MB
                   </span>
                 </div>
               </div>
@@ -391,10 +390,10 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                     </div>
                     <div>
                       <span className="font-bold block text-sm text-emerald-950">
-                        Batch Successfully Ingested into System!
+                        Harvest Records Successfully Saved to System!
                       </span>
                       <span className="text-[11px] text-emerald-700 block">
-                        Imported {importResult.imported_count} harvest records across {importResult.cooperatives_created} new and {importResult.cooperatives_updated} existing cooperatives (Batch ID: #{importResult.batch_id}).
+                        Saved {importResult.imported_count} harvest records across {importResult.cooperatives_created} new and {importResult.cooperatives_updated} existing cooperatives (Batch ID: #{importResult.batch_id}).
                       </span>
                     </div>
                   </div>
@@ -426,7 +425,7 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
               </div>
             )}
 
-            {/* Dry-Run Preview Table & Summary Ribbon */}
+            {/* Preview Table & Summary Ribbon */}
             {previewData && !importResult && (
               <div className="space-y-4">
                 {/* Summary Ribbon */}
@@ -437,7 +436,7 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                       {previewData.total_received} Total Rows
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold text-[11px]">
-                      {previewData.imported_count} Ready to Ingest
+                      {previewData.imported_count} Ready to Save
                     </span>
                     {previewData.cooperatives_created > 0 && (
                       <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono font-bold text-[11px]">
@@ -451,7 +450,7 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                     )}
                   </div>
 
-                  {/* Commit Import Button */}
+                  {/* Save Records Button */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -469,10 +468,10 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                           ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                           : 'bg-emerald-700 hover:bg-emerald-800 text-white cursor-pointer active:scale-95 shadow-emerald-700/20'
                       }`}
-                      title={previewData.errors?.length > 0 ? 'Resolve errors before importing' : 'Commit validated records into the system'}
+                      title={previewData.errors?.length > 0 ? 'Resolve errors before saving' : 'Save validated records into the system'}
                     >
                       <Check className="w-3.5 h-3.5" />
-                      <span>{importLoading ? 'Ingesting Batch...' : `Ingest ${previewData.imported_count} Records`}</span>
+                      <span>{importLoading ? 'Saving Records...' : `Save ${previewData.imported_count} Records`}</span>
                     </button>
                   </div>
                 </div>

@@ -84,7 +84,7 @@ export default function App() {
             <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-xs text-amber-800 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-amber-600 animate-spin shrink-0" />
-                <span>Starting the server — this can take up to a minute on first load.</span>
+                <span>Connecting to agricultural database — this may take a moment on initial load.</span>
               </div>
             </div>
           )}
@@ -94,7 +94,7 @@ export default function App() {
             <div className="bg-rose-50 border-b border-rose-200 px-4 py-2.5 text-xs text-rose-800 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                <span>Can't reach the server. Make sure the API is active.</span>
+                <span>Cannot connect to agricultural statistics services. Check your connection.</span>
               </div>
               <button
                 onClick={checkConnectionAndLoad}
@@ -151,7 +151,7 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
                 <span className="text-slate-600 font-medium">
-                  NISR 2026 Big Data Hackathon • Post-Harvest Loss Tracker
+                  National Institute of Statistics of Rwanda (NISR) • Agricultural Loss Monitoring System
                 </span>
               </div>
 

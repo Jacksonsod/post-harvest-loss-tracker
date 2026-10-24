@@ -24,7 +24,7 @@ export default function PlanNextSeason({ selectedCoop }) {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">
-              Simulate pre-harvest loss risks and evaluate storage infrastructure dividends grounded in NISR SAS microdata.
+              Simulate seasonal loss risks and evaluate storage options grounded in NISR agricultural survey data.
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/client';
-import { Info, Sparkles, TrendingUp, ShieldCheck } from 'lucide-react';
+import { Info, TrendingUp, ShieldCheck } from 'lucide-react';
 
 export default function LiveBenchmarkPreview({ district, crop, season }) {
   const [benchmark, setBenchmark] = useState(null);
@@ -40,7 +40,7 @@ export default function LiveBenchmarkPreview({ district, crop, season }) {
       <div className="flex items-center justify-between pb-2 border-b border-black/[0.04] mb-3">
         <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-800">
           <Info className="w-3.5 h-3.5 text-emerald-600" />
-          <span className="uppercase text-[11px]">NISR SAS Microdata Benchmark</span>
+          <span className="uppercase text-[11px]">NISR SAS Survey Benchmark</span>
         </div>
         {benchmark && (
           <span className="text-[9.5px] px-2 py-0.5 rounded-full font-mono font-bold bg-white text-cyan-800 border border-black/[0.06] shadow-2xs">
@@ -51,7 +51,7 @@ export default function LiveBenchmarkPreview({ district, crop, season }) {
 
       {loading ? (
         <div className="text-xs text-slate-400 animate-pulse font-mono py-1">
-          Querying NISR SAS 2024–2025 microdata baselines...
+          Loading NISR SAS 2024–2025 survey benchmarks...
         </div>
       ) : error ? (
         <div className="text-xs text-amber-700 py-1 font-mono">

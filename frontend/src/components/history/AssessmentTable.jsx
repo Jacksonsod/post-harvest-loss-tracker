@@ -106,7 +106,7 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
           <div className="relative">
             <input
               type="text"
-              placeholder="Search crop or driver..."
+              placeholder="Search crop or loss cause..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="px-3 py-1.5 pl-8 text-xs font-mono bg-white border border-black/[0.06] rounded-full text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 w-44 sm:w-52 shadow-2xs"
@@ -133,21 +133,20 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
             <tr>
               <th className="py-3 px-4 font-bold">Survey Date</th>
               <th className="py-3 px-3 font-bold">Season</th>
-              <th className="py-3 px-3 font-bold">Commodity</th>
+              <th className="py-3 px-3 font-bold">Crop</th>
               <th className="py-3 px-3 text-right font-bold">Harvested</th>
               <th className="py-3 px-3 text-right font-bold">Loss (kg)</th>
               <th className="py-3 px-3 text-right font-bold">Loss %</th>
               <th className="py-3 px-3 text-right font-bold">Benchmark</th>
-              <th className="py-3 px-3 text-center font-bold">Risk Tier</th>
-              <th className="py-3 px-3 font-bold">Leading Driver</th>
-              <th className="py-3 px-3 text-right font-bold">Forfeited RWF</th>
-              <th className="py-3 px-4 text-center font-bold">Action</th>
+              <th className="py-3 px-3 text-center font-bold">Risk Category</th>
+              <th className="py-3 px-3 font-bold">Primary Cause</th>
+              <th className="py-3 px-4 text-right font-bold">Estimated Loss (RWF)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-black/[0.04] bg-white">
             {filteredAssessments.length === 0 ? (
               <tr>
-                <td colSpan="11" className="py-8 text-center text-xs font-mono text-slate-400">
+                <td colSpan="10" className="py-8 text-center text-xs font-mono text-slate-400">
                   No records match your season or query filter.
                 </td>
               </tr>
@@ -191,24 +190,10 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
                     <td className="py-3 px-3 capitalize text-slate-700">
                       {a.dominant_cause ? a.dominant_cause.replace('_', ' ') : '—'}
                     </td>
-                    <td className="py-3 px-3 text-right font-black text-amber-800 tnum">
+                    <td className="py-3 px-4 text-right font-black text-amber-800 tnum">
                       {a.estimated_loss_value_rwf 
                         ? `${Math.round(a.estimated_loss_value_rwf).toLocaleString()}` 
                         : '—'}
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      {onReportClick ? (
-                        <button
-                          onClick={() => onReportClick(a)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-slate-100 hover:bg-emerald-700 text-slate-700 hover:text-white transition-all shadow-2xs active:scale-95 cursor-pointer"
-                          title="Open Official NISR Advisory Brief"
-                        >
-                          <FileText className="w-3 h-3 text-emerald-500" />
-                          <span>Brief</span>
-                        </button>
-                      ) : (
-                        <span className="text-[10px] text-slate-300 font-mono">—</span>
-                      )}
                     </td>
                   </tr>
                 );

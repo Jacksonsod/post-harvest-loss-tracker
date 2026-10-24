@@ -68,7 +68,7 @@ export default function CoopSelectPopover({ coops = [], selectedCoop, onSelectCo
               </span>
               <span className="text-emerald-700 font-bold bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Live Backend ({coops.length} Coops)</span>
+                <span>Active Registry ({coops.length} Coops)</span>
               </span>
             </div>
 
@@ -140,7 +140,7 @@ export default function CoopSelectPopover({ coops = [], selectedCoop, onSelectCo
               <Database className="w-3 h-3 text-slate-400" />
               <span>NISR SAS Database</span>
             </span>
-            <span>Real Microdata Records</span>
+            <span>Surveyed Farm Records</span>
           </div>
         </div>
       )}

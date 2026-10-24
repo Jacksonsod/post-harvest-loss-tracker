@@ -248,11 +248,11 @@ export default function CoopHistory({
               </div>
             </div>
 
-            {/* Cumulative Revenue Forfeited */}
+            {/* Cumulative Estimated Financial Loss */}
             <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider">
-                  Revenue Forfeited
+                  Estimated Value Lost
                 </span>
                 <div className="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center text-xs shadow-2xs">
                   <Scale className="w-4 h-4" />

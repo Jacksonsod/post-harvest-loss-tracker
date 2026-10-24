@@ -16,7 +16,6 @@ import {
   MapPin, 
   Compass, 
   Layers, 
-  Sparkles,
   Info,
   Calendar,
   Wheat,
@@ -414,7 +413,7 @@ export default function SituationRoomMap({
           <div className="flex-1 w-full h-full relative flex items-center justify-center overflow-hidden">
             {loadingMap ? (
               <div className="text-xs font-mono text-slate-400 animate-pulse flex items-center gap-2">
-                <span>Loading survey microdata map...</span>
+                <span>Loading national map data...</span>
               </div>
             ) : (
               <svg

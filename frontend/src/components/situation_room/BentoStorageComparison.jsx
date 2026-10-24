@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/client';
-import { Warehouse, ShieldCheck, CheckCircle2, TrendingDown, Sparkles } from 'lucide-react';
+import { Warehouse, ShieldCheck, CheckCircle2, TrendingDown } from 'lucide-react';
 
 const STORAGE_CROPS = [
   'Maize', 
@@ -76,7 +76,7 @@ export default function BentoStorageComparison() {
                 Storage Infrastructure Efficacy
               </span>
               <span className="text-[10px] text-slate-400 font-mono block">
-                Loss rates by storage method from SAS microdata
+                Average loss rates by storage facility type
               </span>
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function BentoStorageComparison() {
       {/* Hermetic Storage Callout */}
       <div className="p-3 bg-indigo-50/70 rounded-2xl border border-indigo-200/80 flex items-center justify-between text-xs">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
           <div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-950 block">
               Hermetic Storage Impact

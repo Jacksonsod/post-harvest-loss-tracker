@@ -238,7 +238,7 @@ export default function BenchmarkExplorer() {
       {/* Query Results */}
       {loading ? (
         <div className="bg-white/95 border border-black/[0.06] rounded-[28px] p-12 text-center text-xs font-mono text-slate-400 animate-pulse shadow-sm">
-          Querying survey microdata for {district} • {crop} ({season ? `Season ${season}` : 'All Seasons'})...
+          Loading survey benchmarks for {district} • {crop} ({season ? `Season ${season}` : 'All Seasons'})...
         </div>
       ) : error ? (
         <div className="bg-white/95 border border-amber-200 rounded-[28px] p-8 text-center text-xs font-mono text-amber-800 shadow-sm">
@@ -358,7 +358,7 @@ export default function BenchmarkExplorer() {
                     Survey Loss Distribution & Risk Bands
                   </h3>
                   <p className="text-[11px] text-slate-400 font-mono">
-                    Empirical quartile ranges from farmer-reported survey microdata
+                    Empirical quartile ranges from surveyed farm plots
                   </p>
                 </div>
               </div>

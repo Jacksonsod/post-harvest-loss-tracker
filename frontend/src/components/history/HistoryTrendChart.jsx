@@ -98,7 +98,7 @@ export default function HistoryTrendChart({ assessments = [] }) {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Revenue Forfeited (RWF)
+            Estimated Loss (RWF)
           </button>
           <button
             type="button"
@@ -175,7 +175,7 @@ export default function HistoryTrendChart({ assessments = [] }) {
                             <span>{data.benchmark}%</span>
                           </div>
                           <div className="flex justify-between items-center text-slate-600">
-                            <span>Forfeited Revenue:</span>
+                            <span>Estimated Loss:</span>
                             <span className="font-bold text-amber-800">~{data.lossRwfMillion}M RWF</span>
                           </div>
                         </div>
@@ -261,7 +261,7 @@ export default function HistoryTrendChart({ assessments = [] }) {
                       <div className="bg-white/95 border border-black/[0.08] p-3.5 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1.5 min-w-[210px]">
                         <span className="font-extrabold text-slate-900 block border-b border-black/[0.05] pb-1">{data.fullTitle}</span>
                         <div className="text-amber-800 font-bold flex justify-between gap-4 pt-0.5">
-                          <span>Financial Forfeited:</span>
+                          <span>Estimated Loss:</span>
                           <strong>{Math.round(data.lossRwf).toLocaleString()} RWF</strong>
                         </div>
                         <div className="text-slate-500 text-[10.5px]">
@@ -278,7 +278,7 @@ export default function HistoryTrendChart({ assessments = [] }) {
               />
               <Bar 
                 dataKey="lossRwfMillion" 
-                name="Revenue Forfeited (Million RWF)" 
+                name="Estimated Loss (Million RWF)" 
                 fill="#F59E0B" 
                 radius={[8, 8, 0, 0]} 
               />

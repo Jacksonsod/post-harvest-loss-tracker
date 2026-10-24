@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/client';
 import { DISTRICTS, CROPS, SEASONS } from '../../data/staticData';
-import { Calculator, TrendingUp, Sparkles, Scale, DollarSign, Sliders } from 'lucide-react';
+import { Calculator, TrendingUp, Scale, DollarSign, Sliders } from 'lucide-react';
 
 const COMMON_CROPS = [
   'Maize', 
@@ -231,13 +231,13 @@ export default function BentoPreHarvestSimulator({ selectedDistrict, onDistrictC
             {/* NST2 Avoidable Loss Dividend Callout */}
             <div className="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200/80 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0" />
                 <div>
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-900 block">
-                    NST2 MITIGATION DIVIDEND (≤5.0% TARGET)
+                    NST2 TARGET SAVINGS (≤5.0% TARGET)
                   </span>
                   <span className="text-[11px] text-slate-600">
-                    Potential cash saved if loss is cut to national target:
+                    Potential value saved if loss is reduced to the national target:
                   </span>
                 </div>
               </div>
