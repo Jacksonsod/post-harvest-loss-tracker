@@ -6,6 +6,9 @@ import TacticalTooltip from './TacticalTooltip';
 import DistrictHotspots from './DistrictHotspots';
 import CropRanking from './CropRanking';
 import PolicyActionBox from './PolicyActionBox';
+import BentoPreHarvestSimulator from './BentoPreHarvestSimulator';
+import BentoStorageComparison from './BentoStorageComparison';
+import BentoDispatchCard from './BentoDispatchCard';
 
 import { RWANDA_VIEWBOX } from '../../data/rwandaDistrictPaths';
 import { CAUSES_ORDER } from '../../data/staticData';
@@ -350,7 +353,37 @@ export default function SituationRoomMap({
         </div>
       </div>
 
-      {/* 5. Policy Mitigation Action Box Banner */}
+      {/* 5. Executive Scenario Simulation & Predictive Intelligence Hub */}
+      <div className="space-y-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] font-mono font-bold tracking-wider text-slate-500 uppercase flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span>EXECUTIVE PREDICTIVE INTELLIGENCE & SCENARIO HUB</span>
+            </span>
+            <span className="text-[9.5px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold border border-black/[0.04]">
+              NST2 ≤5.0% TARGET • REAL-TIME BENCHMARKS
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-slate-400">
+            Interactive Field Risk Forecast & Infrastructure Technology Decision Matrix
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          <div className="lg:col-span-4 flex flex-col">
+            <BentoPreHarvestSimulator selectedDistrict={selectedDistrict} />
+          </div>
+          <div className="lg:col-span-4 flex flex-col">
+            <BentoStorageComparison />
+          </div>
+          <div className="lg:col-span-4 flex flex-col">
+            <BentoDispatchCard selectedDistrict={selectedDistrict} />
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Policy Mitigation Action Box Banner */}
       <PolicyActionBox
         activeCause={activeCause}
         onSelectCause={setActiveCause}
