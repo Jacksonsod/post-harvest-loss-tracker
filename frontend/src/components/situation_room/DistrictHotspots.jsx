@@ -14,7 +14,7 @@ export default function DistrictHotspots({
   const activeCauseMeta = activeCause !== 'all' ? CAUSE_LABELS[activeCause] : null;
 
   return (
-    <div className="bg-white border border-black/[0.05] rounded-[28px] p-6 flex flex-col h-[560px] shadow-[0_2px_16px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300">
+    <div className="bg-white border border-black/[0.05] rounded-[28px] p-6 flex flex-col h-[480px] sm:h-[520px] xl:h-[560px] shadow-[0_2px_16px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300">
       {/* Header Strip */}
       <div className="flex items-center justify-between pb-3 border-b border-black/[0.04] mb-3.5 flex-shrink-0">
         <div className="flex items-center gap-2">
