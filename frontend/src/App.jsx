@@ -72,12 +72,6 @@ export default function App() {
         <Sidebar
           activeTab={activeTab}
           onSelectTab={setActiveTab}
-          activeSeason={activeSeason}
-          onSelectSeason={setActiveSeason}
-          coops={coops}
-          selectedCoop={selectedCoop}
-          onSelectCoop={setSelectedCoop}
-          onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
           onOpenReportModal={() => setIsReportModalOpen(true)}
           isBackendLive={isBackendLive}
           isCollapsed={isSidebarCollapsed}

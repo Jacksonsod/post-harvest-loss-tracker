@@ -167,6 +167,11 @@ export default function SituationRoomMap({
             <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
               NISR SAS 2024–2025
             </span>
+            {activeSeason !== 'all' && (
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-50 text-cyan-900 border border-cyan-200">
+                Season {activeSeason} Active
+              </span>
+            )}
             {selectedCrop !== 'all' && (
               <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
                 {selectedCrop} Filter Active
@@ -181,8 +186,26 @@ export default function SituationRoomMap({
           </p>
         </div>
 
-        {/* Filter Controls: Crop & Quick Actions */}
+        {/* Filter Controls: Season, Crop & Quick Actions */}
         <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Season Selector */}
+          <div className="flex items-center bg-slate-50 border border-black/[0.07] rounded-xl px-3 py-1.5 text-xs font-mono">
+            <Calendar className="w-3.5 h-3.5 text-slate-500 mr-2 shrink-0" />
+            <select
+              value={activeSeason}
+              onChange={(e) => {
+                if (onSelectSeason) onSelectSeason(e.target.value);
+              }}
+              className="bg-transparent text-slate-800 font-bold focus:outline-none cursor-pointer pr-1"
+              aria-label="Filter map by agricultural season"
+            >
+              <option value="all">All Seasons (Combined)</option>
+              <option value="A">Season A (Cereal Harvest)</option>
+              <option value="B">Season B (Legumes & Tubers)</option>
+              <option value="C">Season C (Marshland Crops)</option>
+            </select>
+          </div>
+
           {/* Crop Selector */}
           <div className="flex items-center bg-slate-50 border border-black/[0.07] rounded-xl px-3 py-1.5 text-xs font-mono">
             <Wheat className="w-3.5 h-3.5 text-slate-500 mr-2 shrink-0" />
@@ -201,13 +224,14 @@ export default function SituationRoomMap({
             </select>
           </div>
 
-          {(selectedCrop !== 'all' || activeCause !== 'all') && (
+          {(selectedCrop !== 'all' || activeSeason !== 'all' || activeCause !== 'all') && (
             <button
               onClick={() => {
                 setSelectedCrop('all');
+                if (onSelectSeason) onSelectSeason('all');
                 setActiveCause('all');
               }}
-              className="text-xs font-mono font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
+              className="text-xs font-mono font-bold text-rose-600 bg-rose-50 hover:bg-rose-100/80 border border-rose-200 px-2.5 py-1.5 rounded-xl transition-all active:scale-95 cursor-pointer shadow-2xs"
             >
               Reset Filters
             </button>
