@@ -14,7 +14,7 @@ const COMMON_CROPS = [
   'Soybean'
 ];
 
-export default function BentoPreHarvestSimulator({ selectedDistrict }) {
+export default function BentoPreHarvestSimulator({ selectedDistrict, onDistrictChange, onCropChange }) {
   const [district, setDistrict] = useState(selectedDistrict || 'Musanze');
   const [crop, setCrop] = useState('Irish potato');
   const [season, setSeason] = useState('A');
@@ -87,13 +87,10 @@ export default function BentoPreHarvestSimulator({ selectedDistrict }) {
                 Pre-Harvest Risk Simulator
               </span>
               <span className="text-[10px] text-slate-400 font-mono block">
-                Forecast post-harvest risk prior to field desiccation
+                Project loss volume and financial risk before harvest
               </span>
             </div>
           </div>
-          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold uppercase shrink-0">
-            PREDICTIVE
-          </span>
         </div>
 
         {/* Input Selectors */}
@@ -104,7 +101,11 @@ export default function BentoPreHarvestSimulator({ selectedDistrict }) {
             </label>
             <select
               value={district}
-              onChange={(e) => setDistrict(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setDistrict(val);
+                if (onDistrictChange) onDistrictChange(val);
+              }}
               className="w-full text-xs font-mono font-semibold bg-slate-50 border border-black/[0.06] rounded-xl px-2.5 py-1.5 text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 shadow-2xs truncate cursor-pointer transition-all"
             >
               {DISTRICTS.map((d) => (
@@ -119,7 +120,11 @@ export default function BentoPreHarvestSimulator({ selectedDistrict }) {
             </label>
             <select
               value={crop}
-              onChange={(e) => setCrop(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setCrop(val);
+                if (onCropChange) onCropChange(val);
+              }}
               className="w-full text-xs font-mono font-semibold bg-slate-50 border border-black/[0.06] rounded-xl px-2.5 py-1.5 text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 shadow-2xs truncate cursor-pointer transition-all"
             >
               {COMMON_CROPS.map((c) => (
@@ -176,10 +181,10 @@ export default function BentoPreHarvestSimulator({ selectedDistrict }) {
                   key={preset}
                   type="button"
                   onClick={() => setHarvestKg(preset)}
-                  className={`px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold transition-all ${
+                  className={`px-2.5 py-0.5 rounded-full text-[9.5px] font-mono font-bold transition-all cursor-pointer ${
                     harvestKg === preset
-                      ? 'bg-slate-900 text-white shadow-2xs'
-                      : 'bg-white text-slate-600 border border-black/[0.05] hover:bg-slate-100'
+                      ? 'bg-emerald-700 text-white shadow-2xs'
+                      : 'bg-white text-slate-600 border border-black/[0.05] hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
                   {preset / 1000}t
@@ -247,7 +252,7 @@ export default function BentoPreHarvestSimulator({ selectedDistrict }) {
 
       {/* Footer Info Strip */}
       <div className="pt-2.5 border-t border-black/[0.05] flex items-center justify-between text-[10px] font-mono text-slate-500">
-        <span>Empirical SAS 2024–2025 Matrix</span>
+        <span>NISR SAS 2024–2025 Baseline</span>
         <span className="text-slate-700 font-bold bg-slate-100 px-2 py-0.5 rounded-full border border-black/[0.04]">
           Ref: {lossRate.toFixed(1)}% benchmark
         </span>

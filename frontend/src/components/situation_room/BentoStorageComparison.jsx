@@ -73,17 +73,13 @@ export default function BentoStorageComparison() {
             </div>
             <div>
               <span className="text-xs font-mono font-bold tracking-tight text-slate-900 uppercase block">
-                Storage Technology Efficacy Matrix
+                Storage Infrastructure Efficacy
               </span>
               <span className="text-[10px] text-slate-400 font-mono block">
-                Compare post-harvest loss across infrastructure types
+                Loss rates by storage method from SAS microdata
               </span>
             </div>
           </div>
-
-          <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold uppercase shrink-0">
-            TECHNOLOGY ROI
-          </span>
         </div>
 
         {/* Crop Selection Pill Bar */}
@@ -93,10 +89,10 @@ export default function BentoStorageComparison() {
               key={c}
               type="button"
               onClick={() => setSelectedCrop(c)}
-              className={`px-2.5 py-1 rounded-full text-[10.5px] font-mono font-bold shrink-0 transition-all ${
+              className={`px-2.5 py-1 rounded-full text-[10.5px] font-mono font-bold shrink-0 transition-all cursor-pointer ${
                 selectedCrop === c
-                  ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'bg-slate-100/80 text-slate-600 border border-black/[0.04] hover:bg-slate-200'
+                  ? 'bg-emerald-700 text-white shadow-2xs'
+                  : 'bg-slate-100/80 text-slate-600 border border-black/[0.04] hover:bg-slate-200 hover:text-slate-900'
               }`}
             >
               {c}
@@ -174,16 +170,16 @@ export default function BentoStorageComparison() {
         )}
       </div>
 
-      {/* Technology ROI Callout */}
+      {/* Hermetic Storage Callout */}
       <div className="p-3 bg-indigo-50/70 rounded-2xl border border-indigo-200/80 flex items-center justify-between text-xs">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
           <div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-950 block">
-              HERMETIC STORAGE IMPACT
+              Hermetic Storage Impact
             </span>
             <span className="text-[11px] text-slate-600">
-              PICS multi-layer bags cut storage loss by &gt;50% and amortize in 1 season.
+              PICS hermetic bags consistently meet the NST2 ≤5.0% target across monitored crops.
             </span>
           </div>
         </div>

@@ -95,7 +95,7 @@ export default function PolicyActionBox({ onNavigateToPlanSeason }) {
         </div>
 
         {/* Card 3: Official 2029 NST2 Target */}
-        <div className="p-4 rounded-2xl bg-slate-900 text-white font-mono flex flex-col justify-between">
+        <div className="p-4 rounded-2xl bg-emerald-950 text-white font-mono flex flex-col justify-between border border-emerald-900/50 shadow-sm">
           <div>
             <span className="text-[10px] text-emerald-400 font-bold uppercase block">
               OFFICIAL 2029 TARGET
