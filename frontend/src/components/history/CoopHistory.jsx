@@ -4,29 +4,23 @@ import AssessmentTable from './AssessmentTable';
 import { api } from '../../api/client';
 import { CAUSE_LABELS } from '../../data/staticData';
 import { 
-  History, 
+  Building2, 
   TrendingDown, 
   TrendingUp,
-  DollarSign, 
   AlertCircle, 
-  BarChart3,
-  Award,
-  Building2,
-  Scale,
-  Plus,
-  ShieldCheck,
+  Calendar,
   Layers,
-  ArrowRight,
   ChevronDown,
   ClipboardList,
-  Calculator
+  Calculator,
+  ShieldCheck,
+  Scale
 } from 'lucide-react';
 
 export default function CoopHistory({ 
   coops = [],
   selectedCoop, 
   onSelectCoop,
-  onOpenNewCoopModal,
   onNavigateToPlanSeason, 
   onViewReport 
 }) {
@@ -78,9 +72,9 @@ export default function CoopHistory({
   // Compliance Grade computation
   const numericAvgLoss = parseFloat(avgLoss);
   const complianceGrade = totalSeasons === 0 ? 'Unrated' :
-    numericAvgLoss <= 10.0 ? 'GRADE A: RESILIENT' :
-    numericAvgLoss <= 14.0 ? 'GRADE B: MONITORED' :
-    'GRADE C: AT-RISK';
+    numericAvgLoss <= 10.0 ? 'Grade A: Resilient' :
+    numericAvgLoss <= 14.0 ? 'Grade B: Monitored' :
+    'Grade C: At-Risk';
 
   const gradeColor = totalSeasons === 0 ? 'bg-slate-100 text-slate-600 border-slate-300' :
     numericAvgLoss <= 10.0 ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
@@ -123,13 +117,13 @@ export default function CoopHistory({
   return (
     <div className="space-y-6">
       {/* Executive Cooperative Resilience Banner */}
-      <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-5 lg:p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
+      <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div className="flex items-start sm:items-center gap-4 min-w-0">
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-700 shrink-0 shadow-2xs">
             <Building2 className="w-6 h-6" />
           </div>
-          <div>
-            <div className="flex items-center gap-2.5 flex-wrap mb-1">
+          <div className="space-y-1.5 min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
               {/* Interactive Cooperative Selector Dropdown */}
               <div className="relative inline-flex items-center">
                 <select
@@ -139,8 +133,8 @@ export default function CoopHistory({
                     const found = coops.find((c) => c.id === coopId);
                     if (found && onSelectCoop) onSelectCoop(found);
                   }}
-                  className="text-sm sm:text-base font-bold text-slate-900 bg-slate-100/90 hover:bg-slate-200/80 border border-black/[0.08] rounded-xl pl-3 pr-8 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer transition-all shadow-2xs appearance-none font-mono"
-                  aria-label="Switch cooperative for performance history"
+                  className="text-sm sm:text-base font-bold text-slate-900 bg-slate-50 hover:bg-slate-100 border border-black/[0.08] rounded-xl pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer transition-all shadow-2xs appearance-none font-mono"
+                  aria-label="Switch cooperative"
                 >
                   {coops.map((coop) => (
                     <option key={coop.id} value={coop.id}>
@@ -151,29 +145,20 @@ export default function CoopHistory({
                 <ChevronDown className="w-4 h-4 text-slate-500 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" />
               </div>
 
-              {onOpenNewCoopModal && (
-                <button
-                  onClick={onOpenNewCoopModal}
-                  className="text-[10.5px] font-mono font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shadow-2xs active:scale-95"
-                  title="Register new cooperative"
-                >
-                  <Plus className="w-3 h-3" />
-                  <span>Register Coop</span>
-                </button>
-              )}
-
-              <span className="text-[10.5px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05] font-semibold">
-                {selectedCoop?.district} DISTRICT
+              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05] font-semibold">
+                {selectedCoop?.district} District
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
                 NISR-COOP-#{String(selectedCoop?.id || '01').padStart(2, '0')}
               </span>
+            </div>
+
+            {/* Performance Status & Trajectory */}
+            <div className="flex items-center gap-2.5 text-xs text-slate-500 font-medium flex-wrap pt-0.5">
               <span className={`text-[10.5px] font-mono px-2.5 py-0.5 rounded-full font-bold border ${gradeColor}`}>
                 {complianceGrade}
               </span>
-            </div>
-            <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 font-medium flex-wrap">
-              <span className={`flex items-center gap-1 font-mono font-bold ${
+              <span className={`flex items-center gap-1 font-mono font-bold text-[11px] ${
                 trajectoryImproving ? 'text-emerald-700' : trajectoryDeteriorating ? 'text-rose-700' : 'text-slate-600'
               }`}>
                 {trajectoryImproving ? <TrendingDown className="w-3.5 h-3.5" /> : trajectoryDeteriorating ? <TrendingUp className="w-3.5 h-3.5" /> : null}
@@ -226,118 +211,165 @@ export default function CoopHistory({
         </div>
       ) : (
         <>
-          {/* 4-KPI Ceramic Strip */}
+          {/* 4-KPI Ceramic Intelligence Tiles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Monitored Seasons */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">RECORDED SEASONS</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-mono font-black text-slate-900 tnum">{totalSeasons}</span>
-                <span className="text-[11px] font-mono font-semibold text-slate-500">
-                  {totalHarvestedKg > 0 ? `~${(totalHarvestedKg / 1000).toFixed(0)}t logged` : ''}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                  Recorded Seasons
+                </span>
+                <div className="w-7 h-7 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-xs shadow-2xs">
+                  <Calendar className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-mono font-black text-slate-900 tnum">{totalSeasons}</span>
+                  <span className="text-[11px] font-mono font-semibold text-slate-500">
+                    {totalHarvestedKg > 0 ? `~${(totalHarvestedKg / 1000).toFixed(0)}t logged` : ''}
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-400 block">
+                  Aggregated seasonal harvest records
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400 block mt-1">
-                Verified cooperative aggregation records
-              </span>
             </div>
 
             {/* Weighted Multi-Season Loss Rate */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">WEIGHTED AVERAGE LOSS</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-mono font-black text-emerald-700 tnum">{avgLoss}%</span>
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
-                  numericAvgLoss <= 10.22 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-700'
-                }`}>
-                  {numericAvgLoss <= 10.22 ? 'Below Nat’l' : 'Above Nat’l'}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                  Weighted Avg Loss
+                </span>
+                <div className="w-7 h-7 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center text-xs shadow-2xs">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-mono font-black text-emerald-700 tnum">{avgLoss}%</span>
+                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
+                    numericAvgLoss <= 10.22 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-700'
+                  }`}>
+                    {numericAvgLoss <= 10.22 ? 'Below Nat’l' : 'Above Nat’l'}
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-400 block">
+                  vs. 10.22% National SAS Baseline
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400 block mt-1">
-                vs. 10.22% National Average
-              </span>
             </div>
 
             {/* Cumulative Revenue Forfeited */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">CUMULATIVE CASH FORFEITED</span>
-              <span className="text-2xl font-mono font-black text-amber-800 tnum block">
-                {totalRwfLost > 0 ? `~${(totalRwfLost / 1000000).toFixed(2)}M RWF` : '0 RWF'}
-              </span>
-              <span className="text-[10px] text-slate-400 block mt-1">
-                {totalLossKg > 0 ? `${(totalLossKg / 1000).toFixed(1)} tons depleted` : 'Zero depletion'}
-              </span>
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                  Revenue Forfeited
+                </span>
+                <div className="w-7 h-7 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center text-xs shadow-2xs">
+                  <Scale className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-2xl font-mono font-black text-amber-800 tnum block">
+                  {totalRwfLost > 0 ? `~${(totalRwfLost / 1000000).toFixed(2)}M RWF` : '0 RWF'}
+                </span>
+                <span className="text-[11px] text-slate-400 block">
+                  {totalLossKg > 0 ? `${(totalLossKg / 1000).toFixed(1)} tons depleted` : 'Zero volume depleted'}
+                </span>
+              </div>
             </div>
 
-            {/* Recurring Bottleneck Driver */}
-            <div 
-              className="p-5 rounded-2xl border shadow-2xs transition-all"
-              style={{
-                backgroundColor: `${topCauseMeta?.hex || '#10B981'}10`,
-                borderColor: `${topCauseMeta?.hex || '#10B981'}30`,
-              }}
-            >
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">PRIMARY BOTTLENECK</span>
-              <span 
-                className="text-lg font-mono font-black capitalize truncate block"
-                style={{ color: topCauseMeta?.hex || '#0F172A' }}
-              >
-                {topRecurringCause}
-              </span>
-              <span className="text-[10px] text-slate-500 font-medium block mt-1">
-                Leading driver across recorded harvests
-              </span>
+            {/* Primary Loss Driver */}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                  Primary Loss Driver
+                </span>
+                <div 
+                  className="w-7 h-7 rounded-xl flex items-center justify-center text-xs shadow-2xs"
+                  style={{ backgroundColor: `${topCauseMeta?.hex || '#10B981'}15`, color: topCauseMeta?.hex || '#10B981' }}
+                >
+                  <AlertCircle className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="space-y-0.5">
+                <span 
+                  className="text-xl font-mono font-black capitalize truncate block"
+                  style={{ color: topCauseMeta?.hex || '#0F172A' }}
+                >
+                  {topRecurringCause}
+                </span>
+                <span className="text-[11px] text-slate-500 font-medium block">
+                  {cumulativeCauses[0]?.pct || 0}% share of cumulative loss
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Multi-Season Supply Chain Driver Matrix */}
           {cumulativeCauses.length > 0 && (
-            <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-5 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <h4 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <Layers className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Supply Chain Loss Allocation</span>
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Proportion of cumulative losses attributed to each supply chain stage across all recorded seasons.
-                  </p>
+            <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/[0.05]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 flex items-center justify-center shrink-0">
+                    <Layers className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-tight">
+                      Supply Chain Loss Allocation
+                    </h3>
+                    <p className="text-[11px] text-slate-400 font-mono">
+                      Cumulative volume lost across reported post-harvest stages
+                    </p>
+                  </div>
                 </div>
-                <span className="text-[10.5px] font-mono text-slate-500 font-semibold self-start sm:self-auto bg-slate-50 px-2.5 py-1 rounded-full border border-black/[0.05]">
-                  Total Cumulative Loss: <strong className="text-slate-900 font-bold">{(totalLossKg / 1000).toFixed(1)} tons</strong>
+                <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-full border border-black/[0.04]">
+                  Total Loss: <span className="text-emerald-700 font-extrabold">{(totalLossKg / 1000).toFixed(1)} tons</span>
                 </span>
               </div>
 
-              {/* Multi-segment Cumulative Stacked Bar */}
-              <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden flex shadow-inner">
+              {/* Segmented Loss Allocation Track */}
+              <div className="w-full h-3.5 rounded-full bg-slate-100 p-0.5 flex overflow-hidden border border-black/[0.04] shadow-inner gap-0.5">
                 {cumulativeCauses.map((c) => {
                   const cMeta = CAUSE_LABELS[c.key];
                   return (
                     <div
                       key={c.key}
                       style={{ 
-                        width: `${c.pct}%`,
+                        width: `${Math.max(c.pct, 2)}%`,
                         backgroundColor: cMeta?.hex || '#10B981'
                       }}
-                      className="h-full transition-all duration-300"
+                      className="h-full rounded-full transition-all duration-300"
                       title={`${c.name}: ${c.pct}% (${(c.kg / 1000).toFixed(1)}t)`}
                     />
                   );
                 })}
               </div>
 
-              {/* Legend Chips */}
-              <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
+              {/* Interactive Driver Badges Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-1">
                 {cumulativeCauses.slice(0, 6).map((c) => {
                   const cMeta = CAUSE_LABELS[c.key];
                   return (
-                    <div key={c.key} className="flex items-center gap-1.5">
-                      <span 
-                        className="w-2.5 h-2.5 rounded-full shrink-0" 
-                        style={{ backgroundColor: cMeta?.hex || '#10B981' }} 
-                      />
-                      <span className="text-slate-600 font-medium">{c.name}:</span>
-                      <strong className="text-slate-900">{c.pct}%</strong>
+                    <div 
+                      key={c.key}
+                      className="bg-slate-50/70 hover:bg-slate-100/80 rounded-xl p-2.5 border border-black/[0.04] transition-all flex flex-col justify-between gap-1"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span 
+                          className="w-2 h-2 rounded-full shrink-0" 
+                          style={{ backgroundColor: cMeta?.hex || '#10B981' }} 
+                        />
+                        <span className="text-[11px] font-mono font-medium text-slate-600 truncate" title={c.name}>
+                          {c.name}
+                        </span>
+                      </div>
+                      <div className="flex items-baseline justify-between text-xs font-mono">
+                        <span className="font-bold text-slate-900 tnum">{c.pct}%</span>
+                        <span className="text-[10px] text-slate-400 tnum">{(c.kg / 1000).toFixed(1)}t</span>
+                      </div>
                     </div>
                   );
                 })}
@@ -348,14 +380,21 @@ export default function CoopHistory({
           {/* Seasonal Trend Chart Card */}
           <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-black/[0.05]">
-              <div className="flex items-center gap-2">
-                <TrendingDown className="w-4 h-4 text-emerald-600" />
-                <h3 className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
-                  Season-over-Season Performance Trajectory (vs. District & NST2 Targets)
-                </h3>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 flex items-center justify-center shrink-0">
+                  <TrendingDown className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-mono font-bold tracking-tight text-slate-900 uppercase">
+                    Seasonal Loss Trajectory
+                  </h3>
+                  <span className="text-[10px] text-slate-400 font-mono block">
+                    Multi-season performance vs. district benchmark & NST2 target
+                  </span>
+                </div>
               </div>
               <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05] font-bold">
-                SEASONAL RECORDS
+                {assessments.length} SEASONS
               </span>
             </div>
 
@@ -375,6 +414,7 @@ export default function CoopHistory({
             <AssessmentTable 
               assessments={assessments} 
               onViewReport={onViewReport} 
+              onNavigateToPlanSeason={onNavigateToPlanSeason}
             />
           </div>
         </>

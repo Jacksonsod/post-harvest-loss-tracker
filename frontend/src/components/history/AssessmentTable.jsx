@@ -71,7 +71,7 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
         </div>
         <h4 className="text-sm font-bold text-slate-900 font-mono">No Harvest Assessments Recorded Yet</h4>
         <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 leading-relaxed">
-          This cooperative does not have historical records in the database. Use the "Check losses" tab to record your first verified post-harvest survey.
+          No historical records logged for this cooperative yet. Use "Plan next season" to forecast post-harvest risks and evaluate storage technology dividends.
         </p>
       </div>
     );
@@ -90,10 +90,10 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
             <button
               key={s}
               onClick={() => setSeasonFilter(s)}
-              className={`px-2.5 py-1 rounded-full text-[10.5px] font-mono font-bold transition-all ${
+              className={`px-2.5 py-1 rounded-full text-[10.5px] font-mono font-bold transition-all cursor-pointer ${
                 seasonFilter === s
-                  ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'bg-white text-slate-600 border border-black/[0.06] hover:bg-slate-100'
+                  ? 'bg-emerald-700 text-white shadow-2xs'
+                  : 'bg-white text-slate-600 border border-black/[0.06] hover:bg-slate-100 hover:text-slate-900'
               }`}
             >
               {s === 'all' ? 'All Seasons' : `Season ${s}`}
@@ -200,7 +200,7 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
                       {onReportClick ? (
                         <button
                           onClick={() => onReportClick(a)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white transition-all shadow-2xs active:scale-95"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-slate-100 hover:bg-emerald-700 text-slate-700 hover:text-white transition-all shadow-2xs active:scale-95 cursor-pointer"
                           title="Open Official NISR Advisory Brief"
                         >
                           <FileText className="w-3 h-3 text-emerald-500" />
