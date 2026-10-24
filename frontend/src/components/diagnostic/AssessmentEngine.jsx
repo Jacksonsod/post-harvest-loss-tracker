@@ -49,35 +49,7 @@ export default function AssessmentEngine({
         onAssessmentCompleted(result);
       }
     } catch (err) {
-      // If backend is offline in demo mode, synthesize local calculation
-      if (err.status === 503 || !err.status) {
-        const harvested = payload.harvested_qty_kg;
-        const totalLoss = payload.total_loss_kg || Object.values(payload.loss_by_cause_kg || {}).reduce((a, b) => a + b, 0);
-        const lossRate = Number(((totalLoss / harvested) * 100).toFixed(2));
-        const syntheticResult = {
-          assessment_id: Math.floor(Math.random() * 900) + 100,
-          loss_rate_pct: lossRate,
-          benchmark_loss_rate_pct: 12.5,
-          benchmark_source: "district_season (demo fallback)",
-          risk_category: lossRate <= 10.6 ? "Low" : lossRate > 14.3 ? "High" : "Medium",
-          dominant_cause: payload.loss_by_cause_kg ? Object.entries(payload.loss_by_cause_kg).sort((a,b) => b[1]-a[1])[0][0] : "insects_pests",
-          dominant_cause_is_estimated: !payload.loss_by_cause_kg,
-          recommendation: "Ensure proper pre-storage drying and transition to certified hermetic storage bags (PICS) to cut pest and moisture spoilage.",
-          estimated_loss_value_rwf: totalLoss * 520,
-          cause_of_loss_breakdown_pct: payload.loss_by_cause_kg ? Object.fromEntries(
-            Object.entries(payload.loss_by_cause_kg).map(([k, v]) => [k, Number(((v / totalLoss) * 100).toFixed(1))])
-          ) : null
-        };
-        setLatestResult(syntheticResult);
-        setSubmittedMeta({
-          coopName: selectedCoop?.name,
-          cropName: payload.crop,
-          districtName: payload.district,
-        });
-        if (onAssessmentCompleted) onAssessmentCompleted(syntheticResult);
-      } else {
-        setError(err.message || 'Assessment failed to process.');
-      }
+      setError(err.message || 'Assessment failed to process. Ensure the backend is reachable.');
     } finally {
       setIsSubmitting(false);
     }

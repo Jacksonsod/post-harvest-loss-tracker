@@ -16,7 +16,7 @@ import {
   Layers
 } from 'lucide-react';
 
-const TACTICAL_ACTIONS = {
+const RECOMMENDED_ACTIONS = {
   insects_pests: [
     { 
       title: 'PICS Hermetic Bag Adoption', 
@@ -126,13 +126,13 @@ export default function ResultCard({
     'bg-rose-50 text-rose-800 border-rose-300';
 
   const riskIcon = 
-    isLow ? <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" /> :
+    isLow ? <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" /> :
     isMedium ? <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" /> :
     <AlertOctagon className="w-5 h-5 text-rose-600 shrink-0" />;
 
   const gap = result.loss_rate_pct - result.benchmark_loss_rate_pct;
   const dominantKey = result.dominant_cause || 'default';
-  const actions = TACTICAL_ACTIONS[dominantKey] || TACTICAL_ACTIONS.default;
+  const actions = RECOMMENDED_ACTIONS[dominantKey] || RECOMMENDED_ACTIONS.default;
 
   // Calculate economic recovery potential if brought to NST2 target of 5.0%
   const targetPct = 5.0;
@@ -145,7 +145,22 @@ export default function ResultCard({
 
   return (
     <div className="bg-white/95 border border-black/[0.06] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-5 animate-in fade-in duration-300">
-      {/* Top Banner: Risk Status & Telemetry */}
+      {/* High Volatility Caution Flag */}
+      {result.high_volatility && (
+        <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-300 flex items-start gap-3 text-xs text-amber-900 font-sans">
+          <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+          <div>
+            <span className="font-bold font-mono uppercase block text-amber-950">
+              High Seasonal Volatility Caution
+            </span>
+            <span>
+              This average comes from an unusually variable season ({result.volatility_share_total_loss_pct || 17}% of surveyed plots lost their whole harvest), so treat the comparison with care.
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Top Banner: Risk Status & Performance */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-black/[0.04] gap-3">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-2xl bg-slate-50 border border-black/[0.05] shadow-2xs">
@@ -153,8 +168,9 @@ export default function ResultCard({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className={`text-xs px-2.5 py-0.5 rounded-full font-mono font-bold border ${riskBadgeColor}`}>
-                {result.risk_category.toUpperCase()} RISK CLASSIFICATION
+              <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full font-mono font-bold border ${riskBadgeColor}`}>
+                {riskIcon}
+                <span>{result.risk_category} Risk</span>
               </span>
               <span className="text-[10px] text-slate-400 font-mono">
                 ASSESSMENT #{result.assessment_id}
@@ -163,6 +179,11 @@ export default function ResultCard({
             <h3 className="text-sm font-bold text-slate-900 mt-1">
               Assessment for {coopName || 'Cooperative'} • <span className="text-emerald-700 font-semibold">{cropName}</span> in {districtName}
             </h3>
+            {result.benchmark_n_records && (
+              <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                Compared with {districtName} average ({result.benchmark_n_records.toLocaleString()} surveyed plots)
+              </p>
+            )}
           </div>
         </div>
 
@@ -301,13 +322,13 @@ export default function ResultCard({
         </div>
       </div>
 
-      {/* Prescriptive Tactical Action Checklist */}
+      {/* Recommended Action Checklist */}
       <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-2xs space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
-              PRESCRIPTIVE TACTICAL INTERVENTIONS
+              RECOMMENDED INTERVENTIONS FOR YOUR COOPERATIVE
             </h4>
           </div>
           <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full">
