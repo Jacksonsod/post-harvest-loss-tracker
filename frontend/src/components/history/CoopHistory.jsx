@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import HistoryTrendChart from './HistoryTrendChart';
 import AssessmentTable from './AssessmentTable';
+import CoopSelectPopover from './CoopSelectPopover';
 import { api } from '../../api/client';
 import { CAUSE_LABELS } from '../../data/staticData';
 import { 
@@ -124,26 +125,12 @@ export default function CoopHistory({
           </div>
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
-              {/* Interactive Cooperative Selector Dropdown */}
-              <div className="relative inline-flex items-center">
-                <select
-                  value={selectedCoop?.id || ''}
-                  onChange={(e) => {
-                    const coopId = Number(e.target.value);
-                    const found = coops.find((c) => c.id === coopId);
-                    if (found && onSelectCoop) onSelectCoop(found);
-                  }}
-                  className="text-sm sm:text-base font-bold text-slate-900 bg-slate-50 hover:bg-slate-100 border border-black/[0.08] rounded-xl pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer transition-all shadow-2xs appearance-none font-mono"
-                  aria-label="Switch cooperative"
-                >
-                  {coops.map((coop) => (
-                    <option key={coop.id} value={coop.id}>
-                      {coop.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-500 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" />
-              </div>
+              {/* Interactive Ceramic Cooperative Selector Popover */}
+              <CoopSelectPopover
+                coops={coops}
+                selectedCoop={selectedCoop}
+                onSelectCoop={onSelectCoop}
+              />
 
               <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05] font-semibold">
                 {selectedCoop?.district} District
