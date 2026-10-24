@@ -6,11 +6,13 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
+  const headers = { ...options.headers };
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  }
+
   const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
     ...options,
   };
 
@@ -24,11 +26,15 @@ async function request(endpoint, options = {}) {
       } catch (e) {
         // fallback to status text
       }
-      const err = new Error(errorMsg);
+      const err = new Error(typeof errorMsg === 'object' ? JSON.stringify(errorMsg) : errorMsg);
       err.status = res.status;
       throw err;
     }
-    return await res.json();
+    const contentType = res.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await res.json();
+    }
+    return { status: 'ok' };
   } catch (err) {
     if (err.name === 'TypeError' && err.message.includes('fetch')) {
       const offlineErr = new Error('Backend offline. Make sure FastAPI server is running on port 8000.');
@@ -92,4 +98,35 @@ export const api = {
     return request(`/overview/top-risk?${params.toString()}`);
   },
   getAboutData: () => request('/about-data'),
+  
+  // Dataset Ingestion Endpoints
+  getImportFormat: () => request('/datasets/import-format'),
+  getImportTemplateUrl: () => `${BASE_URL}/datasets/import-template`,
+  previewImportFile: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return request('/datasets/import-assessments/file?dry_run=true', {
+      method: 'POST',
+      body: formData,
+    });
+  },
+  importAssessmentsFile: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return request('/datasets/import-assessments/file', {
+      method: 'POST',
+      body: formData,
+    });
+  },
+  previewImportJson: (records) => request('/datasets/import-assessments?dry_run=true', {
+    method: 'POST',
+    body: JSON.stringify({ records }),
+  }),
+  importAssessmentsJson: (records) => request('/datasets/import-assessments', {
+    method: 'POST',
+    body: JSON.stringify({ records }),
+  }),
+  undoImportBatch: (batchId) => request(`/datasets/imports/${batchId}`, {
+    method: 'DELETE',
+  }),
 };
