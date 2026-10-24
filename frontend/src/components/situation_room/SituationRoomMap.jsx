@@ -218,113 +218,124 @@ export default function SituationRoomMap({
       {/* 2. Interactive Cause Breakdown Bar - Sorted Big to Low with Distinct Semantic Colors */}
       {sortedCauses.length > 0 && (
         <div className="space-y-2">
-          <div className="bg-white/95 backdrop-blur-md border border-black/[0.06] rounded-2xl p-2.5 px-3.5 flex items-center gap-2 overflow-x-auto no-scrollbar shadow-2xs">
-            {/* Context Label */}
-            <div className="flex items-center gap-1.5 shrink-0 mr-1.5 font-mono">
-              <Filter className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                {selectedCrop === 'all' ? 'NATIONAL CAUSES:' : `${selectedCrop.toUpperCase()} CAUSES:`}
-              </span>
-            </div>
+          <div className="relative group">
+            <div className="bg-white/95 backdrop-blur-md border border-black/[0.06] rounded-2xl p-2 px-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar shadow-2xs scroll-smooth">
+              {/* Context Label */}
+              <div className="flex items-center gap-1.5 shrink-0 mr-1 font-mono">
+                <Filter className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  {selectedCrop === 'all' ? 'NATIONAL CAUSES:' : `${selectedCrop.toUpperCase()} CAUSES:`}
+                </span>
+              </div>
 
-            {/* "All Causes" Reset Pill */}
-            <button
-              type="button"
-              onClick={() => setActiveCause('all')}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-mono font-bold whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-1.5 ${
-                activeCause === 'all'
-                  ? 'bg-slate-900 text-white shadow-xs scale-[1.02]'
-                  : 'bg-slate-100/90 text-slate-600 hover:bg-slate-200/80 border border-black/[0.04]'
-              }`}
-            >
-              <span>All Causes</span>
-            </button>
+              {/* "All Causes" Reset Pill - Crisp Ceramic White */}
+              <button
+                type="button"
+                onClick={() => setActiveCause('all')}
+                className={`px-2.5 py-1 rounded-full text-[10.5px] font-mono font-bold whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-1.5 border cursor-pointer ${
+                  activeCause === 'all'
+                    ? 'bg-white text-slate-900 border-slate-300 shadow-2xs ring-2 ring-emerald-500/25 scale-[1.02]'
+                    : 'bg-slate-50/90 text-slate-600 hover:bg-white hover:text-slate-900 border-black/[0.05]'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${activeCause === 'all' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                <span>All Causes</span>
+              </button>
 
-            {/* Individual Cause Pills (Sorted Big-to-Low) */}
-            {sortedCauses.map(([causeKey, share]) => {
-              const meta = CAUSE_LABELS[causeKey] || {
-                name: causeKey.replace('_', ' '),
-                shortName: causeKey,
-                icon: 'Bug',
-                hex: '#64748B',
-                bgLight: 'bg-slate-50',
-                borderLight: 'border-slate-200',
-                textLight: 'text-slate-800',
-                bgActive: 'bg-slate-800 text-white',
-                badgeLight: 'bg-white text-slate-800',
-                badgeActive: 'bg-white/20 text-white'
-              };
-              const IconComp = CAUSE_ICONS[meta.icon] || Bug;
-              const isSelected = activeCause === causeKey;
+              {/* Individual Cause Pills (Sorted Big-to-Low) */}
+              {sortedCauses.map(([causeKey, share]) => {
+                const meta = CAUSE_LABELS[causeKey] || {
+                  name: causeKey.replace('_', ' '),
+                  shortName: causeKey,
+                  icon: 'Bug',
+                  hex: '#64748B',
+                  bgLight: 'bg-slate-50',
+                  borderLight: 'border-slate-200',
+                  textLight: 'text-slate-800',
+                  bgActive: 'bg-slate-800 text-white',
+                  badgeLight: 'bg-white text-slate-800',
+                  badgeActive: 'bg-white/20 text-white'
+                };
+                const IconComp = CAUSE_ICONS[meta.icon] || Bug;
+                const isSelected = activeCause === causeKey;
 
-              return (
-                <button
-                  key={causeKey}
-                  type="button"
-                  onClick={() => setActiveCause(isSelected ? 'all' : causeKey)}
-                  className={`px-3 py-1.5 rounded-full text-[11px] font-mono whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-2 border cursor-pointer ${
-                    isSelected
-                      ? `${meta.bgActive} font-bold scale-[1.04] shadow-md z-10`
-                      : `${meta.bgLight} ${meta.borderLight} ${meta.textLight} ${meta.pillHover} hover:-translate-y-0.5 shadow-2xs font-semibold`
-                  }`}
-                  title={`${meta.name}: ${share}% of losses. Click to filter.`}
-                >
-                  <IconComp 
-                    className="w-3.5 h-3.5 shrink-0" 
-                    style={!isSelected ? { color: meta.hex } : undefined} 
-                  />
-                  <span>{meta.shortName || meta.name}</span>
-                  <span
-                    className={`font-mono font-black text-[10px] px-1.5 py-0.2 rounded-full border ${
+                return (
+                  <button
+                    key={causeKey}
+                    type="button"
+                    onClick={() => setActiveCause(isSelected ? 'all' : causeKey)}
+                    className={`px-2.5 py-1 rounded-full text-[10.5px] font-mono whitespace-nowrap shrink-0 transition-all duration-200 flex items-center gap-1.5 border cursor-pointer ${
                       isSelected
-                        ? meta.badgeActive
-                        : meta.badgeLight
+                        ? `${meta.bgActive} font-bold scale-[1.03] shadow-sm z-10`
+                        : `${meta.bgLight} ${meta.borderLight} ${meta.textLight} ${meta.pillHover} hover:-translate-y-0.5 shadow-2xs font-semibold`
                     }`}
+                    title={`${meta.name}: ${share}% of losses. Click to filter.`}
                   >
-                    {share}%
-                  </span>
-                </button>
-              );
-            })}
+                    <IconComp 
+                      className="w-3.5 h-3.5 shrink-0" 
+                      style={!isSelected ? { color: meta.hex } : undefined} 
+                    />
+                    <span>{meta.shortName || meta.name}</span>
+                    <span
+                      className={`font-mono font-black text-[9.5px] px-1.5 py-0.2 rounded-full border ${
+                        isSelected
+                          ? meta.badgeActive
+                          : meta.badgeLight
+                      }`}
+                    >
+                      {share}%
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {/* Subtle gradient scroll hint on right edge for horizontal overflow */}
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/90 to-transparent rounded-r-2xl hidden sm:block" />
           </div>
 
-          {/* Active Cause Filter Context Indicator */}
+          {/* Active Cause Filter Context Indicator - Refined Light Ceramic Card */}
           {activeCause !== 'all' && (
-            <div className="flex items-center justify-between bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-mono shadow-sm animate-in fade-in slide-in-from-top-1 duration-150">
+            <div 
+              className="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-mono border shadow-2xs animate-in fade-in slide-in-from-top-1 duration-150"
+              style={{
+                backgroundColor: `${CAUSE_LABELS[activeCause]?.hex || '#10B981'}0d`,
+                borderColor: `${CAUSE_LABELS[activeCause]?.hex || '#10B981'}33`,
+              }}
+            >
               <div className="flex items-center gap-2.5 flex-wrap">
                 <span
-                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs"
                   style={{ backgroundColor: CAUSE_LABELS[activeCause]?.hex || '#10B981' }}
                 />
-                <span>
-                  Active Cause Filter: <strong className="text-white">{CAUSE_LABELS[activeCause]?.name}</strong>
+                <span className="text-slate-900">
+                  Active Cause Filter: <strong className="font-bold text-slate-950">{CAUSE_LABELS[activeCause]?.name}</strong>
                   {activeBreakdown[activeCause] !== undefined && (
-                    <span className="text-slate-300 ml-1.5">
+                    <span className="text-slate-600 ml-1.5 font-medium">
                       ({activeBreakdown[activeCause]}% of {selectedCrop === 'all' ? 'national' : selectedCrop} losses)
                     </span>
                   )}
                 </span>
-                <span className="text-slate-400 text-[11px]">
+                <span className="text-slate-500 text-[11px] hidden sm:inline">
                   • Highlighting commodities & hotspots driven by this cause
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveCause('all')}
-                className="text-[11px] font-bold text-amber-300 hover:text-amber-200 underline ml-3 flex items-center gap-1 shrink-0"
+                className="text-[11px] font-bold text-slate-700 hover:text-slate-950 bg-white/90 hover:bg-white border border-slate-200/90 hover:border-slate-300 px-2.5 py-1 rounded-lg ml-3 flex items-center gap-1.5 shrink-0 transition-all shadow-2xs cursor-pointer active:scale-95"
               >
-                <X className="w-3 h-3" />
-                <span>Clear cause filter</span>
+                <X className="w-3 h-3 text-slate-500" />
+                <span>Clear filter</span>
               </button>
             </div>
           )}
         </div>
       )}
 
-      {/* 3. Core Spatial Layout: Cartography (Left 6), Hotspots (Mid 3), Vulnerable Crops (Right 3) */}
+      {/* 3. Core Spatial Layout: Cartography (Left 12/6), Hotspots (Mid 6/3), Vulnerable Crops (Right 6/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Left: Rwanda Cartography Card (Span 6) */}
-        <div className="lg:col-span-6 bg-white border border-black/[0.05] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] flex flex-col justify-between h-[560px] relative overflow-hidden">
+        {/* Left: Rwanda Cartography Card (Span 12 on laptop, Span 6 on 2K/Wide) */}
+        <div className="lg:col-span-12 xl:col-span-6 bg-white border border-black/[0.05] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] flex flex-col justify-between h-[480px] sm:h-[520px] xl:h-[560px] relative overflow-hidden">
           {/* Card Top Strip */}
           <div className="flex items-center justify-between pb-3 border-b border-black/[0.04] mb-3 flex-shrink-0 z-10">
             <div className="flex items-center gap-2">
@@ -434,8 +445,8 @@ export default function SituationRoomMap({
           </div>
         </div>
 
-        {/* Middle: Where Losses Are Highest (Span 3, h-[560px]) */}
-        <div className="lg:col-span-3">
+        {/* Middle: Where Losses Are Highest (Span 6 on laptop, Span 3 on 2K/Wide) */}
+        <div className="lg:col-span-6 xl:col-span-3">
           <DistrictHotspots
             selectedDistrict={selectedDistrict}
             onSelectDistrict={setSelectedDistrict}
@@ -445,8 +456,8 @@ export default function SituationRoomMap({
           />
         </div>
 
-        {/* Right: Vulnerable Commodities (Span 3, h-[560px]) */}
-        <div className="lg:col-span-3">
+        {/* Right: Vulnerable Commodities (Span 6 on laptop, Span 3 on 2K/Wide) */}
+        <div className="lg:col-span-6 xl:col-span-3">
           <CropRanking
             activeCause={activeCause}
             selectedCrop={selectedCrop}
