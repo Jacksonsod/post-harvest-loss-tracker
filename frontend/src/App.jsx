@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/layout/Header';
-import Navigation from './components/layout/Navigation';
+import Sidebar from './components/layout/Sidebar';
 import NewCoopModal from './components/layout/NewCoopModal';
 import SituationRoomMap from './components/situation_room/SituationRoomMap';
 import AssessmentEngine from './components/diagnostic/AssessmentEngine';
@@ -20,6 +19,7 @@ export default function App() {
   const [isNewCoopModalOpen, setIsNewCoopModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [latestAssessmentResult, setLatestAssessmentResult] = useState(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Initialize and check backend connection
   useEffect(() => {
@@ -77,80 +77,90 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900">
-      {/* 1. Situation Room Header */}
-      <Header
-        coops={coops}
-        selectedCoop={selectedCoop}
-        onSelectCoop={setSelectedCoop}
-        onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
-        isBackendLive={isBackendLive}
-      />
-
-      {/* 2. Tactical Navigation Bar with Integrated Season Switcher */}
-      <Navigation
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col lg:flex-row">
+      {/* 1. Ceramic Collapsible Sidebar Navigation Rail */}
+      <Sidebar
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         activeSeason={activeSeason}
         onSelectSeason={setActiveSeason}
+        coops={coops}
+        selectedCoop={selectedCoop}
+        onSelectCoop={setSelectedCoop}
+        onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
         onOpenReportModal={() => setIsReportModalOpen(true)}
+        isBackendLive={isBackendLive}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
 
-      {/* 3. Main Dashboard Content Viewport */}
-      <main className="flex-1 px-4 lg:px-8 py-5 max-w-[1720px] mx-auto w-full">
-        {activeTab === 'situation_room' && (
-          <SituationRoomMap
-            selectedCoop={selectedCoop}
-            onSelectCoop={setSelectedCoop}
-            activeSeason={activeSeason}
-            onSelectSeason={setActiveSeason}
-            onNavigateToDiagnostic={() => setActiveTab('diagnostic')}
-          />
-        )}
+      {/* 2. Main Executive Viewport Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+        <main className="flex-1 px-4 lg:px-8 py-5 max-w-[1720px] w-full mx-auto">
+          {activeTab === 'situation_room' && (
+            <SituationRoomMap
+              selectedCoop={selectedCoop}
+              onSelectCoop={setSelectedCoop}
+              activeSeason={activeSeason}
+              onSelectSeason={setActiveSeason}
+              onNavigateToDiagnostic={() => setActiveTab('diagnostic')}
+            />
+          )}
 
-        {activeTab === 'diagnostic' && (
-          <AssessmentEngine
-            selectedCoop={selectedCoop}
-            onAssessmentCompleted={handleAssessmentCompleted}
-            onOpenReportModal={() => setIsReportModalOpen(true)}
-          />
-        )}
+          {activeTab === 'diagnostic' && (
+            <AssessmentEngine
+              coops={coops}
+              selectedCoop={selectedCoop}
+              onSelectCoop={setSelectedCoop}
+              onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
+              onAssessmentCompleted={handleAssessmentCompleted}
+              onOpenReportModal={() => setIsReportModalOpen(true)}
+            />
+          )}
 
-        {activeTab === 'history' && (
-          <CoopHistory
-            selectedCoop={selectedCoop}
-            onNavigateToDiagnostic={() => setActiveTab('diagnostic')}
-            onViewReport={(assessment) => {
-              setLatestAssessmentResult(assessment);
-              setIsReportModalOpen(true);
-            }}
-          />
-        )}
+          {activeTab === 'history' && (
+            <CoopHistory
+              coops={coops}
+              selectedCoop={selectedCoop}
+              onSelectCoop={setSelectedCoop}
+              onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
+              onNavigateToDiagnostic={() => setActiveTab('diagnostic')}
+              onViewReport={(assessment) => {
+                setLatestAssessmentResult(assessment);
+                setIsReportModalOpen(true);
+              }}
+            />
+          )}
 
-        {activeTab === 'explorer' && (
-          <BenchmarkExplorer />
-        )}
-      </main>
+          {activeTab === 'explorer' && (
+            <BenchmarkExplorer
+              coops={coops}
+              selectedCoop={selectedCoop}
+              onSelectCoop={setSelectedCoop}
+            />
+          )}
+        </main>
 
-      {/* 4. Executive Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 px-4 lg:px-8 text-xs text-slate-500 font-mono">
-        <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span className="text-slate-600 font-medium">
-              NISR 2026 Big Data Hackathon • Track 1: Agricultural Productivity
-            </span>
+        {/* 3. Executive Footer */}
+        <footer className="border-t border-slate-200 bg-white py-4 px-4 lg:px-8 text-xs text-slate-500 font-mono">
+          <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span className="text-slate-600 font-medium">
+                NISR 2026 Big Data Hackathon • Track 1: Agricultural Productivity
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 text-[11px] text-slate-500">
+              <span>Data: NISR SAS 2024 & 2025</span>
+              <span>•</span>
+              <span>geoBoundaries RWA ADM2</span>
+              <span>•</span>
+              <span>NST2 Priority Aligned</span>
+            </div>
           </div>
-
-          <div className="flex items-center gap-4 text-[11px] text-slate-500">
-            <span>Data: NISR SAS 2024 & 2025</span>
-            <span>•</span>
-            <span>geoBoundaries RWA ADM2</span>
-            <span>•</span>
-            <span>NST2 Priority Aligned</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
 
       {/* Modals */}
       <NewCoopModal

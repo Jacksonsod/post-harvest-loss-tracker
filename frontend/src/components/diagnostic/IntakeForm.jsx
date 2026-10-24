@@ -48,10 +48,13 @@ export default function IntakeForm({
 
   const [formValidationError, setFormValidationError] = useState(null);
 
-  // Sync district if selected cooperative changes
+  // Sync district and primary crop if selected cooperative changes
   useEffect(() => {
     if (selectedCoop?.district) {
       setDistrict(selectedCoop.district);
+    }
+    if (selectedCoop?.primaryCrop) {
+      setCrop(selectedCoop.primaryCrop);
     }
   }, [selectedCoop]);
 

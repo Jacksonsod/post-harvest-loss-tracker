@@ -16,11 +16,19 @@ import {
   Plus,
   ShieldCheck,
   Layers,
-  ArrowRight
+  ArrowRight,
+  ChevronDown
 } from 'lucide-react';
 import { CAUSE_METADATA } from '../../data/nationalMetrics';
 
-export default function CoopHistory({ selectedCoop, onNavigateToDiagnostic, onViewReport }) {
+export default function CoopHistory({ 
+  coops = [],
+  selectedCoop, 
+  onSelectCoop,
+  onOpenNewCoopModal,
+  onNavigateToDiagnostic, 
+  onViewReport 
+}) {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -136,10 +144,41 @@ export default function CoopHistory({ selectedCoop, onNavigateToDiagnostic, onVi
             <Building2 className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-base font-bold text-slate-900 font-mono">{selectedCoop?.name}</h2>
+            <div className="flex items-center gap-2.5 flex-wrap mb-1">
+              {/* Interactive Cooperative Selector Dropdown */}
+              <div className="relative inline-flex items-center">
+                <select
+                  value={selectedCoop?.id || ''}
+                  onChange={(e) => {
+                    const coopId = Number(e.target.value);
+                    const found = coops.find((c) => c.id === coopId);
+                    if (found && onSelectCoop) onSelectCoop(found);
+                  }}
+                  className="text-sm sm:text-base font-bold text-slate-900 bg-slate-100/90 hover:bg-slate-200/80 border border-black/[0.08] rounded-xl pl-3 pr-8 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer transition-all shadow-2xs appearance-none font-mono"
+                  aria-label="Switch cooperative for performance history"
+                >
+                  {coops.map((coop) => (
+                    <option key={coop.id} value={coop.id}>
+                      {coop.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-500 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" />
+              </div>
+
+              {onOpenNewCoopModal && (
+                <button
+                  onClick={onOpenNewCoopModal}
+                  className="text-[10.5px] font-mono font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shadow-2xs active:scale-95"
+                  title="Register new cooperative"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Register Coop</span>
+                </button>
+              )}
+
               <span className="text-[10.5px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05] font-semibold">
-                {selectedCoop?.district} DISTRICT • {selectedCoop?.province || 'Province'}
+                {selectedCoop?.district} DISTRICT
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
                 NISR-COOP-#{String(selectedCoop?.id || '01').padStart(2, '0')}
