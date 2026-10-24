@@ -222,12 +222,121 @@ def build_benchmarks(df: pd.DataFrame) -> dict:
     }
 
 
+def build_extended_metrics(df: pd.DataFrame) -> dict:
+    """
+    Extra aggregates used by the redesigned UI, so the frontend never has to
+    hardcode national figures. Everything here is derived from the same
+    cleaned rows and the same weighted_avg() (weight-capped) as the core
+    benchmarks, so numbers are consistent across every screen.
+    """
+    MIN_SAMPLE = 5
+
+    def nested_counts(keys):
+        out = {}
+        for k, g in df.groupby(keys):
+            val, n = weighted_avg(g, "loss_rate_pct")
+            if val is None or n < MIN_SAMPLE:
+                continue
+            if len(keys) == 1:
+                out[k if not isinstance(k, tuple) else k[0]] = n
+            elif len(keys) == 2:
+                out.setdefault(k[0], {})[k[1]] = n
+            else:
+                out.setdefault(f"{k[0]}|{k[1]}", {})[k[2]] = n
+        return out
+
+    # Sample sizes, parallel to the existing benchmark dicts (same gating)
+    national_n = {crop: weighted_avg(g, "loss_rate_pct")[1] for crop, g in df.groupby("CropCategory")}
+    district_n = nested_counts(["s1q2", "CropCategory"])
+    district_season_n = nested_counts(["s1q2", "season", "CropCategory"])
+
+    # All-crop district figures (for the national choropleth)
+    district_overall = {}
+    for dist, g in df.groupby("s1q2"):
+        val, n = weighted_avg(g, "loss_rate_pct")
+        if val is not None and n >= MIN_SAMPLE:
+            district_overall[dist] = {"avg_loss_rate_pct": val, "n_records": n}
+
+    district_season_overall = {}
+    for (dist, season), g in df.groupby(["s1q2", "season"]):
+        val, n = weighted_avg(g, "loss_rate_pct")
+        if val is not None and n >= MIN_SAMPLE:
+            district_season_overall[f"{dist}|{season}"] = {"avg_loss_rate_pct": val, "n_records": n}
+
+    season_overall = {}
+    for season, g in df.groupby("season"):
+        val, n = weighted_avg(g, "loss_rate_pct")
+        if val is not None:
+            season_overall[season] = {"avg_loss_rate_pct": val, "n_records": n}
+
+    # All-crop cause shares (unweighted kg shares, same method as the per-crop breakdown)
+    totals = df[CAUSE_COLS].sum()
+    total_all = float(totals.sum())
+    cause_all = {CAUSE_LABELS[c]: round(float(totals[c] / total_all * 100), 1) for c in CAUSE_COLS} if total_all > 0 else {}
+
+    # Volatility flag: district|season|crop groups where >=15% of usable plots
+    # reported total (100%) loss. These are real but extreme seasons (see
+    # docs/DATA.md, Kayonza paddy rice) and should be shown with a caution.
+    volatility = {}
+    for (dist, season, crop), g in df.groupby(["s1q2", "season", "CropCategory"]):
+        d = g.dropna(subset=["loss_rate_pct", "plot_weight"])
+        if len(d) < MIN_SAMPLE:
+            continue
+        share_total = float((d["loss_rate_pct"] >= 100).mean())
+        if share_total >= 0.15:
+            volatility.setdefault(f"{dist}|{season}", {})[crop] = {
+                "share_plots_total_loss_pct": round(share_total * 100, 1),
+                "n_records": int(len(d)),
+            }
+
+    n_total = int(len(df))
+    n_nonzero = int((df["total_loss_kg"] > 0).sum())
+    metadata = {
+        "source": "NISR Seasonal Agricultural Survey (SAS) 2024 and 2025, Production files, Seasons A/B/C",
+        "survey_years": sorted(int(y) for y in df["survey_year"].dropna().unique()),
+        "n_records": n_total,
+        "n_records_with_loss": n_nonzero,
+        "share_records_with_loss_pct": round(n_nonzero / n_total * 100, 1) if n_total else None,
+        "n_districts": int(df["s1q2"].nunique()),
+        "n_crop_categories": int(df["CropCategory"].nunique()),
+        "years_note": "2024 and 2025 are pooled. Benchmarks vary by season (A/B/C), not by year.",
+    }
+
+    return {
+        "national_n_records": national_n,
+        "district_n_records": district_n,
+        "district_season_n_records": district_season_n,
+        "district_overall_avg_loss_rate_pct": district_overall,
+        "district_season_overall_avg_loss_rate_pct": district_season_overall,
+        "season_overall_avg_loss_rate_pct": season_overall,
+        "national_cause_of_loss_breakdown_all_crops_pct": cause_all,
+        "high_volatility_benchmarks": volatility,
+        "metadata": metadata,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-dir", required=True,
+    parser.add_argument("--from-cleaned", default=None,
+                         help="Rebuild benchmarks.json from an existing cleaned_production.csv "
+                              "(no raw NISR files needed)")
+    parser.add_argument("--data-dir", default=None,
                          help="Root folder containing raw SAS Production CSVs (searched recursively)")
     parser.add_argument("--output-dir", default=".", help="Folder to write outputs to")
     args = parser.parse_args()
+
+    if args.from_cleaned:
+        combined = pd.read_csv(args.from_cleaned)
+        benchmarks = build_benchmarks(combined)
+        benchmarks.update(build_extended_metrics(combined))
+        os.makedirs(args.output_dir, exist_ok=True)
+        out = os.path.join(args.output_dir, "benchmarks.json")
+        with open(out, "w") as f:
+            json.dump(benchmarks, f, indent=2)
+        print(f"Rebuilt {out} from {args.from_cleaned} ({len(combined)} rows)")
+        return
+    if not args.data_dir:
+        raise SystemExit("Provide --data-dir (raw NISR files) or --from-cleaned (cleaned_production.csv)")
 
     files = find_production_files(args.data_dir)
     if not files:
@@ -251,6 +360,7 @@ def main():
     print(f"\nWrote cleaned row-level data ({len(combined)} rows) to {cleaned_path}")
 
     benchmarks = build_benchmarks(combined)
+    benchmarks.update(build_extended_metrics(combined))
     benchmarks_path = os.path.join(args.output_dir, "benchmarks.json")
     with open(benchmarks_path, "w") as f:
         json.dump(benchmarks, f, indent=2)

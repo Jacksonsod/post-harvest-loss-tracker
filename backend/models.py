@@ -25,6 +25,7 @@ class CoopOut(BaseModel):
     id: int
     name: str
     district: str
+    is_sample: bool = False             # True for clearly labelled demo cooperatives
     created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
@@ -42,6 +43,9 @@ class BenchmarkOut(BaseModel):
     benchmark_source: str           # "district_season" | "district" | "national"
     avg_selling_price_rwf_per_kg: Optional[float] = None
     cause_of_loss_breakdown_pct: Optional[Dict[str, float]] = None
+    benchmark_n_records: Optional[int] = None          # sample size at benchmark_source level
+    high_volatility: bool = False                      # district_season level only
+    volatility_share_total_loss_pct: Optional[float] = None
 
 
 # ---------------------------------------------------------------------------
@@ -90,6 +94,9 @@ class AssessOut(BaseModel):
     recommendation: str
     estimated_loss_value_rwf: Optional[float]
     cause_of_loss_breakdown_pct: Optional[Dict[str, float]] = None
+    benchmark_n_records: Optional[int] = None
+    high_volatility: bool = False
+    volatility_share_total_loss_pct: Optional[float] = None
 
 
 # ---------------------------------------------------------------------------
@@ -132,6 +139,7 @@ class EstimateOut(BaseModel):
     expected_loss_kg: float
     expected_loss_value_rwf: Optional[float]
     avg_selling_price_rwf_per_kg: Optional[float]
+    benchmark_n_records: Optional[int] = None
 
 
 # ---------------------------------------------------------------------------
@@ -203,3 +211,114 @@ class StorageTypeItem(BaseModel):
 class StorageComparisonOut(BaseModel):
     crop: str
     storage_types: List[StorageTypeItem]
+
+
+# ---------------------------------------------------------------------------
+# /overview/national-summary — GET response
+# ---------------------------------------------------------------------------
+
+class SeasonOverallItem(BaseModel):
+    avg_loss_rate_pct: float
+    n_records: int
+
+
+class TopDistrictItem(BaseModel):
+    district: str
+    avg_loss_rate_pct: float
+    n_records: int
+
+
+class Nst2Block(BaseModel):
+    baseline_2023_pct: float
+    target_2029_pct: float
+    source: str
+
+
+class NationalSummaryOut(BaseModel):
+    overall_avg_loss_rate_pct: float
+    n_records: Optional[int]
+    n_records_with_loss: Optional[int]
+    share_records_with_loss_pct: Optional[float]
+    n_districts: Optional[int]
+    n_crop_categories: Optional[int]
+    survey_years: List[int]
+    season_overall: Dict[str, SeasonOverallItem]
+    cause_breakdown_all_crops_pct: Dict[str, float]
+    top_districts: List[TopDistrictItem]
+    nst2: Nst2Block
+
+
+# ---------------------------------------------------------------------------
+# /overview/map — GET response
+# ---------------------------------------------------------------------------
+
+class MapDistrictItem(BaseModel):
+    district: str
+    avg_loss_rate_pct: float
+    n_records: Optional[int]
+    above_reference: bool
+    high_volatility: bool
+
+
+class MapOut(BaseModel):
+    season: Optional[str]
+    crop: Optional[str]
+    national_reference_pct: Optional[float]
+    districts: List[MapDistrictItem]
+    districts_without_data: List[str]
+
+
+# ---------------------------------------------------------------------------
+# /overview/by-crop — GET response
+# ---------------------------------------------------------------------------
+
+class ByCropItem(BaseModel):
+    crop: str
+    avg_loss_rate_pct: float
+    n_records: Optional[int]
+    national_reference_pct: Optional[float]
+    avg_selling_price_rwf_per_kg: Optional[float]
+    dominant_cause: Optional[str]
+
+
+class ByCropOut(BaseModel):
+    district: Optional[str]
+    season: Optional[str]
+    crops: List[ByCropItem]
+
+
+# ---------------------------------------------------------------------------
+# /overview/top-risk — GET response
+# ---------------------------------------------------------------------------
+
+class TopRiskItem(BaseModel):
+    district: str
+    season: Optional[str]
+    crop: str
+    avg_loss_rate_pct: float
+    n_records: int
+    national_reference_pct: Optional[float]
+    ratio_to_national: Optional[float]
+    high_volatility: bool
+
+
+class TopRiskOut(BaseModel):
+    season: Optional[str]
+    min_records: int
+    groups: List[TopRiskItem]
+
+
+# ---------------------------------------------------------------------------
+# /about-data — GET response
+# ---------------------------------------------------------------------------
+
+class DataSourceItem(BaseModel):
+    name: str
+    url: Optional[str] = None
+    note: Optional[str] = None
+
+
+class AboutDataOut(BaseModel):
+    metadata: dict
+    methodology: List[str]
+    sources: List[DataSourceItem]

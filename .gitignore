@@ -7,7 +7,9 @@ __pycache__/
 venv/
 
 # Database — not committed
-backend/app.db
+*.db
+*.db.bak
+*.db-journal
 
 # Jupyter
 .ipynb_checkpoints/
@@ -15,6 +17,9 @@ backend/app.db
 # IDE
 .idea/
 .vscode/
+
+# Internal planning notes — shared privately, not published
+docs/IMPROVEMENT_PLAN.md
 
 # OS
 .DS_Store
