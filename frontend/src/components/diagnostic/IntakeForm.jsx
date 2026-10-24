@@ -3,15 +3,10 @@ import { DISTRICTS, CROPS, SEASONS, CAUSES_ORDER, CAUSE_LABELS } from '../../dat
 import { useOptions } from '../../context/OptionsContext';
 import LiveBenchmarkPreview from './LiveBenchmarkPreview';
 import { 
-  ClipboardList, 
   Sparkles, 
-  Sliders, 
   AlertCircle, 
-  CheckCircle2, 
   Send,
-  Zap,
   Activity,
-  Layers,
   Scissors,
   Bug,
   ShieldAlert,
@@ -37,6 +32,75 @@ const CAUSE_ICONS = {
   ShoppingBag,
 };
 
+export const DEMO_PROFILES = [
+  {
+    id: 'typical',
+    label: 'Typical Harvest',
+    district: 'Musanze',
+    crop: 'Maize',
+    season: 'A',
+    harvestedQtyKg: '50000',
+    causeLosses: {
+      harvesting_damage: 1200,
+      insects_pests: 1200,
+      theft: 400,
+      stalks_fallen: 500,
+      birds_animals: 300,
+      processing: 200,
+      transport: 300,
+      storage: 400,
+      packaging: 100,
+      sale: 100,
+    },
+    tag: '9.4% Loss • Benchmark Compliant',
+    dotColor: 'bg-emerald-500'
+  },
+  {
+    id: 'storage_rot',
+    label: 'Storage Rot Outbreak',
+    district: 'Nyagatare',
+    crop: 'Maize',
+    season: 'A',
+    harvestedQtyKg: '50000',
+    causeLosses: {
+      harvesting_damage: 500,
+      insects_pests: 800,
+      theft: 300,
+      stalks_fallen: 400,
+      birds_animals: 200,
+      processing: 200,
+      transport: 400,
+      storage: 5900,
+      packaging: 200,
+      sale: 200,
+    },
+    tag: '18.2% Loss • Elevated Storage Loss',
+    dotColor: 'bg-amber-500'
+  },
+  {
+    id: 'pest_crisis',
+    label: 'Bruchid Pest Crisis',
+    district: 'Gatsibo',
+    crop: 'Climbing bean',
+    season: 'B',
+    harvestedQtyKg: '25000',
+    causeLosses: {
+      harvesting_damage: 400,
+      insects_pests: 4200,
+      theft: 300,
+      stalks_fallen: 200,
+      birds_animals: 200,
+      processing: 100,
+      transport: 200,
+      storage: 300,
+      packaging: 50,
+      sale: 50,
+    },
+    tag: '24.0% Loss • Severe Pest Damage',
+    dotColor: 'bg-rose-500'
+  },
+];
+
 export default function IntakeForm({
   selectedCoop,
   onSubmit,
@@ -49,48 +113,31 @@ export default function IntakeForm({
   const cropList = options.crops?.length ? options.crops : CROPS;
   const seasonList = options.seasons?.length ? options.seasons : SEASONS;
 
-  const [district, setDistrict] = useState(selectedCoop?.district || districtList[0] || 'Musanze');
-  const [crop, setCrop] = useState(selectedCoop?.primaryCrop || 'Maize');
-  const [season, setSeason] = useState('A');
-  const [harvestedQtyKg, setHarvestedQtyKg] = useState('50000');
-  
-  // Dual-mode state: 'express' vs 'diagnostic'
-  const [mode, setMode] = useState('diagnostic');
-
-  // Express mode input
-  const [totalLossKg, setTotalLossKg] = useState('6000');
-
-  // Diagnostic mode inputs (10 causes in kg)
-  const [causeLosses, setCauseLosses] = useState({
-    theft: 500,
-    insects_pests: 3200,
-    birds_animals: 300,
-    stalks_fallen: 800,
-    harvesting_damage: 200,
-    transport: 200,
-    storage: 600,
-    processing: 100,
-    packaging: 50,
-    sale: 50,
-  });
-
+  const [activeProfile, setActiveProfile] = useState('typical');
+  const [district, setDistrict] = useState(DEMO_PROFILES[0].district);
+  const [crop, setCrop] = useState(DEMO_PROFILES[0].crop);
+  const [season, setSeason] = useState(DEMO_PROFILES[0].season);
+  const [harvestedQtyKg, setHarvestedQtyKg] = useState(DEMO_PROFILES[0].harvestedQtyKg);
+  const [causeLosses, setCauseLosses] = useState({ ...DEMO_PROFILES[0].causeLosses });
   const [formValidationError, setFormValidationError] = useState(null);
 
-  // Sync district and primary crop if selected cooperative changes
-  useEffect(() => {
-    if (selectedCoop?.district) {
-      setDistrict(selectedCoop.district);
-    }
-    if (selectedCoop?.primaryCrop) {
-      setCrop(selectedCoop.primaryCrop);
-    }
-  }, [selectedCoop]);
+  const handleSelectProfile = (profile) => {
+    setActiveProfile(profile.id);
+    setDistrict(profile.district);
+    setCrop(profile.crop);
+    setSeason(profile.season);
+    setHarvestedQtyKg(profile.harvestedQtyKg);
+    setCauseLosses({ ...profile.causeLosses });
+  };
 
-  // Compute calculated total loss based on active mode
-  const currentTotalLoss = mode === 'express'
-    ? parseFloat(totalLossKg) || 0
-    : Object.values(causeLosses).reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
+  const handleCauseChange = (key, val) => {
+    setActiveProfile('custom');
+    const num = Math.max(0, parseFloat(val) || 0);
+    setCauseLosses(prev => ({ ...prev, [key]: num }));
+  };
 
+  // Compute calculated total loss
+  const currentTotalLoss = Object.values(causeLosses).reduce((sum, v) => sum + (parseFloat(v) || 0), 0);
   const parsedHarvested = parseFloat(harvestedQtyKg) || 0;
   const currentLossRatePct = parsedHarvested > 0 
     ? ((currentTotalLoss / parsedHarvested) * 100).toFixed(1)
@@ -106,22 +153,10 @@ export default function IntakeForm({
         harvestedQtyKg: parsedHarvested,
         totalLossKg: currentTotalLoss,
         lossRatePct: parseFloat(currentLossRatePct),
-        causeLosses: mode === 'diagnostic' ? causeLosses : null,
+        causeLosses,
       });
     }
-  }, [district, crop, season, parsedHarvested, currentTotalLoss, currentLossRatePct, mode, causeLosses, onLiveChange]);
-
-  const handleCauseChange = (key, val) => {
-    const num = Math.max(0, parseFloat(val) || 0);
-    setCauseLosses(prev => ({ ...prev, [key]: num }));
-  };
-
-  const handleExpressPreset = (pct) => {
-    if (parsedHarvested > 0) {
-      const calculated = Math.round(parsedHarvested * (pct / 100));
-      setTotalLossKg(String(calculated));
-    }
-  };
+  }, [district, crop, season, parsedHarvested, currentTotalLoss, currentLossRatePct, causeLosses, onLiveChange]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -145,90 +180,83 @@ export default function IntakeForm({
     }
 
     const payload = {
-      coop_id: selectedCoop.id,
+      coop_id: selectedCoop?.id || 1,
       district,
       crop,
       season: season || null,
       harvested_qty_kg: parsedHarvested,
+      loss_by_cause_kg: causeLosses,
     };
-
-    if (mode === 'express') {
-      payload.total_loss_kg = currentTotalLoss;
-    } else {
-      payload.loss_by_cause_kg = causeLosses;
-    }
 
     onSubmit(payload);
   };
 
   return (
     <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-5">
-      {/* Header & Mode Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-black/[0.05] gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-800">
-              ASSESSMENT INTAKE
-            </span>
-          </div>
-          <h2 className="text-base font-bold text-slate-900 mt-0.5 flex items-center gap-2">
-            <ClipboardList className="w-4 h-4 text-emerald-600" />
-            <span>Check your harvest losses</span>
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Logging harvest for <strong className="text-slate-800 font-semibold">{selectedCoop?.name || 'Selected Cooperative'}</strong>
-          </p>
+      {/* 1-Click Pre-loaded Demo Profiles Bar */}
+      <div className="space-y-2 pb-4 border-b border-black/[0.05]">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <span>1-Click Scenarios:</span>
+          </span>
+          <span className="text-[10px] font-mono text-slate-400">Zero typing needed</span>
         </div>
 
-        {/* Dual Mode Switcher Pill */}
-        <div className="inline-flex items-center bg-slate-100/90 p-1 rounded-full border border-black/[0.04] self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={() => setMode('express')}
-            className={`px-3 py-1 rounded-full text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
-              mode === 'express'
-                ? 'bg-white text-slate-900 shadow-xs border border-black/[0.04]'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Zap className="w-3 h-3 text-amber-500" />
-            <span>Express</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('diagnostic')}
-            className={`px-3 py-1 rounded-full text-xs font-mono font-semibold transition-all flex items-center gap-1.5 ${
-              mode === 'diagnostic'
-                ? 'bg-white text-slate-900 shadow-xs border border-black/[0.04]'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Layers className="w-3 h-3 text-emerald-600" />
-            <span>10 Causes</span>
-          </button>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          {DEMO_PROFILES.map((p) => {
+            const isSelected = activeProfile === p.id;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => handleSelectProfile(p)}
+                className={`p-2.5 rounded-xl border text-left transition-all duration-150 cursor-pointer shadow-2xs ${
+                  isSelected
+                    ? 'bg-emerald-50/90 border-emerald-300 ring-2 ring-emerald-500/20'
+                    : 'bg-slate-50/80 border-black/[0.05] hover:bg-white hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs font-mono font-bold text-slate-900 truncate">
+                    {p.label}
+                  </span>
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${p.dotColor}`} />
+                </div>
+                <span className="text-[10px] font-mono text-slate-500 block mt-0.5 truncate">
+                  {p.district} • {p.crop}
+                </span>
+                <span className="text-[9.5px] font-mono font-semibold text-slate-600 block mt-1">
+                  {p.tag}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {(formValidationError || error) && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3 text-rose-800 text-xs">
+        <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3 text-rose-800 text-xs font-mono">
           <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
           <span>{formValidationError || error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Step 1: Context Selectors */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Context Selectors */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* District */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-600 mb-1.5 uppercase tracking-wider font-mono">
+            <label className="block text-[10.5px] font-bold text-slate-600 mb-1 font-mono uppercase tracking-wider">
               District
             </label>
             <select
               value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
+              onChange={(e) => {
+                setDistrict(e.target.value);
+                setActiveProfile('custom');
+              }}
+              className="w-full px-2.5 py-1.5 bg-slate-50/90 border border-black/[0.07] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all cursor-pointer"
             >
               {districtList.map((d) => (
                 <option key={d} value={d}>{d}</option>
@@ -238,13 +266,16 @@ export default function IntakeForm({
 
           {/* Crop */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-600 mb-1.5 uppercase tracking-wider font-mono">
+            <label className="block text-[10.5px] font-bold text-slate-600 mb-1 font-mono uppercase tracking-wider">
               Crop Commodity
             </label>
             <select
               value={crop}
-              onChange={(e) => setCrop(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
+              onChange={(e) => {
+                setCrop(e.target.value);
+                setActiveProfile('custom');
+              }}
+              className="w-full px-2.5 py-1.5 bg-slate-50/90 border border-black/[0.07] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all cursor-pointer"
             >
               {cropList.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -254,13 +285,16 @@ export default function IntakeForm({
 
           {/* Season */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-600 mb-1.5 uppercase tracking-wider font-mono">
+            <label className="block text-[10.5px] font-bold text-slate-600 mb-1 font-mono uppercase tracking-wider">
               Season
             </label>
             <select
               value={season}
-              onChange={(e) => setSeason(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
+              onChange={(e) => {
+                setSeason(e.target.value);
+                setActiveProfile('custom');
+              }}
+              className="w-full px-2.5 py-1.5 bg-slate-50/90 border border-black/[0.07] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all cursor-pointer"
             >
               {seasonList.map((s) => {
                 const sId = typeof s === 'string' ? s : s.id;
@@ -272,14 +306,14 @@ export default function IntakeForm({
             </select>
           </div>
 
-          {/* Harvested Quantity with Quick Presets */}
+          {/* Harvested Quantity */}
           <div>
-            <div className="flex justify-between items-center mb-1.5">
-              <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider font-mono">
-                Harvested (kg)
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-[10.5px] font-bold text-slate-600 font-mono uppercase tracking-wider">
+                Harvest (kg)
               </label>
-              <span className="text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full">
-                {parsedHarvested > 0 ? `${(parsedHarvested / 1000).toFixed(1)} t` : '0 t'}
+              <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
+                {parsedHarvested > 0 ? `${(parsedHarvested / 1000).toFixed(0)}t` : '0t'}
               </span>
             </div>
             <input
@@ -287,20 +321,26 @@ export default function IntakeForm({
               min="1"
               required
               value={harvestedQtyKg}
-              onChange={(e) => setHarvestedQtyKg(e.target.value)}
+              onChange={(e) => {
+                setHarvestedQtyKg(e.target.value);
+                setActiveProfile('custom');
+              }}
               placeholder="e.g. 50000"
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
+              className="w-full px-2.5 py-1.5 bg-slate-50/90 border border-black/[0.07] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs font-bold transition-all"
             />
             {/* Quick Presets */}
-            <div className="flex items-center gap-1.5 mt-2">
+            <div className="flex items-center gap-1.5 mt-1.5">
               {[10000, 25000, 50000, 100000].map((preset) => (
                 <button
                   key={preset}
                   type="button"
-                  onClick={() => setHarvestedQtyKg(String(preset))}
-                  className={`text-[9.5px] font-mono px-2 py-0.5 rounded-full border transition-all ${
+                  onClick={() => {
+                    setHarvestedQtyKg(String(preset));
+                    setActiveProfile('custom');
+                  }}
+                  className={`text-[9.5px] font-mono px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
                     harvestedQtyKg === String(preset)
-                      ? 'bg-slate-900 text-white border-slate-900 font-bold shadow-2xs'
+                      ? 'bg-emerald-50 text-emerald-900 border-emerald-300 font-bold shadow-2xs ring-1 ring-emerald-500/20'
                       : 'bg-slate-100/90 text-slate-600 border-black/[0.04] hover:bg-slate-200'
                   }`}
                 >
@@ -311,156 +351,96 @@ export default function IntakeForm({
           </div>
         </div>
 
-        {/* Step 2: Live Benchmark Preview Card */}
+        {/* Live Microdata Benchmark Reference */}
         <LiveBenchmarkPreview district={district} crop={crop} season={season} />
 
-        {/* Step 3: Loss Input (Express vs Diagnostic) */}
-        {mode === 'express' ? (
-          <div className="bg-slate-50/80 p-5 rounded-2xl border border-black/[0.05] space-y-3.5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <label className="block text-xs font-mono font-bold text-slate-800">
-                  Total Post-Harvest Loss Quantity (kg)
-                </label>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Enter estimated total loss or choose an express severity benchmark:
-                </p>
-              </div>
-
-              {/* Express Severity Preset Steppers */}
-              <div className="flex items-center gap-1.5">
-                {[
-                  { label: '5% Low', pct: 5 },
-                  { label: '10% Normal', pct: 10 },
-                  { label: '15% Elevated', pct: 15 },
-                  { label: '20% Severe', pct: 20 },
-                ].map((item) => (
-                  <button
-                    key={item.pct}
-                    type="button"
-                    onClick={() => handleExpressPreset(item.pct)}
-                    className="px-2 py-1 rounded-full text-[10px] font-mono font-bold bg-white border border-black/[0.06] text-slate-700 hover:border-emerald-500 hover:text-emerald-700 transition-all shadow-2xs active:scale-95"
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+        {/* Itemized 10 Causes Loss Grid */}
+        <div className="bg-slate-50/70 p-4 rounded-2xl border border-black/[0.05] space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-mono font-bold text-slate-800 uppercase tracking-wider">
+              Loss Quantities by Cause (kg)
+            </span>
+            <div className="bg-white px-2.5 py-1 rounded-lg border border-black/[0.05] text-xs font-mono">
+              <span className="text-slate-500 text-[10.5px]">Total Loss: </span>
+              <strong className="text-emerald-700 font-extrabold tnum">{currentTotalLoss.toLocaleString()} kg</strong>
+              <span className="text-slate-400 mx-1">•</span>
+              <strong className="text-slate-900 font-extrabold">{currentLossRatePct}%</strong>
             </div>
-
-            <div className="flex items-center gap-3">
-              <input
-                type="number"
-                min="0"
-                max={harvestedQtyKg}
-                value={totalLossKg}
-                onChange={(e) => setTotalLossKg(e.target.value)}
-                className="w-full max-w-xs px-3.5 py-2.5 bg-white border border-black/[0.08] rounded-xl text-sm font-mono text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs font-bold"
-              />
-              <div className="text-xs font-mono text-slate-600 bg-white px-3 py-2.5 rounded-xl border border-black/[0.06] shadow-2xs">
-                Loss Rate: <strong className="text-emerald-700 font-extrabold">{currentLossRatePct}%</strong>
-              </div>
-            </div>
-
-            <p className="text-[11px] text-slate-500 leading-relaxed">
-              In Express mode, the backend automatically attributes the dominant loss driver based on NISR national crop baseline distributions.
-            </p>
           </div>
-        ) : (
-          <div className="bg-slate-50/80 p-5 rounded-2xl border border-black/[0.05] space-y-3.5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h4 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                  <span>Itemized Loss Quantities by Cause (kg)</span>
-                  <span className="text-[10px] font-semibold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-black/[0.05]">
-                    10 NISR Dimensions
-                  </span>
-                </h4>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Enter volume lost at each supply chain stage. Percentages update in real time.
-                </p>
-              </div>
-              <div className="text-left sm:text-right bg-white px-3 py-1.5 rounded-xl border border-black/[0.05] shadow-2xs">
-                <span className="text-[10.5px] text-slate-500 font-mono">Running Loss Total: </span>
-                <span className="text-xs font-mono font-black text-emerald-700 tnum">
-                  {currentTotalLoss.toLocaleString()} kg ({currentLossRatePct}%)
-                </span>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {CAUSES_ORDER.map((cKey) => {
-                const meta = CAUSE_LABELS[cKey];
-                const causeKg = causeLosses[cKey] || 0;
-                const sharePct = currentTotalLoss > 0 
-                  ? ((causeKg / currentTotalLoss) * 100).toFixed(0) 
-                  : 0;
-                const IconComp = (meta && CAUSE_ICONS[meta.icon]) || Bug;
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+            {CAUSES_ORDER.map((cKey) => {
+              const meta = CAUSE_LABELS[cKey];
+              const causeKg = causeLosses[cKey] || 0;
+              const sharePct = currentTotalLoss > 0 
+                ? ((causeKg / currentTotalLoss) * 100).toFixed(0) 
+                : 0;
+              const IconComp = (meta && CAUSE_ICONS[meta.icon]) || Bug;
 
-                return (
-                  <div 
-                    key={cKey} 
-                    className="bg-white p-3 rounded-xl border border-black/[0.06] hover:border-black/[0.12] transition-all shadow-2xs flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <IconComp 
-                            className="w-3.5 h-3.5 shrink-0" 
-                            style={{ color: meta?.hex || '#64748B' }} 
-                          />
-                          <label 
-                            className="block text-[11px] font-mono text-slate-800 font-semibold truncate" 
-                            title={meta?.name || cKey}
-                          >
-                            {meta?.shortName || meta?.name || cKey}
-                          </label>
-                        </div>
-                        <span 
-                          className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded-full shrink-0 border"
-                          style={{
-                            backgroundColor: `${meta?.hex || '#10B981'}15`,
-                            color: meta?.hex || '#10B981',
-                            borderColor: `${meta?.hex || '#10B981'}30`,
-                          }}
-                        >
-                          {sharePct}%
-                        </span>
-                      </div>
-                      
-                      {/* Mini progress bar of cause share with cause color */}
-                      <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mb-2">
-                        <div 
-                          className="h-full rounded-full transition-all duration-300"
-                          style={{ 
-                            width: `${Math.min(100, sharePct)}%`,
-                            backgroundColor: meta?.hex || '#10B981'
-                          }}
+              return (
+                <div 
+                  key={cKey} 
+                  className="bg-white p-2.5 rounded-xl border border-black/[0.06] hover:border-black/[0.12] transition-all shadow-2xs flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <IconComp 
+                          className="w-3.5 h-3.5 shrink-0" 
+                          style={{ color: meta?.hex || '#64748B' }} 
                         />
+                        <label 
+                          className="block text-[10.5px] font-mono text-slate-800 font-semibold truncate" 
+                          title={meta?.name || cKey}
+                        >
+                          {meta?.shortName || meta?.name || cKey}
+                        </label>
                       </div>
-                    </div>
-
-                    <div className="relative">
-                      <input
-                        type="number"
-                        min="0"
-                        value={causeLosses[cKey]}
-                        onChange={(e) => handleCauseChange(cKey, e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-slate-50/80 border border-black/[0.06] rounded-lg text-xs font-mono text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 pr-7"
-                      />
-                      <span className="absolute right-2 top-1.5 text-[10px] font-mono text-slate-400 pointer-events-none">
-                        kg
+                      <span 
+                        className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full shrink-0 border"
+                        style={{
+                          backgroundColor: `${meta?.hex || '#10B981'}15`,
+                          color: meta?.hex || '#10B981',
+                          borderColor: `${meta?.hex || '#10B981'}30`,
+                        }}
+                      >
+                        {sharePct}%
                       </span>
                     </div>
+                    
+                    {/* Progress indicator */}
+                    <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mb-1.5">
+                      <div 
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{ 
+                          width: `${Math.min(100, sharePct)}%`,
+                          backgroundColor: meta?.hex || '#10B981'
+                        }}
+                      />
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
-        {/* Live Summary Strip & Submit */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-black/[0.05]">
-          <div className="text-xs font-mono text-slate-600 flex flex-wrap items-center gap-2 sm:gap-3">
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      value={causeLosses[cKey]}
+                      onChange={(e) => handleCauseChange(cKey, e.target.value)}
+                      className="w-full px-2 py-1 bg-slate-50/80 border border-black/[0.06] rounded-lg text-xs font-mono text-slate-900 font-bold focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 pr-6"
+                    />
+                    <span className="absolute right-1.5 top-1 text-[9.5px] font-mono text-slate-400 pointer-events-none">
+                      kg
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Action Strip & Submit */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-black/[0.05]">
+          <div className="text-xs font-mono text-slate-600 flex flex-wrap items-center gap-2">
             <span>Harvest: <strong className="text-slate-900 font-bold tnum">{parsedHarvested.toLocaleString()} kg</strong></span>
             <span className="text-slate-300">•</span>
             <span>Loss: <strong className="text-rose-700 font-bold tnum">{currentTotalLoss.toLocaleString()} kg</strong></span>
@@ -471,7 +451,7 @@ export default function IntakeForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition-all active:scale-[0.98] shadow-sm shadow-emerald-700/20 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -480,7 +460,7 @@ export default function IntakeForm({
               </span>
             ) : (
               <>
-                <Send className="w-3.5 h-3.5 text-emerald-400" />
+                <Send className="w-3.5 h-3.5 text-emerald-200" />
                 <span>Submit harvest assessment</span>
               </>
             )}

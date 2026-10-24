@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import NewCoopModal from './components/layout/NewCoopModal';
 import SituationRoomMap from './components/situation_room/SituationRoomMap';
-import AssessmentEngine from './components/diagnostic/AssessmentEngine';
 import PlanNextSeason from './components/simulator/PlanNextSeason';
 import CoopHistory from './components/history/CoopHistory';
 import BenchmarkExplorer from './components/explorer/BenchmarkExplorer';
@@ -114,26 +113,13 @@ export default function App() {
                 onSelectCoop={setSelectedCoop}
                 activeSeason={activeSeason}
                 onSelectSeason={setActiveSeason}
-                onNavigateToCheckLosses={() => setActiveTab('check_losses')}
                 onNavigateToPlanSeason={() => setActiveTab('plan_season')}
-              />
-            )}
-
-            {activeTab === 'check_losses' && (
-              <AssessmentEngine
-                coops={coops}
-                selectedCoop={selectedCoop}
-                onSelectCoop={setSelectedCoop}
-                onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
-                onAssessmentCompleted={handleAssessmentCompleted}
-                onOpenReportModal={() => setIsReportModalOpen(true)}
               />
             )}
 
             {activeTab === 'plan_season' && (
               <PlanNextSeason
                 selectedCoop={selectedCoop}
-                onNavigateToCheckLosses={() => setActiveTab('check_losses')}
               />
             )}
 
@@ -143,7 +129,7 @@ export default function App() {
                 selectedCoop={selectedCoop}
                 onSelectCoop={setSelectedCoop}
                 onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
-                onNavigateToCheckLosses={() => setActiveTab('check_losses')}
+                onNavigateToPlanSeason={() => setActiveTab('plan_season')}
                 onViewReport={(assessment) => {
                   setLatestAssessmentResult(assessment);
                   setIsReportModalOpen(true);

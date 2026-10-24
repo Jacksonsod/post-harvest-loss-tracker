@@ -190,9 +190,9 @@ export default function ResultCard({
 
         <button
           onClick={onOpenReportModal}
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-all active:scale-[0.96] shadow-xs shrink-0 self-start sm:self-auto"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all active:scale-[0.96] shadow-sm shadow-emerald-700/20 shrink-0 self-start sm:self-auto cursor-pointer"
         >
-          <FileText className="w-3.5 h-3.5 text-emerald-400" />
+          <FileText className="w-3.5 h-3.5 text-emerald-200" />
           <span>Export Official Report</span>
         </button>
       </div>

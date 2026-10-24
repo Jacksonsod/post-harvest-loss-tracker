@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../api/client';
 import { ShieldCheck, Target, TrendingDown, ArrowRight, Award, Info } from 'lucide-react';
 
-export default function PolicyActionBox({ onNavigateToCheckLosses, onNavigateToPlanSeason }) {
+export default function PolicyActionBox({ onNavigateToPlanSeason }) {
   const [policy, setPolicy] = useState(null);
   const [national, setNational] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,10 +51,10 @@ export default function PolicyActionBox({ onNavigateToCheckLosses, onNavigateToP
           {onNavigateToPlanSeason && (
             <button
               onClick={onNavigateToPlanSeason}
-              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-all flex items-center gap-1.5 active:scale-95 shadow-2xs"
+              className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white transition-all flex items-center gap-1.5 active:scale-95 shadow-sm shadow-emerald-700/20 cursor-pointer"
             >
               <span>Plan next season</span>
-              <ArrowRight className="w-3 h-3 text-emerald-400" />
+              <ArrowRight className="w-3 h-3 text-emerald-200" />
             </button>
           )}
         </div>

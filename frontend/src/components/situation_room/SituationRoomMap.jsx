@@ -51,7 +51,6 @@ export default function SituationRoomMap({
   onSelectCoop,
   activeSeason = 'all',
   onSelectSeason,
-  onNavigateToCheckLosses,
   onNavigateToPlanSeason
 }) {
   const { crops } = useOptions();
@@ -492,7 +491,6 @@ export default function SituationRoomMap({
 
       {/* 4. Policy Mitigation Alignment Box */}
       <PolicyActionBox
-        onNavigateToCheckLosses={onNavigateToCheckLosses}
         onNavigateToPlanSeason={onNavigateToPlanSeason}
       />
 
