@@ -26,14 +26,24 @@ export default function HistoryTrendChart({ assessments = [] }) {
     );
   }
 
-  // Format data for chart chronologically
+  // Format data for chart chronologically with distinct crop + date labels
   const chartData = assessments.map((a, idx) => {
     const harvested = a.harvested_qty_kg || 0;
     const loss = a.total_loss_kg || 0;
     const retained = Math.max(0, harvested - loss);
 
+    // Format a distinctive chronological label combining crop + date
+    const dateFormatted = a.created_at
+      ? new Date(a.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+      : `H#${idx + 1}`;
+
+    const label = `${a.crop || 'Harvest'} (${dateFormatted})`;
+
     return {
-      label: a.season ? `Season ${a.season}` : `Harvest #${idx + 1}`,
+      label,
+      fullTitle: `${a.crop || 'Crop'} • Season ${a.season || 'A'} (${dateFormatted})`,
+      date: dateFormatted,
+      season: a.season || 'A',
       lossRate: Number((a.loss_rate_pct || 0).toFixed(1)),
       benchmark: Number((a.benchmark_used_pct || 11.5).toFixed(1)),
       nst2Target: 10.0,
@@ -131,9 +141,10 @@ export default function HistoryTrendChart({ assessments = [] }) {
               <XAxis 
                 dataKey="label" 
                 stroke="#94A3B8" 
-                fontSize={11} 
+                fontSize={10.5} 
                 fontFamily="ui-monospace, monospace"
                 tickLine={false}
+                interval={0}
               />
               <YAxis 
                 stroke="#94A3B8" 
@@ -145,23 +156,40 @@ export default function HistoryTrendChart({ assessments = [] }) {
                 domain={[0, 'dataMax + 4']}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
+                    const isMeetingTarget = data.lossRate <= 5.0;
                     return (
-                      <div className="bg-white/95 border border-black/[0.08] p-3 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1">
-                        <span className="font-extrabold text-slate-900 block">{label} • {data.crop}</span>
-                        <div className="text-emerald-700 font-bold flex justify-between gap-4">
-                          <span>Actual Loss:</span>
-                          <strong>{data.lossRate}%</strong>
+                      <div className="bg-white/95 border border-black/[0.08] p-3.5 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1.5 min-w-[220px]">
+                        <div className="border-b border-black/[0.05] pb-1.5">
+                          <span className="font-extrabold text-slate-900 block">{data.fullTitle}</span>
                         </div>
-                        <div className="text-amber-700 font-medium flex justify-between gap-4">
-                          <span>Benchmark:</span>
-                          <strong>{data.benchmark}%</strong>
+                        <div className="space-y-1 pt-0.5">
+                          <div className="flex justify-between items-center text-emerald-800 font-bold">
+                            <span>Loss Rate:</span>
+                            <span className="text-sm font-black">{data.lossRate}%</span>
+                          </div>
+                          <div className="flex justify-between items-center text-amber-700">
+                            <span>District Baseline:</span>
+                            <span>{data.benchmark}%</span>
+                          </div>
+                          <div className="flex justify-between items-center text-slate-600">
+                            <span>Forfeited Revenue:</span>
+                            <span className="font-bold text-amber-800">~{data.lossRwfMillion}M RWF</span>
+                          </div>
                         </div>
-                        <div className="text-slate-500 text-[10px] pt-1 border-t border-black/[0.05] flex justify-between gap-4">
-                          <span>Revenue Depletion:</span>
-                          <strong className="text-slate-900">~{data.lossRwfMillion}M RWF</strong>
+                        <div className="pt-1.5 border-t border-black/[0.05] flex items-center justify-between text-[10px]">
+                          <span className="text-slate-400">NST2 Alignment:</span>
+                          <span className={`font-bold px-1.5 py-0.5 rounded-full ${
+                            isMeetingTarget 
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+                              : data.lossRate <= 10.0 
+                              ? 'bg-blue-50 text-blue-800 border border-blue-200' 
+                              : 'bg-rose-50 text-rose-800 border border-rose-200'
+                          }`}>
+                            {isMeetingTarget ? '≤5.0% Met' : data.lossRate <= 10.0 ? 'Within Cap' : 'Above Target'}
+                          </span>
                         </div>
                       </div>
                     );
@@ -173,20 +201,20 @@ export default function HistoryTrendChart({ assessments = [] }) {
                 wrapperStyle={{ fontSize: '11px', fontFamily: 'ui-monospace, monospace', paddingTop: '8px' }} 
               />
               {/* Shaded NST2 Target Corridor */}
-              <ReferenceArea y1={0} y2={10} fill="#10B981" fillOpacity={0.08} />
+              <ReferenceArea y1={0} y2={10} fill="#10B981" fillOpacity={0.06} />
               <ReferenceLine 
                 y={10} 
                 stroke="#059669" 
                 strokeDasharray="4 4" 
                 strokeWidth={1.5}
-                label={{ value: 'NST2 Cap (10%)', position: 'insideTopLeft', fill: '#059669', fontSize: 10, fontFamily: 'monospace', fontWeight: 'bold' }} 
+                label={{ value: 'NST2 Cap (10%)', position: 'insideTopRight', fill: '#059669', fontSize: 10, fontFamily: 'monospace', fontWeight: 'bold' }} 
               />
               <ReferenceLine 
                 y={5} 
                 stroke="#10B981" 
                 strokeDasharray="2 2" 
                 strokeWidth={1}
-                label={{ value: 'NST2 Target (5%)', position: 'insideBottomLeft', fill: '#10B981', fontSize: 9.5, fontFamily: 'monospace' }} 
+                label={{ value: 'NST2 Target (5%)', position: 'insideBottomRight', fill: '#10B981', fontSize: 9.5, fontFamily: 'monospace' }} 
               />
               <Line
                 type="monotone"
@@ -226,18 +254,18 @@ export default function HistoryTrendChart({ assessments = [] }) {
                 axisLine={false}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="bg-white/95 border border-black/[0.08] p-3 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1">
-                        <span className="font-extrabold text-slate-900 block">{label} • {data.crop}</span>
-                        <div className="text-amber-800 font-bold flex justify-between gap-4">
+                      <div className="bg-white/95 border border-black/[0.08] p-3.5 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1.5 min-w-[210px]">
+                        <span className="font-extrabold text-slate-900 block border-b border-black/[0.05] pb-1">{data.fullTitle}</span>
+                        <div className="text-amber-800 font-bold flex justify-between gap-4 pt-0.5">
                           <span>Financial Forfeited:</span>
                           <strong>{Math.round(data.lossRwf).toLocaleString()} RWF</strong>
                         </div>
                         <div className="text-slate-500 text-[10.5px]">
-                          Crop Volume Loss Rate: {data.lossRate}%
+                          Crop Volume Loss Rate: <span className="font-bold text-slate-700">{data.lossRate}%</span>
                         </div>
                       </div>
                     );
@@ -275,13 +303,13 @@ export default function HistoryTrendChart({ assessments = [] }) {
                 axisLine={false}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="bg-white/95 border border-black/[0.08] p-3 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1">
-                        <span className="font-extrabold text-slate-900 block">{label} • {data.crop}</span>
-                        <div className="text-emerald-700 font-bold flex justify-between gap-4">
+                      <div className="bg-white/95 border border-black/[0.08] p-3.5 rounded-2xl text-xs font-mono shadow-xl backdrop-blur-md space-y-1.5 min-w-[220px]">
+                        <span className="font-extrabold text-slate-900 block border-b border-black/[0.05] pb-1">{data.fullTitle}</span>
+                        <div className="text-emerald-700 font-bold flex justify-between gap-4 pt-0.5">
                           <span>Retained Marketable Yield:</span>
                           <strong>{data.retainedTons} tons</strong>
                         </div>
