@@ -71,7 +71,7 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
         </div>
         <h4 className="text-sm font-bold text-slate-900 font-mono">No Harvest Assessments Recorded Yet</h4>
         <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 leading-relaxed">
-          This cooperative does not have historical survey entries in the database. Use the Diagnostic Engine tab to record your first verified post-harvest survey.
+          This cooperative does not have historical records in the database. Use the "Check losses" tab to record your first verified post-harvest survey.
         </p>
       </div>
     );
