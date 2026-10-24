@@ -4,27 +4,9 @@ import { useOptions } from '../../context/OptionsContext';
 import { api } from '../../api/client';
 import { 
   Database, 
-  Search, 
-  Filter, 
-  ShieldCheck, 
-  DollarSign, 
-  BarChart2, 
   Download, 
-  FileSpreadsheet, 
-  CheckCircle2, 
-  TrendingUp, 
-  TrendingDown, 
+  BarChart2, 
   SlidersHorizontal, 
-  Layers, 
-  Award, 
-  Sparkles, 
-  Scale, 
-  Zap, 
-  Info,
-  Building2,
-  ChevronDown,
-  Target,
-  ArrowRight,
   AlertCircle,
   Scissors,
   Bug,
@@ -34,7 +16,8 @@ import {
   Truck,
   Warehouse,
   Package,
-  ShoppingBag
+  ShoppingBag,
+  TrendingDown
 } from 'lucide-react';
 
 const CAUSE_ICONS = {
@@ -50,34 +33,20 @@ const CAUSE_ICONS = {
   ShoppingBag,
 };
 
-const QUICK_CROPS = [
-  { name: 'Maize', icon: '🌽' },
-  { name: 'Irish potato', icon: '🥔' },
-  { name: 'Paddy rice', icon: '🌾' },
-  { name: 'Climbing bean', icon: '🫘' },
-  { name: 'Cassava', icon: '🍠' },
-  { name: 'Banana for beer', icon: '🍌' },
-];
-
-export default function BenchmarkExplorer({
-  coops = [],
-  selectedCoop,
-  onSelectCoop
-}) {
+export default function BenchmarkExplorer() {
   const options = useOptions();
   const districtList = options.districts?.length ? options.districts : DISTRICTS;
   const cropList = options.crops?.length ? options.crops : CROPS;
   const seasonList = options.seasons?.length ? options.seasons : SEASONS;
 
-  const [district, setDistrict] = useState(selectedCoop?.district || 'Musanze');
-  const [crop, setCrop] = useState(selectedCoop?.primaryCrop || 'Irish potato');
+  const [district, setDistrict] = useState('Musanze');
+  const [crop, setCrop] = useState('Irish potato');
   const [season, setSeason] = useState('A');
   const [benchmark, setBenchmark] = useState(null);
   const [nationalSummary, setNationalSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [metricDisplayMode, setMetricDisplayMode] = useState('percent'); // 'percent' | 'rwf_100t'
-  const [activeCoopId, setActiveCoopId] = useState(selectedCoop?.id || '');
 
   // Fetch national summary baseline once
   useEffect(() => {
@@ -85,26 +54,6 @@ export default function BenchmarkExplorer({
       .then(data => setNationalSummary(data))
       .catch(() => {});
   }, []);
-
-  // Sync if selectedCoop prop changes from sidebar
-  useEffect(() => {
-    if (selectedCoop) {
-      setActiveCoopId(selectedCoop.id);
-      if (selectedCoop.district) setDistrict(selectedCoop.district);
-      if (selectedCoop.primaryCrop) setCrop(selectedCoop.primaryCrop);
-    }
-  }, [selectedCoop]);
-
-  const handleSelectCoop = (idVal) => {
-    setActiveCoopId(idVal);
-    if (!idVal) return;
-    const found = coops.find((c) => c.id === Number(idVal));
-    if (found) {
-      if (onSelectCoop) onSelectCoop(found);
-      if (found.district) setDistrict(found.district);
-      if (found.primaryCrop) setCrop(found.primaryCrop);
-    }
-  };
 
   const fetchBenchmark = () => {
     setLoading(true);
@@ -182,8 +131,6 @@ export default function BenchmarkExplorer({
   const p75 = Number((medianRate * 1.35).toFixed(1));
   const p90 = Number((medianRate * 1.85).toFixed(1));
 
-  const coopActualLoss = selectedCoop?.lossRatePct ?? null;
-
   const farmgatePrice = benchmark?.avg_selling_price_rwf_per_kg || 480;
   const natAvg = nationalSummary?.overall_avg_loss_rate_pct ?? 10.22;
   const deltaVsNat = (medianRate - natAvg).toFixed(2);
@@ -215,7 +162,7 @@ export default function BenchmarkExplorer({
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-1 font-medium">
-                Browse empirical post-harvest loss benchmarks from the NISR Seasonal Agricultural Survey.
+                Browse empirical post-harvest loss benchmarks from the NISR Seasonal Agricultural Survey across Rwanda&apos;s 30 districts.
               </p>
             </div>
           </div>
@@ -223,69 +170,25 @@ export default function BenchmarkExplorer({
           {benchmark && (
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-all active:scale-95 shadow-xs shrink-0 self-start sm:self-auto"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all active:scale-95 shadow-sm shadow-emerald-700/20 shrink-0 self-start sm:self-auto cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <Download className="w-3.5 h-3.5 text-emerald-200" />
               <span>Export Benchmark CSV</span>
             </button>
           )}
         </div>
 
-        {/* Quick Commodity Preset Pills */}
-        <div className="flex items-center gap-1.5 flex-wrap pt-1">
-          <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-emerald-600" />
-            <span>Quick Crops:</span>
-          </span>
-          {QUICK_CROPS.map((qc) => (
-            <button
-              key={qc.name}
-              type="button"
-              onClick={() => setCrop(qc.name)}
-              className={`px-3 py-1 rounded-full text-xs font-mono font-semibold transition-all flex items-center gap-1.5 shadow-2xs active:scale-95 ${
-                crop === qc.name
-                  ? 'bg-slate-900 text-white font-bold'
-                  : 'bg-slate-100/90 hover:bg-slate-200/80 text-slate-700 border border-black/[0.04]'
-              }`}
-            >
-              <span>{qc.icon}</span>
-              <span>{qc.name}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* 4 Interactive Dropdown Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2 border-t border-black/[0.05]">
-          {/* 1. Context Cooperative */}
+        {/* 3 Interactive Dropdown Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 border-t border-black/[0.05]">
+          {/* 1. Target District */}
           <div>
             <label className="block text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              COOPERATIVE CONTEXT
-            </label>
-            <div className="relative">
-              <select
-                value={activeCoopId}
-                onChange={(e) => handleSelectCoop(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
-              >
-                <option value="">None (Generic Explorer)</option>
-                {coops.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} ({c.district})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* 2. District Filter */}
-          <div>
-            <label className="block text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              TARGET DISTRICT
+              Target District
             </label>
             <select
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
+              className="w-full px-3.5 py-2 bg-slate-50/90 hover:bg-slate-100/80 border border-black/[0.08] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
             >
               {districtList.map((d) => (
                 <option key={d} value={d}>{d}</option>
@@ -293,15 +196,15 @@ export default function BenchmarkExplorer({
             </select>
           </div>
 
-          {/* 3. Crop Filter */}
+          {/* 2. Crop Commodity */}
           <div>
             <label className="block text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              CROP COMMODITY
+              Crop Commodity
             </label>
             <select
               value={crop}
               onChange={(e) => setCrop(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
+              className="w-full px-3.5 py-2 bg-slate-50/90 hover:bg-slate-100/80 border border-black/[0.08] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
             >
               {cropList.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -309,15 +212,15 @@ export default function BenchmarkExplorer({
             </select>
           </div>
 
-          {/* 4. Agricultural Season */}
+          {/* 3. Agricultural Season */}
           <div>
             <label className="block text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              AGRICULTURAL SEASON
+              Agricultural Season
             </label>
             <select
               value={season}
               onChange={(e) => setSeason(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
+              className="w-full px-3.5 py-2 bg-slate-50/90 hover:bg-slate-100/80 border border-black/[0.08] text-slate-900 rounded-xl text-xs font-mono font-medium focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs cursor-pointer transition-all"
             >
               <option value="">All Seasons (Combined)</option>
               {seasonList.map((s) => {
@@ -358,137 +261,106 @@ export default function BenchmarkExplorer({
             </div>
           )}
 
-          {/* Key Metrics Strip (4 Ceramic Cards) */}
+          {/* Key Metrics Strip (4 Ceramic Intelligence Tiles) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Statistical Baseline Loss */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
+            {/* Survey Baseline Loss */}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase">
-                  SURVEY BASELINE LOSS
+                <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                  Survey Baseline Loss
                 </span>
                 {benchmark.benchmark_n_records && (
-                  <span className="text-[9.5px] font-mono font-bold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded-full">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-black/[0.04]">
                     {benchmark.benchmark_n_records.toLocaleString()} plots
                   </span>
                 )}
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-mono font-black text-slate-900 tnum">
-                  {benchmark.benchmark_loss_rate_pct.toFixed(1)}%
+              <div className="space-y-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-mono font-black text-slate-900 tnum">
+                    {benchmark.benchmark_loss_rate_pct.toFixed(1)}%
+                  </span>
+                  <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
+                    parseFloat(deltaVsNat) <= 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-700'
+                  }`}>
+                    {parseFloat(deltaVsNat) > 0 ? `+${deltaVsNat}%` : `${deltaVsNat}%`} vs Nat&apos;l
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 block font-mono">
+                  ~{Math.round(benchmark.benchmark_loss_rate_pct)} kg lost per 100 kg harvested
                 </span>
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
-                  parseFloat(deltaVsNat) <= 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-700'
-                }`}>
-                  {parseFloat(deltaVsNat) > 0 ? `+${deltaVsNat}%` : `${deltaVsNat}%`} vs Nat'l
+                <span className="text-[10px] text-slate-400 block capitalize">
+                  Source: {benchmark.benchmark_source.replace('_', ' ')}
                 </span>
               </div>
-              <span className="text-[10px] text-slate-500 block mt-1 font-mono">
-                ~{Math.round(benchmark.benchmark_loss_rate_pct)} kg lost per 100 kg harvested
-              </span>
-              <span className="text-[9.5px] text-slate-400 block mt-0.5 capitalize">
-                Source: {benchmark.benchmark_source.replace('_', ' ')}
-              </span>
             </div>
 
-            {/* Benchmark Farmgate Price */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">
-                FARMGATE SELLING PRICE
+            {/* Farmgate Selling Price */}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider mb-1">
+                Farmgate Selling Price
               </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-mono font-black text-emerald-700 tnum">
-                  {benchmark.avg_selling_price_rwf_per_kg ? `${Math.round(benchmark.avg_selling_price_rwf_per_kg)}` : '520'}
+              <div className="space-y-1">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-mono font-black text-emerald-700 tnum">
+                    {benchmark.avg_selling_price_rwf_per_kg ? `${Math.round(benchmark.avg_selling_price_rwf_per_kg)}` : '520'}
+                  </span>
+                  <span className="text-xs font-mono font-semibold text-slate-500">RWF/kg</span>
+                </div>
+                <span className="text-[11px] text-slate-500 block">
+                  NISR Official Farmgate Index
                 </span>
-                <span className="text-xs font-mono font-semibold text-slate-500">RWF/kg</span>
               </div>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                NISR Official Farmgate Index
-              </span>
             </div>
 
-            {/* NST2 Target Distance */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">
-                NST2 TARGET STATUS (≤5%)
+            {/* NST2 Target Status */}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider mb-1">
+                NST2 Target Status (≤5.0%)
               </span>
-              <div className="flex items-baseline gap-2">
-                <span className={`text-2xl font-mono font-black uppercase ${
+              <div className="space-y-1">
+                <span className={`text-2xl font-mono font-black block ${
                   parseFloat(gapToNST2) <= 0 ? 'text-emerald-700' : parseFloat(gapToNST2) <= 5.0 ? 'text-amber-700' : 'text-rose-700'
                 }`}>
-                  {parseFloat(gapToNST2) <= 0 ? 'COMPLIANT' : `+${gapToNST2}% GAP`}
+                  {parseFloat(gapToNST2) <= 0 ? 'Compliant' : `+${gapToNST2}% Gap`}
+                </span>
+                <span className="text-[11px] text-slate-500 block">
+                  Target: ≤5.0% by Rwanda Vision 2050
                 </span>
               </div>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                Goal: ≤5.0% by Rwanda Vision 2050
-              </span>
             </div>
 
-            {/* Macro Depletion on 100t */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
-              <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">
-                VALUE AT RISK PER 100T
+            {/* Estimated Loss per 100 Tons */}
+            <div className="bg-white/95 rounded-2xl border border-black/[0.06] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+              <span className="text-[11px] font-mono text-slate-500 font-bold uppercase tracking-wider mb-1">
+                Estimated Loss per 100 Tons
               </span>
-              <span className="text-2xl font-mono font-black text-rose-800 tnum block">
-                ~{(depletion100tRwf / 1000000).toFixed(2)}M RWF
-              </span>
-              <span className="text-[10px] text-slate-500 block mt-1">
-                Depletes {Math.round(depletion100tKg).toLocaleString()} kg volume per 100t
-              </span>
+              <div className="space-y-1">
+                <span className="text-2xl font-mono font-black text-rose-800 tnum block">
+                  ~{(depletion100tRwf / 1000000).toFixed(2)}M RWF
+                </span>
+                <span className="text-[11px] text-slate-500 block">
+                  Depletes {Math.round(depletion100tKg).toLocaleString()} kg volume per 100t
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Context Cooperative vs Benchmark Comparative Intelligence Strip */}
-          {selectedCoop && coopActualLoss !== null && (
-            <div className="bg-emerald-50/70 border border-emerald-500/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 flex items-center justify-center font-bold shrink-0">
-                  <Building2 className="w-5 h-5" />
+          {/* Survey Loss Distribution & Risk Bands */}
+          <div className="bg-white/95 border border-black/[0.06] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/[0.05]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 flex items-center justify-center shrink-0">
+                  <SlidersHorizontal className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-mono font-bold text-slate-900">
-                      {selectedCoop.name}
-                    </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white text-emerald-800 font-bold border border-emerald-200">
-                      Recorded Loss: {coopActualLoss}%
-                    </span>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
-                      coopActualLoss <= medianRate 
-                        ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
-                        : 'bg-rose-100 text-rose-800 border-rose-300'
-                    }`}>
-                      {coopActualLoss <= medianRate 
-                        ? `↓ ${(medianRate - coopActualLoss).toFixed(1)}% Superior to District Baseline` 
-                        : `↑ ${(coopActualLoss - medianRate).toFixed(1)}% Above District Baseline`}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-600 mt-0.5">
-                    Compared with {district} {crop} baseline ({medianRate.toFixed(1)}%) and NST2 national target (≤5.0%).
+                  <h3 className="text-xs font-mono font-bold tracking-tight text-slate-900 uppercase">
+                    Survey Loss Distribution & Risk Bands
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    Empirical quartile ranges from farmer-reported survey microdata
                   </p>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 font-mono text-[11px]">
-                <span className="text-slate-500">NST2 Target:</span>
-                <span className={`font-bold px-2.5 py-0.5 rounded-lg border ${
-                  coopActualLoss <= 5.0 
-                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
-                    : 'bg-amber-100 text-amber-800 border-amber-300'
-                }`}>
-                  {coopActualLoss <= 5.0 ? 'Compliant (≤5.0%)' : `+${(coopActualLoss - 5.0).toFixed(1)}% Gap`}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Statistical Quantile Distribution Visualizer */}
-          <div className="bg-white/95 border border-black/[0.06] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-emerald-600" />
-                <h3 className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
-                  Empirical Microdata Distribution (P25 • P50 • P75 • P90)
-                </h3>
               </div>
               {benchmark.benchmark_n_records && (
                 <span className="text-[10px] font-mono text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-black/[0.05]">
@@ -498,55 +370,49 @@ export default function BenchmarkExplorer({
             </div>
 
             {/* Quantile Continuum Multi-Segment Bar */}
-            <div className="space-y-1.5">
-              <div className="relative w-full h-4 rounded-full bg-slate-100 border border-black/[0.06] overflow-hidden flex shadow-inner">
-                <div className="w-[25%] bg-emerald-400/70 border-r border-white/60" title={`P25: ${p25}%`} />
-                <div className="w-[25%] bg-emerald-500/80 border-r border-white/60" title={`P50 Median: ${p50}%`} />
-                <div className="w-[25%] bg-amber-400/80 border-r border-white/60" title={`P75: ${p75}%`} />
-                <div className="w-[25%] bg-rose-500/80" title={`P90 Outliers: ${p90}%`} />
+            <div className="space-y-2">
+              <div className="relative w-full h-3.5 rounded-full bg-slate-100 border border-black/[0.06] overflow-hidden flex shadow-inner gap-0.5 p-0.5">
+                <div className="w-[25%] bg-emerald-400 rounded-full" title={`P25: ${p25}%`} />
+                <div className="w-[25%] bg-emerald-500 rounded-full" title={`P50 Median: ${p50}%`} />
+                <div className="w-[25%] bg-amber-400 rounded-full" title={`P75: ${p75}%`} />
+                <div className="w-[25%] bg-rose-500 rounded-full" title={`P90 Outliers: ${p90}%`} />
               </div>
 
-              {/* NST2 Target & Coop Marker Indicators */}
-              <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 px-1 flex-wrap gap-1">
-                <span>0% Resilient</span>
-                <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  🎯 NST2 Target: ≤5.0%
+              {/* Threshold Indicators */}
+              <div className="flex justify-between items-center text-[10.5px] font-mono text-slate-500 px-1 flex-wrap gap-1">
+                <span>0% Minimal Loss</span>
+                <span className="text-emerald-800 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  NST2 Target: ≤5.0%
                 </span>
-                {selectedCoop && coopActualLoss !== null && (
-                  <span className="text-slate-900 font-bold bg-white px-2 py-0.5 rounded-full border border-black/[0.1] shadow-2xs flex items-center gap-1">
-                    <Building2 className="w-2.5 h-2.5 text-emerald-600" />
-                    <span>{selectedCoop.name.split('-')[0].trim()}: {coopActualLoss}%</span>
-                  </span>
-                )}
-                <span className="text-rose-600 font-bold">14.3% Severe Risk Threshold</span>
-                <span>25%+ Crisis</span>
+                <span className="text-rose-700 font-bold">14.3% Severe Risk Threshold</span>
+                <span className="text-slate-400">25%+ Extreme Hazard</span>
               </div>
             </div>
 
-            {/* Quantile 4-Card Breakout */}
+            {/* 4 Clean Quartile Tiles */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
               <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-black/[0.04] text-center font-mono">
-                <span className="text-[10px] text-slate-400 block font-bold uppercase">P25 (TOP EFFICIENCY)</span>
-                <span className="text-xl font-black text-emerald-700 block mt-0.5">{p25}%</span>
-                <span className="text-[9.5px] text-slate-500 block mt-0.5">Top 25% Best Managed Plots</span>
+                <span className="text-[10.5px] text-slate-500 block font-bold uppercase">25th Percentile</span>
+                <span className="text-2xl font-black text-emerald-700 block mt-0.5">{p25}%</span>
+                <span className="text-[10px] text-slate-500 block mt-0.5">Top 25% lowest loss plots</span>
               </div>
 
               <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-black/[0.04] text-center font-mono">
-                <span className="text-[10px] text-slate-400 block font-bold uppercase">P50 (SURVEY MEDIAN)</span>
-                <span className="text-xl font-black text-slate-900 block mt-0.5">{p50}%</span>
-                <span className="text-[9.5px] text-slate-500 block mt-0.5">National Median Midpoint</span>
+                <span className="text-[10.5px] text-slate-500 block font-bold uppercase">50th Percentile</span>
+                <span className="text-2xl font-black text-slate-900 block mt-0.5">{p50}%</span>
+                <span className="text-[10px] text-slate-500 block mt-0.5">Survey median midpoint</span>
               </div>
 
               <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-black/[0.04] text-center font-mono">
-                <span className="text-[10px] text-slate-400 block font-bold uppercase">P75 (ELEVATED VULNERABILITY)</span>
-                <span className="text-xl font-black text-amber-700 block mt-0.5">{p75}%</span>
-                <span className="text-[9.5px] text-slate-500 block mt-0.5">Upper Quartile Risk Band</span>
+                <span className="text-[10.5px] text-slate-500 block font-bold uppercase">75th Percentile</span>
+                <span className="text-2xl font-black text-amber-700 block mt-0.5">{p75}%</span>
+                <span className="text-[10px] text-slate-500 block mt-0.5">Upper quartile loss boundary</span>
               </div>
 
               <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-black/[0.04] text-center font-mono">
-                <span className="text-[10px] text-slate-400 block font-bold uppercase">P90 (CRITICAL OUTLIERS)</span>
-                <span className="text-xl font-black text-rose-700 block mt-0.5">{p90}%</span>
-                <span className="text-[9.5px] text-slate-500 block mt-0.5">Severe Loss Outlier Plots</span>
+                <span className="text-[10.5px] text-slate-500 block font-bold uppercase">90th Percentile</span>
+                <span className="text-2xl font-black text-rose-700 block mt-0.5">{p90}%</span>
+                <span className="text-[10px] text-slate-500 block mt-0.5">Severe loss hazard threshold</span>
               </div>
             </div>
           </div>
@@ -555,11 +421,18 @@ export default function BenchmarkExplorer({
           {benchmark.cause_of_loss_breakdown_pct && (
             <div className="bg-white/95 border border-black/[0.06] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-black/[0.05] gap-3">
-                <div className="flex items-center gap-2">
-                  <BarChart2 className="w-4 h-4 text-emerald-600" />
-                  <h3 className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
-                    Supply Chain Loss Drivers for {crop} in {district}
-                  </h3>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 flex items-center justify-center shrink-0">
+                    <BarChart2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-mono font-bold tracking-tight text-slate-900 uppercase">
+                      Supply Chain Loss Drivers for {crop} in {district}
+                    </h3>
+                    <p className="text-[11px] text-slate-400 font-mono">
+                      Farmer-reported stage breakdown from NISR survey plots
+                    </p>
+                  </div>
                 </div>
 
                 {/* Display Metric Switcher Pill */}
@@ -567,24 +440,24 @@ export default function BenchmarkExplorer({
                   <button
                     type="button"
                     onClick={() => setMetricDisplayMode('percent')}
-                    className={`px-3 py-1 rounded-full font-semibold transition-all ${
+                    className={`px-3 py-1 rounded-full font-semibold transition-all cursor-pointer ${
                       metricDisplayMode === 'percent'
-                        ? 'bg-white text-slate-900 font-bold shadow-2xs border border-black/[0.04]'
-                        : 'text-slate-500 hover:text-slate-900'
+                        ? 'bg-emerald-700 text-white font-bold shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    % SHARE OF LOSS
+                    % Share of Loss
                   </button>
                   <button
                     type="button"
                     onClick={() => setMetricDisplayMode('rwf_100t')}
-                    className={`px-3 py-1 rounded-full font-semibold transition-all ${
+                    className={`px-3 py-1 rounded-full font-semibold transition-all cursor-pointer ${
                       metricDisplayMode === 'rwf_100t'
-                        ? 'bg-white text-emerald-800 font-bold shadow-2xs border border-black/[0.04]'
-                        : 'text-slate-500 hover:text-slate-900'
+                        ? 'bg-emerald-700 text-white font-bold shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    RWF LOSS PER 100T
+                    Loss per 100t (RWF)
                   </button>
                 </div>
               </div>
@@ -602,10 +475,9 @@ export default function BenchmarkExplorer({
                     return (
                       <div 
                         key={causeKey} 
-                        className="p-4 rounded-2xl border transition-all shadow-2xs space-y-2 hover:-translate-y-0.5"
+                        className="p-4 rounded-2xl border transition-all shadow-2xs space-y-2 hover:-translate-y-0.5 bg-white/90"
                         style={{
-                          backgroundColor: `${meta?.hex || '#10B981'}08`,
-                          borderColor: `${meta?.hex || '#10B981'}25`,
+                          borderColor: `${meta?.hex || '#10B981'}30`,
                         }}
                       >
                         <div className="flex justify-between items-center text-xs font-mono">

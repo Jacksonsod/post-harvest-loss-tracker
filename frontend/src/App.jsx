@@ -137,11 +137,7 @@ export default function App() {
             )}
 
             {activeTab === 'explore_data' && (
-              <BenchmarkExplorer
-                coops={coops}
-                selectedCoop={selectedCoop}
-                onSelectCoop={setSelectedCoop}
-              />
+              <BenchmarkExplorer />
             )}
 
             {activeTab === 'about_data' && (

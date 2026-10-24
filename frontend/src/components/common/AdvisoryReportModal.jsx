@@ -40,7 +40,7 @@ export default function AdvisoryReportModal({ isOpen, onClose, selectedCoop, lat
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-bold transition-transform active:scale-95 shadow-xs"
+              className="flex items-center gap-1.5 px-4 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-full text-xs font-bold transition-transform active:scale-95 shadow-sm shadow-emerald-700/20 cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5 text-emerald-400" />
               <span>Print / Save PDF</span>

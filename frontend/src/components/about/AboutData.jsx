@@ -68,7 +68,7 @@ export default function AboutData() {
           href="https://github.com/Jacksonsod/post-harvest-loss-tracker"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition-all shadow-xs shrink-0 self-start md:self-auto"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition-all shadow-sm shadow-emerald-700/20 shrink-0 self-start md:self-auto cursor-pointer"
         >
           <Github className="w-4 h-4" />
           <span>View GitHub Repository</span>
