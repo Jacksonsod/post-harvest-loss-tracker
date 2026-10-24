@@ -3,73 +3,62 @@ import Sidebar from './components/layout/Sidebar';
 import NewCoopModal from './components/layout/NewCoopModal';
 import SituationRoomMap from './components/situation_room/SituationRoomMap';
 import AssessmentEngine from './components/diagnostic/AssessmentEngine';
+import PlanNextSeason from './components/simulator/PlanNextSeason';
 import CoopHistory from './components/history/CoopHistory';
 import BenchmarkExplorer from './components/explorer/BenchmarkExplorer';
+import AboutData from './components/about/AboutData';
 import AdvisoryReportModal from './components/common/AdvisoryReportModal';
+import { OptionsProvider } from './context/OptionsContext';
 import { api } from './api/client';
-import { INITIAL_COOPERATIVES, INITIAL_ASSESSMENTS } from './api/seedData';
-import { ShieldCheck, Database, Award } from 'lucide-react';
+import { AlertCircle, RotateCcw, Clock } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('situation_room');
+  const [activeTab, setActiveTab] = useState('national_picture');
   const [activeSeason, setActiveSeason] = useState('all');
-  const [coops, setCoops] = useState(INITIAL_COOPERATIVES);
-  const [selectedCoop, setSelectedCoop] = useState(INITIAL_COOPERATIVES[0]);
+  const [coops, setCoops] = useState([]);
+  const [selectedCoop, setSelectedCoop] = useState(null);
   const [isBackendLive, setIsBackendLive] = useState(false);
+  const [isColdStarting, setIsColdStarting] = useState(false);
+  const [connectionError, setConnectionError] = useState(null);
   const [isNewCoopModalOpen, setIsNewCoopModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [latestAssessmentResult, setLatestAssessmentResult] = useState(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Initialize and check backend connection
+  const checkConnectionAndLoad = async () => {
+    setConnectionError(null);
+    const coldStartTimer = setTimeout(() => {
+      setIsColdStarting(true);
+    }, 2500);
+
+    try {
+      await api.checkHealth();
+      clearTimeout(coldStartTimer);
+      setIsColdStarting(false);
+      setIsBackendLive(true);
+
+      const coopData = await api.getCoops();
+      if (coopData && coopData.length > 0) {
+        setCoops(coopData);
+        setSelectedCoop(coopData[0]);
+      }
+    } catch (err) {
+      clearTimeout(coldStartTimer);
+      setIsColdStarting(false);
+      setIsBackendLive(false);
+      setConnectionError(err.message || 'Unable to connect to the backend server.');
+    }
+  };
+
   useEffect(() => {
-    let isMounted = true;
-
-    // Check health
-    api.checkHealth()
-      .then(() => {
-        if (isMounted) setIsBackendLive(true);
-        // Load coops from backend database
-        return api.getCoops();
-      })
-      .then((data) => {
-        if (isMounted && data && data.length > 0) {
-          setCoops(data);
-          setSelectedCoop(data[0]);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setIsBackendLive(false);
-          // Fall back gracefully to pre-seeded cooperatives
-          setCoops(INITIAL_COOPERATIVES);
-          setSelectedCoop(INITIAL_COOPERATIVES[0]);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
+    checkConnectionAndLoad();
   }, []);
 
   const handleCreateCoop = async ({ name, district }) => {
-    try {
-      const created = await api.createCoop({ name, district });
-      setCoops((prev) => [created, ...prev]);
-      setSelectedCoop(created);
-      return created;
-    } catch (err) {
-      // In demo / offline fallback mode
-      const localCoop = {
-        id: Math.max(...coops.map((c) => c.id), 0) + 1,
-        name,
-        district,
-        created_at: new Date().toISOString(),
-      };
-      setCoops((prev) => [localCoop, ...prev]);
-      setSelectedCoop(localCoop);
-      return localCoop;
-    }
+    const created = await api.createCoop({ name, district });
+    setCoops((prev) => [created, ...prev]);
+    setSelectedCoop(created);
+    return created;
   };
 
   const handleAssessmentCompleted = (result) => {
@@ -77,104 +66,145 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col lg:flex-row">
-      {/* 1. Ceramic Collapsible Sidebar Navigation Rail */}
-      <Sidebar
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        activeSeason={activeSeason}
-        onSelectSeason={setActiveSeason}
-        coops={coops}
-        selectedCoop={selectedCoop}
-        onSelectCoop={setSelectedCoop}
-        onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
-        onOpenReportModal={() => setIsReportModalOpen(true)}
-        isBackendLive={isBackendLive}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
+    <OptionsProvider>
+      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col lg:flex-row">
+        {/* 1. Ceramic Collapsible Sidebar Navigation Rail */}
+        <Sidebar
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          activeSeason={activeSeason}
+          onSelectSeason={setActiveSeason}
+          coops={coops}
+          selectedCoop={selectedCoop}
+          onSelectCoop={setSelectedCoop}
+          onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
+          onOpenReportModal={() => setIsReportModalOpen(true)}
+          isBackendLive={isBackendLive}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
 
-      {/* 2. Main Executive Viewport Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
-        <main className="flex-1 px-4 lg:px-8 py-5 max-w-[1720px] w-full mx-auto">
-          {activeTab === 'situation_room' && (
-            <SituationRoomMap
-              selectedCoop={selectedCoop}
-              onSelectCoop={setSelectedCoop}
-              activeSeason={activeSeason}
-              onSelectSeason={setActiveSeason}
-              onNavigateToDiagnostic={() => setActiveTab('diagnostic')}
-            />
-          )}
-
-          {activeTab === 'diagnostic' && (
-            <AssessmentEngine
-              coops={coops}
-              selectedCoop={selectedCoop}
-              onSelectCoop={setSelectedCoop}
-              onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
-              onAssessmentCompleted={handleAssessmentCompleted}
-              onOpenReportModal={() => setIsReportModalOpen(true)}
-            />
-          )}
-
-          {activeTab === 'history' && (
-            <CoopHistory
-              coops={coops}
-              selectedCoop={selectedCoop}
-              onSelectCoop={setSelectedCoop}
-              onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
-              onNavigateToDiagnostic={() => setActiveTab('diagnostic')}
-              onViewReport={(assessment) => {
-                setLatestAssessmentResult(assessment);
-                setIsReportModalOpen(true);
-              }}
-            />
-          )}
-
-          {activeTab === 'explorer' && (
-            <BenchmarkExplorer
-              coops={coops}
-              selectedCoop={selectedCoop}
-              onSelectCoop={setSelectedCoop}
-            />
-          )}
-        </main>
-
-        {/* 3. Executive Footer */}
-        <footer className="border-t border-slate-200 bg-white py-4 px-4 lg:px-8 text-xs text-slate-500 font-mono">
-          <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-              <span className="text-slate-600 font-medium">
-                NISR 2026 Big Data Hackathon • Track 1: Agricultural Productivity
-              </span>
+        {/* 2. Main Executive Viewport Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+          {/* Cold-Start Banner */}
+          {isColdStarting && !connectionError && (
+            <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-xs text-amber-800 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-amber-600 animate-spin shrink-0" />
+                <span>Starting the server — this can take up to a minute on first load.</span>
+              </div>
             </div>
+          )}
 
-            <div className="flex items-center gap-4 text-[11px] text-slate-500">
-              <span>Data: NISR SAS 2024 & 2025</span>
-              <span>•</span>
-              <span>geoBoundaries RWA ADM2</span>
-              <span>•</span>
-              <span>NST2 Priority Aligned</span>
+          {/* Connection Error Banner */}
+          {connectionError && (
+            <div className="bg-rose-50 border-b border-rose-200 px-4 py-2.5 text-xs text-rose-800 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>Can't reach the server. Make sure the API is active.</span>
+              </div>
+              <button
+                onClick={checkConnectionAndLoad}
+                className="flex items-center gap-1.5 px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg transition-all active:scale-95 shadow-2xs"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Retry Connection</span>
+              </button>
             </div>
-          </div>
-        </footer>
+          )}
+
+          <main className="flex-1 px-4 lg:px-8 py-5 max-w-[1720px] w-full mx-auto">
+            {activeTab === 'national_picture' && (
+              <SituationRoomMap
+                selectedCoop={selectedCoop}
+                onSelectCoop={setSelectedCoop}
+                activeSeason={activeSeason}
+                onSelectSeason={setActiveSeason}
+                onNavigateToCheckLosses={() => setActiveTab('check_losses')}
+                onNavigateToPlanSeason={() => setActiveTab('plan_season')}
+              />
+            )}
+
+            {activeTab === 'check_losses' && (
+              <AssessmentEngine
+                coops={coops}
+                selectedCoop={selectedCoop}
+                onSelectCoop={setSelectedCoop}
+                onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
+                onAssessmentCompleted={handleAssessmentCompleted}
+                onOpenReportModal={() => setIsReportModalOpen(true)}
+              />
+            )}
+
+            {activeTab === 'plan_season' && (
+              <PlanNextSeason
+                selectedCoop={selectedCoop}
+                onNavigateToCheckLosses={() => setActiveTab('check_losses')}
+              />
+            )}
+
+            {activeTab === 'coop_progress' && (
+              <CoopHistory
+                coops={coops}
+                selectedCoop={selectedCoop}
+                onSelectCoop={setSelectedCoop}
+                onOpenNewCoopModal={() => setIsNewCoopModalOpen(true)}
+                onNavigateToCheckLosses={() => setActiveTab('check_losses')}
+                onViewReport={(assessment) => {
+                  setLatestAssessmentResult(assessment);
+                  setIsReportModalOpen(true);
+                }}
+              />
+            )}
+
+            {activeTab === 'explore_data' && (
+              <BenchmarkExplorer
+                coops={coops}
+                selectedCoop={selectedCoop}
+                onSelectCoop={setSelectedCoop}
+              />
+            )}
+
+            {activeTab === 'about_data' && (
+              <AboutData />
+            )}
+          </main>
+
+          {/* 3. Executive Footer */}
+          <footer className="border-t border-slate-200 bg-white py-4 px-4 lg:px-8 text-xs text-slate-500 font-mono">
+            <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                <span className="text-slate-600 font-medium">
+                  NISR 2026 Big Data Hackathon • Post-Harvest Loss Tracker
+                </span>
+              </div>
+
+              <div className="flex items-center gap-4 text-[11px] text-slate-500">
+                <span>Data: NISR SAS 2024 & 2025</span>
+                <span>•</span>
+                <span>geoBoundaries Rwanda Districts</span>
+                <span>•</span>
+                <span>NST2 Priority Aligned</span>
+              </div>
+            </div>
+          </footer>
+        </div>
+
+        {/* Modals */}
+        <NewCoopModal
+          isOpen={isNewCoopModalOpen}
+          onClose={() => setIsNewCoopModalOpen(false)}
+          onCoopCreated={handleCreateCoop}
+        />
+
+        <AdvisoryReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          selectedCoop={selectedCoop}
+          latestResult={latestAssessmentResult}
+        />
       </div>
-
-      {/* Modals */}
-      <NewCoopModal
-        isOpen={isNewCoopModalOpen}
-        onClose={() => setIsNewCoopModalOpen(false)}
-        onCoopCreated={handleCreateCoop}
-      />
-
-      <AdvisoryReportModal
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-        selectedCoop={selectedCoop}
-        latestResult={latestAssessmentResult}
-      />
-    </div>
+    </OptionsProvider>
   );
 }

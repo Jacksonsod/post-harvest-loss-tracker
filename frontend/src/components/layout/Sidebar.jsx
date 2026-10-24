@@ -14,9 +14,16 @@ import {
   Activity,
   Menu,
   X,
-  Sparkles
+  Calculator,
+  Info
 } from 'lucide-react';
-import { SEASONS_LIST } from './Navigation';
+
+export const SEASONS_LIST = [
+  { id: 'all', label: 'All seasons' },
+  { id: 'A', label: 'Season A' },
+  { id: 'B', label: 'Season B' },
+  { id: 'C', label: 'Season C' },
+];
 
 export default function Sidebar({
   activeTab,
@@ -35,10 +42,12 @@ export default function Sidebar({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const navItems = [
-    { id: 'situation_room', label: 'Situation Room', icon: Radar, badge: 'ADM2 Map' },
-    { id: 'diagnostic', label: 'Diagnostic Engine', icon: ClipboardCheck, badge: 'Loss Intake' },
-    { id: 'history', label: 'Performance Trends', icon: TrendingDown, badge: 'Audit Trail' },
-    { id: 'explorer', label: 'Benchmark Explorer', icon: Database, badge: 'SAS 2024-25' },
+    { id: 'national_picture', label: 'National picture', icon: Radar, badge: '30 Districts' },
+    { id: 'check_losses', label: 'Check my losses', icon: ClipboardCheck, badge: 'Advisory' },
+    { id: 'plan_season', label: 'Plan next season', icon: Calculator, badge: 'Estimator' },
+    { id: 'coop_progress', label: "My cooperative's progress", icon: TrendingDown, badge: 'History' },
+    { id: 'explore_data', label: 'Explore the data', icon: Database, badge: 'SAS 2024–25' },
+    { id: 'about_data', label: 'About the data', icon: Info, badge: 'Methodology' },
   ];
 
   const handleSelectNav = (id) => {
@@ -56,18 +65,18 @@ export default function Sidebar({
           </div>
           <div>
             <span className="text-xs font-mono font-black text-slate-900 tracking-wider uppercase block">
-              RWANDA SITUATION ROOM
+              RWANDA HARVEST LOSS TRACKER
             </span>
             <span className="text-[10px] text-slate-400 font-medium block">
-              NISR Post-Harvest Loss Tracker
+              NISR Agricultural Statistics
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 border border-black/[0.05] text-[10px] font-mono font-bold text-slate-700">
+          <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 border border-black/[0.05] text-[10px] font-mono font-bold text-slate-700">
             <span className={`w-1.5 h-1.5 rounded-full ${isBackendLive ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
-            {isBackendLive ? 'API LIVE' : 'DEMO'}
+            {isBackendLive ? 'Connected' : 'Connecting...'}
           </span>
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -108,11 +117,11 @@ export default function Sidebar({
                 <div className="truncate">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-mono font-black text-slate-900 tracking-wider uppercase truncate">
-                      NISR SITUATION ROOM
+                      HARVEST LOSS TRACKER
                     </span>
                   </div>
                   <span className="text-[10px] font-mono text-emerald-700 font-bold block">
-                    NST2 • SAS 2024–25
+                    NISR SAS 2024–2025
                   </span>
                 </div>
               )}
@@ -163,7 +172,7 @@ export default function Sidebar({
                 >
                   {coops.map((coop) => (
                     <option key={coop.id} value={coop.id} className="text-slate-900 font-medium">
-                      {coop.name} ({coop.district})
+                      {coop.is_sample ? `[Sample] ${coop.name}` : coop.name} ({coop.district})
                     </option>
                   ))}
                 </select>
@@ -173,9 +182,16 @@ export default function Sidebar({
               {selectedCoop && (
                 <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 px-0.5">
                   <span className="truncate">{selectedCoop.district || 'District Base'}</span>
-                  <span className="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60 shrink-0">
-                    ID #{String(selectedCoop.id).padStart(2, '0')}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    {selectedCoop.is_sample && (
+                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200 font-bold">
+                        Sample
+                      </span>
+                    )}
+                    <span className="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/60 shrink-0">
+                      ID #{String(selectedCoop.id).padStart(2, '0')}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
@@ -195,7 +211,7 @@ export default function Sidebar({
           <div className="space-y-1">
             {!isCollapsed && (
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 px-2 block mb-1">
-                PLATFORM MODULES
+                MODULES
               </span>
             )}
             {navItems.map((item) => {
@@ -233,9 +249,14 @@ export default function Sidebar({
           {/* Season Filter Dropdown */}
           {!isCollapsed ? (
             <div className="pt-2 border-t border-black/[0.04]">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 px-2 block mb-1.5">
-                SEASON FILTER
-              </span>
+              <div className="flex items-center justify-between px-2 mb-1">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                  SEASON FILTER
+                </span>
+                <span className="text-[9px] text-slate-400 font-mono">
+                  2024 & 2025 combined
+                </span>
+              </div>
               <div className="relative">
                 <select
                   value={activeSeason}
@@ -281,7 +302,7 @@ export default function Sidebar({
                 <span className="flex items-center gap-1.5">
                   <span className={`w-2 h-2 rounded-full ${isBackendLive ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
                   <span className="font-bold text-slate-700">
-                    {isBackendLive ? 'BACKEND LIVE' : 'DEMO MODE'}
+                    {isBackendLive ? 'Connected' : 'Connecting...'}
                   </span>
                 </span>
                 <span className="text-slate-400">NISR SAS</span>
@@ -298,7 +319,7 @@ export default function Sidebar({
               </button>
               <div 
                 className={`w-2 h-2 rounded-full ${isBackendLive ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} 
-                title={isBackendLive ? 'API LIVE' : 'DEMO MODE'}
+                title={isBackendLive ? 'Connected' : 'Connecting...'}
               />
             </div>
           )}
