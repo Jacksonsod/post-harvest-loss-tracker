@@ -45,6 +45,7 @@ class Cooperative(Base):
     name = Column(String, nullable=False)
     district = Column(String, nullable=False)
     is_sample = Column(Boolean, nullable=False, default=False)  # labelled demo data (seed_demo.py)
+    import_batch_id = Column(String, nullable=True)  # set when created by a dataset import
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     assessments = relationship("Assessment", back_populates="cooperative")
@@ -58,6 +59,7 @@ class Assessment(Base):
     district = Column(String)
     crop = Column(String)
     season = Column(String)
+    season_year = Column(Integer, nullable=True)  # survey/harvest year, when known
     harvested_qty_kg = Column(Float)
     total_loss_kg = Column(Float)
     loss_rate_pct = Column(Float)
@@ -65,10 +67,12 @@ class Assessment(Base):
     benchmark_source = Column(String)   # "district_season" | "district" | "national"
     risk_category = Column(String)       # "Low" | "Medium" | "High"
     dominant_cause = Column(String, nullable=True)
+    dominant_cause_is_estimated = Column(Boolean, nullable=True)  # True = national fallback
     recommendation_text = Column(Text)
     estimated_loss_value_rwf = Column(Float, nullable=True)
     cause_breakdown_json = Column(Text)  # JSON-encoded dict of input cause breakdown
     action_notes = Column(Text, nullable=True)  # free-text: what changed since last assessment
+    import_batch_id = Column(String, nullable=True)  # set when created by a dataset import
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     cooperative = relationship("Cooperative", back_populates="assessments")
@@ -94,8 +98,16 @@ def _migrate_columns() -> None:
 
         # Map table -> {ORM column name -> SQLite column definition} for each added column
         new_columns: dict = {
-            "assessments": {"action_notes": "TEXT"},
-            "cooperatives": {"is_sample": "BOOLEAN NOT NULL DEFAULT 0"},
+            "assessments": {
+                "action_notes": "TEXT",
+                "season_year": "INTEGER",
+                "dominant_cause_is_estimated": "BOOLEAN",
+                "import_batch_id": "TEXT",
+            },
+            "cooperatives": {
+                "is_sample": "BOOLEAN NOT NULL DEFAULT 0",
+                "import_batch_id": "TEXT",
+            },
         }
         for table, columns in new_columns.items():
             cur.execute(f"PRAGMA table_info({table})")

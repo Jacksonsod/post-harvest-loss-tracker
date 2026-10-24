@@ -22,6 +22,11 @@ Endpoints:
   GET  /overview/by-crop
   GET  /overview/top-risk
   GET  /about-data
+  GET  /datasets/import-template        CSV template download
+  GET  /datasets/import-format          column reference
+  POST /datasets/import-assessments     JSON records   (?dry_run=true to preview)
+  POST /datasets/import-assessments/file  CSV upload   (?dry_run=true to preview)
+  DELETE /datasets/imports/{batch_id}   undo an import
 
 Set SEED_DEMO=true to create clearly labelled sample cooperatives on startup
 when the database is empty (see seed_demo.py).
@@ -34,24 +39,17 @@ import os
 from collections import Counter
 from typing import List, Literal, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy.orm import Session
 
 from about_data import METHODOLOGY, SOURCES
-from assessment_service import (
-    compute_cause_breakdown_pct,
-    compute_estimated_loss_value,
-    compute_risk_category,
-    find_dominant_cause_from_input,
-    find_dominant_cause_from_national,
-    get_recommendation,
-)
 from benchmark_service import (
     get_by_crop,
     get_district_map,
     get_metadata,
-    get_national_cause_breakdown,
     get_national_summary,
     get_options,
     get_overall_national_loss_rate,
@@ -60,9 +58,22 @@ from benchmark_service import (
     lookup_benchmark,
 )
 from db import Assessment, Cooperative, get_db, init_db
+from import_service import (
+    COLUMNS,
+    MAX_FILE_BYTES,
+    RULES,
+    ImportFileError,
+    apply_import,
+    parse_csv,
+    template_csv,
+    undo_import,
+    validate_and_score,
+)
 from models import (
+    MAX_IMPORT_ROWS,
     AboutDataOut,
     AssessmentHistoryItem,
+    AssessmentImportRequest,
     AssessOut,
     AssessRequest,
     BenchmarkOut,
@@ -72,6 +83,9 @@ from models import (
     DispatchTriggerItem,
     DispatchTriggersOut,
     EstimateOut,
+    ImportFormatOut,
+    ImportResultOut,
+    ImportUndoOut,
     MapOut,
     NationalSummaryOut,
     OutlierItem,
@@ -82,6 +96,7 @@ from models import (
     SummaryOut,
     TopRiskOut,
 )
+from scoring_service import ScoringError, score_assessment
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -274,78 +289,18 @@ def list_coops(db: Session = Depends(get_db)):
 
 @app.post("/assess", response_model=AssessOut, status_code=201)
 def create_assessment(body: AssessRequest, db: Session = Depends(get_db)):
-    # ---- 0. Validate harvested quantity ----
-    if body.harvested_qty_kg <= 0:
-        raise HTTPException(
-            status_code=400,
-            detail="harvested_qty_kg must be greater than 0.",
+    # ---- 0-9. Validate inputs and compute every derived field (shared with imports) ----
+    try:
+        scored = score_assessment(
+            district=body.district,
+            crop=body.crop,
+            season=body.season,
+            harvested_qty_kg=body.harvested_qty_kg,
+            loss_by_cause_kg=body.loss_by_cause_kg,
+            total_loss_kg=body.total_loss_kg,
         )
-
-    # ---- 1. Validate that at least one loss source is given ----
-    if body.loss_by_cause_kg is None and body.total_loss_kg is None:
-        raise HTTPException(
-            status_code=400,
-            detail="Provide either 'loss_by_cause_kg' or 'total_loss_kg' (at least one is required).",
-        )
-
-    # ---- 2. Derive total_loss_kg ----
-    if body.loss_by_cause_kg is not None:
-        total_loss_kg = sum(body.loss_by_cause_kg.values())
-    else:
-        total_loss_kg = body.total_loss_kg  # type: ignore[assignment]
-
-    # ---- 2b. Guard: loss cannot exceed harvested quantity ----
-    if total_loss_kg > body.harvested_qty_kg:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"Reported total loss ({total_loss_kg} kg) exceeds harvested "
-                f"quantity ({body.harvested_qty_kg} kg). Check your inputs."
-            ),
-        )
-
-    # ---- 3. Compute loss rate ----
-    loss_rate_pct = round(total_loss_kg / body.harvested_qty_kg * 100, 2)
-
-    # ---- 4. Benchmark lookup ----
-    bm = lookup_benchmark(district=body.district, crop=body.crop, season=body.season)
-    if bm is None:
-        raise HTTPException(
-            status_code=404,
-            detail=(
-                f"No benchmark data found for district='{body.district}', crop='{body.crop}'"
-                + (f", season='{body.season}'" if body.season else "")
-                + ". Cannot complete assessment without a valid benchmark."
-            ),
-        )
-    benchmark_loss_rate_pct: float = bm["benchmark_loss_rate_pct"]
-    benchmark_source: str = bm["benchmark_source"]
-    price_per_kg: Optional[float] = bm["avg_selling_price_rwf_per_kg"]
-
-    # ---- 5. Risk category ----
-    risk_category = compute_risk_category(loss_rate_pct, benchmark_loss_rate_pct)
-
-    # ---- 6. Dominant cause + estimated flag ----
-    dominant_cause_is_estimated = False
-    if body.loss_by_cause_kg is not None:
-        dominant_cause = find_dominant_cause_from_input(body.loss_by_cause_kg)
-    else:
-        national_breakdown = get_national_cause_breakdown(body.crop)
-        dominant_cause = find_dominant_cause_from_national(national_breakdown)
-        dominant_cause_is_estimated = True
-
-    # ---- 7. Recommendation ----
-    recommendation = get_recommendation(dominant_cause)
-
-    # ---- 8. Economic translation ----
-    estimated_loss_value_rwf = compute_estimated_loss_value(total_loss_kg, price_per_kg)
-
-    # ---- 9. Per-assessment cause breakdown (only when loss_by_cause_kg given) ----
-    cause_of_loss_breakdown_pct: Optional[dict] = None
-    if body.loss_by_cause_kg is not None:
-        cause_of_loss_breakdown_pct = compute_cause_breakdown_pct(
-            body.loss_by_cause_kg, total_loss_kg
-        )
+    except ScoringError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail)
 
     # ---- 10. Verify coop exists ----
     coop = db.query(Cooperative).filter(Cooperative.id == body.coop_id).first()
@@ -361,15 +316,17 @@ def create_assessment(body: AssessRequest, db: Session = Depends(get_db)):
         district=body.district,
         crop=body.crop,
         season=body.season,
+        season_year=body.year,
         harvested_qty_kg=body.harvested_qty_kg,
-        total_loss_kg=total_loss_kg,
-        loss_rate_pct=loss_rate_pct,
-        benchmark_used_pct=benchmark_loss_rate_pct,
-        benchmark_source=benchmark_source,
-        risk_category=risk_category,
-        dominant_cause=dominant_cause,
-        recommendation_text=recommendation,
-        estimated_loss_value_rwf=estimated_loss_value_rwf,
+        total_loss_kg=scored["total_loss_kg"],
+        loss_rate_pct=scored["loss_rate_pct"],
+        benchmark_used_pct=scored["benchmark_loss_rate_pct"],
+        benchmark_source=scored["benchmark_source"],
+        risk_category=scored["risk_category"],
+        dominant_cause=scored["dominant_cause"],
+        dominant_cause_is_estimated=scored["dominant_cause_is_estimated"],
+        recommendation_text=scored["recommendation"],
+        estimated_loss_value_rwf=scored["estimated_loss_value_rwf"],
         cause_breakdown_json=(
             json.dumps(body.loss_by_cause_kg) if body.loss_by_cause_kg is not None else None
         ),
@@ -381,18 +338,18 @@ def create_assessment(body: AssessRequest, db: Session = Depends(get_db)):
 
     return AssessOut(
         assessment_id=assessment.id,
-        loss_rate_pct=loss_rate_pct,
-        benchmark_loss_rate_pct=benchmark_loss_rate_pct,
-        benchmark_source=benchmark_source,
-        risk_category=risk_category,
-        dominant_cause=dominant_cause,
-        dominant_cause_is_estimated=dominant_cause_is_estimated,
-        recommendation=recommendation,
-        estimated_loss_value_rwf=estimated_loss_value_rwf,
-        cause_of_loss_breakdown_pct=cause_of_loss_breakdown_pct,
-        benchmark_n_records=bm["benchmark_n_records"],
-        high_volatility=bm["high_volatility"],
-        volatility_share_total_loss_pct=bm["volatility_share_total_loss_pct"],
+        loss_rate_pct=scored["loss_rate_pct"],
+        benchmark_loss_rate_pct=scored["benchmark_loss_rate_pct"],
+        benchmark_source=scored["benchmark_source"],
+        risk_category=scored["risk_category"],
+        dominant_cause=scored["dominant_cause"],
+        dominant_cause_is_estimated=scored["dominant_cause_is_estimated"],
+        recommendation=scored["recommendation"],
+        estimated_loss_value_rwf=scored["estimated_loss_value_rwf"],
+        cause_of_loss_breakdown_pct=scored["cause_of_loss_breakdown_pct"],
+        benchmark_n_records=scored["benchmark_n_records"],
+        high_volatility=scored["high_volatility"],
+        volatility_share_total_loss_pct=scored["volatility_share_total_loss_pct"],
     )
 
 
@@ -459,9 +416,16 @@ def get_assessments(coop_id: int, db: Session = Depends(get_db)):
     assessments = (
         db.query(Assessment)
         .filter(Assessment.coop_id == coop_id)
-        .order_by(Assessment.created_at.asc())
+        .order_by(Assessment.created_at.asc(), Assessment.id.asc())
         .all()
     )
+    # Chronological by harvest year (imported history), falling back to the
+    # year the record was entered. Rows with a known year are ordered by
+    # season within it; otherwise entry order is kept (the sort is stable).
+    assessments.sort(key=lambda a: (
+        a.season_year or (a.created_at.year if a.created_at else 0),
+        "ABC".find(a.season or "") if a.season_year else 0,
+    ))
     return [AssessmentHistoryItem.model_validate(a) for a in assessments]
 
 
@@ -665,3 +629,122 @@ def top_risk(
 @app.get("/about-data", response_model=AboutDataOut)
 def about_data():
     return AboutDataOut(metadata=get_metadata(), methodology=METHODOLOGY, sources=SOURCES)
+
+
+# ===========================================================================
+# Dataset import  (/datasets/...)
+# ===========================================================================
+
+@app.get("/datasets/import-template")
+def import_template():
+    """CSV template with every column and one visibly fictional example row."""
+    return Response(
+        content=template_csv(),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="harvest_import_template.csv"'},
+    )
+
+
+@app.get("/datasets/import-format", response_model=ImportFormatOut)
+def import_format():
+    return ImportFormatOut(
+        max_rows=MAX_IMPORT_ROWS, max_file_bytes=MAX_FILE_BYTES, columns=COLUMNS, rules=RULES
+    )
+
+
+def _run_import(rows, file_warnings, dry_run: bool, db: Session) -> JSONResponse:
+    """
+    Score every row, then (unless dry_run) write them all or nothing.
+
+    dry_run          → 200, status "preview" (errors listed, nothing saved)
+    any row invalid  → 422, status "failed"  (nothing saved)
+    imported         → 201 (200 when every row was a duplicate)
+    """
+    results, planned = validate_and_score(rows, db)
+    errors = [f"Row {r.row}: {msg}" for r in results for msg in r.errors]
+    new_coops = {p.coop_key for p in planned if p.existing_coop is None}
+    matched_coops = {p.existing_coop.id for p in planned if p.existing_coop is not None}
+
+    batch_id = None
+    if dry_run:
+        status, code = "preview", 200
+    elif errors:
+        status, code = "failed", 422
+    else:
+        batch_id = apply_import(planned, db) if planned else None
+        status, code = "imported", (201 if planned else 200)
+
+    out = ImportResultOut(
+        status=status,
+        dry_run=dry_run,
+        batch_id=batch_id,
+        total_received=len(results),
+        valid_count=sum(r.status != "error" for r in results),
+        imported_count=len(planned) if batch_id else 0,
+        skipped_duplicates=sum(r.status == "duplicate" for r in results),
+        cooperatives_created=len(new_coops),
+        cooperatives_matched=len(matched_coops),
+        rows=results,
+        errors=errors,
+        warnings=file_warnings,
+    )
+    return JSONResponse(content=jsonable_encoder(out), status_code=code)
+
+
+@app.post(
+    "/datasets/import-assessments",
+    response_model=ImportResultOut,
+    responses={201: {"model": ImportResultOut}, 422: {"model": ImportResultOut}},
+)
+def import_assessments(
+    body: AssessmentImportRequest,
+    dry_run: bool = Query(False, description="Preview the results without saving anything"),
+    db: Session = Depends(get_db),
+):
+    """
+    Import a JSON list of records (same columns as the CSV template).
+    Row numbers in the response follow a spreadsheet: records[0] is row 2.
+    """
+    rows = [(i, record) for i, record in enumerate(body.records, start=2)]
+    return _run_import(rows, [], dry_run, db)
+
+
+@app.post(
+    "/datasets/import-assessments/file",
+    response_model=ImportResultOut,
+    responses={201: {"model": ImportResultOut}, 422: {"model": ImportResultOut}},
+)
+async def import_assessments_file(
+    file: UploadFile = File(..., description="CSV file in the format of GET /datasets/import-template"),
+    dry_run: bool = Query(False, description="Preview the results without saving anything"),
+    db: Session = Depends(get_db),
+):
+    name = (file.filename or "").lower()
+    if name.endswith((".xlsx", ".xls", ".ods")):
+        raise HTTPException(
+            status_code=415,
+            detail="Spreadsheet files can't be read directly. In Excel choose File → Save As → CSV, then upload the CSV.",
+        )
+    if not name.endswith((".csv", ".txt")) and "csv" not in (file.content_type or ""):
+        raise HTTPException(status_code=415, detail="Upload a .csv file.")
+
+    data = await file.read(MAX_FILE_BYTES + 1)
+    try:
+        rows, file_warnings = parse_csv(data)
+    except ImportFileError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail)
+    return _run_import(rows, file_warnings, dry_run, db)
+
+
+@app.delete("/datasets/imports/{batch_id}", response_model=ImportUndoOut)
+def delete_import(batch_id: str, db: Session = Depends(get_db)):
+    """Undo an import: removes its assessments and any cooperatives it created that are now empty."""
+    result = undo_import(batch_id, db)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"No import found with batch_id='{batch_id}'.")
+    assessments_deleted, cooperatives_deleted = result
+    return ImportUndoOut(
+        batch_id=batch_id,
+        assessments_deleted=assessments_deleted,
+        cooperatives_deleted=cooperatives_deleted,
+    )

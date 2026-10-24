@@ -32,6 +32,12 @@ Submission deadline: **30 Oct 2026, 23:59**
   `/overview/top-risk`, `/about-data`; labelled sample cooperatives
   (`is_sample`, `SEED_DEMO=true`); contract tests in `backend/tests/`.
 
+- [x] **Phase 3c — Dataset import** (done Oct 24)
+  CSV upload or JSON records → assessments, scored by the same code path as
+  `POST /assess`; dry-run preview, all-or-nothing import, duplicate
+  skipping, chronological history (`year`), undo by `batch_id`. Format and
+  rules: `docs/IMPORT_FORMAT.md`.
+
 - [ ] **Phase 4 — Frontend Dashboard** (target: Oct 10)
   Coop profile + harvest/loss entry forms; dashboard with risk category,
   benchmark comparison chart, cause-of-loss breakdown chart, recommendation
