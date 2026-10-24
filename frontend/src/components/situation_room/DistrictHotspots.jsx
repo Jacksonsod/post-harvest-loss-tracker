@@ -1,14 +1,17 @@
 import React from 'react';
+import { CAUSE_LABELS } from '../../data/staticData';
 import { Flame, AlertTriangle, ShieldAlert, Award } from 'lucide-react';
 
 export default function DistrictHotspots({ 
   selectedDistrict, 
   onSelectDistrict, 
   districts = [],
-  nationalReference = 10.22
+  nationalReference = 10.22,
+  activeCause = 'all'
 }) {
   const ranked = [...districts].sort((a, b) => (b.avg_loss_rate_pct || 0) - (a.avg_loss_rate_pct || 0));
   const top10 = ranked.slice(0, 10);
+  const activeCauseMeta = activeCause !== 'all' ? CAUSE_LABELS[activeCause] : null;
 
   return (
     <div className="bg-white border border-black/[0.05] rounded-[28px] p-6 flex flex-col h-[560px] shadow-[0_2px_16px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300">
@@ -23,19 +26,29 @@ export default function DistrictHotspots({
               WHERE LOSSES ARE HIGHEST
             </h3>
             <span className="text-[10px] text-slate-400 font-mono block">
-              Ranked by SAS survey loss rate
+              {activeCauseMeta ? `Survey rate • ${activeCauseMeta.shortName} focus` : 'Ranked by SAS survey loss rate'}
             </span>
           </div>
         </div>
-        <span className="text-[9px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold border border-black/[0.04] flex-shrink-0">
-          TOP 10
-        </span>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {activeCauseMeta && (
+            <span 
+              className="text-[9px] font-mono px-2 py-0.5 rounded-full font-bold text-white shadow-2xs"
+              style={{ backgroundColor: activeCauseMeta.hex }}
+            >
+              {activeCauseMeta.shortName}
+            </span>
+          )}
+          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold border border-black/[0.04]">
+            TOP 10
+          </span>
+        </div>
       </div>
 
       {/* District Hotspots List */}
       <div className="space-y-2 overflow-y-auto pr-1 flex-1 no-scrollbar">
         {top10.length === 0 ? (
-          <div className="h-40 flex items-center justify-center text-xs text-slate-400 font-mono">
+          <div className="h-40 flex items-center justify-center text-xs text-slate-400 font-mono animate-pulse">
             Loading district loss rates...
           </div>
         ) : (
@@ -98,8 +111,8 @@ export default function DistrictHotspots({
 
                 {/* Sub-label */}
                 <div className="flex justify-between items-center text-[9.5px] text-slate-500 mt-1 font-mono">
-                  <span>≈ {Math.round(rate)} kg lost per 100 kg</span>
-                  <span>{d.n_records?.toLocaleString() || 0} plots</span>
+                  <span>{d.n_records ? `${d.n_records.toLocaleString()} plots` : 'Survey sample'}</span>
+                  <span>{d.above_reference ? 'Above Baseline' : 'Within Baseline'}</span>
                 </div>
               </div>
             );
