@@ -67,39 +67,39 @@ export default function HistoryTrendChart({ assessments = [] }) {
         </div>
 
         {/* Chart View Toggle Pill */}
-        <div className="inline-flex items-center bg-slate-100/90 p-1 rounded-full border border-black/[0.04] text-[10.5px] font-mono self-start sm:self-auto">
+        <div className="inline-flex items-center bg-slate-100 p-1 rounded-full border border-black/[0.04] text-[10.5px] font-mono self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setChartMode('loss_rate')}
-            className={`px-3 py-1 rounded-full font-semibold transition-all duration-150 ${
+            className={`px-3 py-1 rounded-full font-semibold transition-all duration-150 cursor-pointer ${
               chartMode === 'loss_rate'
-                ? 'bg-white text-slate-900 font-bold shadow-2xs border border-black/[0.04]'
-                : 'text-slate-500 hover:text-slate-900'
+                ? 'bg-emerald-700 text-white font-bold shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            % LOSS TRAJECTORY
+            % Loss Trajectory
           </button>
           <button
             type="button"
             onClick={() => setChartMode('financial_rwf')}
-            className={`px-3 py-1 rounded-full font-semibold transition-all duration-150 ${
+            className={`px-3 py-1 rounded-full font-semibold transition-all duration-150 cursor-pointer ${
               chartMode === 'financial_rwf'
-                ? 'bg-white text-amber-900 font-bold shadow-2xs border border-black/[0.04]'
-                : 'text-slate-500 hover:text-slate-900'
+                ? 'bg-emerald-700 text-white font-bold shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            RWF REVENUE FORFEITED
+            Revenue Forfeited (RWF)
           </button>
           <button
             type="button"
             onClick={() => setChartMode('volume_kg')}
-            className={`px-3 py-1 rounded-full font-semibold transition-all duration-150 ${
+            className={`px-3 py-1 rounded-full font-semibold transition-all duration-150 cursor-pointer ${
               chartMode === 'volume_kg'
-                ? 'bg-white text-emerald-900 font-bold shadow-2xs border border-black/[0.04]'
-                : 'text-slate-500 hover:text-slate-900'
+                ? 'bg-emerald-700 text-white font-bold shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            HARVESTED VS LOST (KG)
+            Harvest vs. Loss (Tons)
           </button>
         </div>
       </div>

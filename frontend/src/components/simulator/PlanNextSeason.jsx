@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import BentoPreHarvestSimulator from '../situation_room/BentoPreHarvestSimulator';
 import BentoStorageComparison from '../situation_room/BentoStorageComparison';
-import BentoDispatchCard from '../situation_room/BentoDispatchCard';
 import { Calculator } from 'lucide-react';
 
 export default function PlanNextSeason({ selectedCoop }) {
@@ -25,26 +24,23 @@ export default function PlanNextSeason({ selectedCoop }) {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1 font-medium">
-              Simulate pre-harvest loss risks, compare storage infrastructure efficacy, and review district extension priorities.
+              Simulate pre-harvest loss risks and evaluate storage infrastructure dividends grounded in NISR SAS microdata.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Main 12-Column Responsive Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left Column: Interactive Pre-Harvest Risk Simulator (Span 7) */}
-        <div className="lg:col-span-7 flex flex-col">
+      {/* Symmetrical 2-Column Responsive Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <div className="flex flex-col">
           <BentoPreHarvestSimulator 
             selectedDistrict={selectedDistrict} 
             onDistrictChange={setSelectedDistrict}
           />
         </div>
 
-        {/* Right Column: Storage Technology Efficacy Matrix & Extension Priorities (Span 5) */}
-        <div className="lg:col-span-5 flex flex-col space-y-6">
+        <div className="flex flex-col">
           <BentoStorageComparison />
-          <BentoDispatchCard selectedDistrict={selectedDistrict} />
         </div>
       </div>
     </div>
