@@ -11,8 +11,31 @@ import {
   Send,
   Zap,
   Activity,
-  Layers
+  Layers,
+  Scissors,
+  Bug,
+  ShieldAlert,
+  TrendingDown,
+  Bird,
+  Cog,
+  Truck,
+  Warehouse,
+  Package,
+  ShoppingBag
 } from 'lucide-react';
+
+const CAUSE_ICONS = {
+  Scissors,
+  Bug,
+  ShieldAlert,
+  TrendingDown,
+  Bird,
+  Cog,
+  Truck,
+  Warehouse,
+  Package,
+  ShoppingBag,
+};
 
 export default function IntakeForm({
   selectedCoop,
@@ -371,6 +394,7 @@ export default function IntakeForm({
                 const sharePct = currentTotalLoss > 0 
                   ? ((causeKg / currentTotalLoss) * 100).toFixed(0) 
                   : 0;
+                const IconComp = (meta && CAUSE_ICONS[meta.icon]) || Bug;
 
                 return (
                   <div 
@@ -378,23 +402,39 @@ export default function IntakeForm({
                     className="bg-white p-3 rounded-xl border border-black/[0.06] hover:border-black/[0.12] transition-all shadow-2xs flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <label 
-                          className="block text-[11px] font-mono text-slate-800 font-semibold truncate" 
-                          title={meta?.name || cKey}
+                      <div className="flex items-center justify-between gap-1 mb-1.5">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <IconComp 
+                            className="w-3.5 h-3.5 shrink-0" 
+                            style={{ color: meta?.hex || '#64748B' }} 
+                          />
+                          <label 
+                            className="block text-[11px] font-mono text-slate-800 font-semibold truncate" 
+                            title={meta?.name || cKey}
+                          >
+                            {meta?.shortName || meta?.name || cKey}
+                          </label>
+                        </div>
+                        <span 
+                          className="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded-full shrink-0 border"
+                          style={{
+                            backgroundColor: `${meta?.hex || '#10B981'}15`,
+                            color: meta?.hex || '#10B981',
+                            borderColor: `${meta?.hex || '#10B981'}30`,
+                          }}
                         >
-                          {meta?.name || cKey}
-                        </label>
-                        <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded-full shrink-0">
                           {sharePct}%
                         </span>
                       </div>
                       
-                      {/* Mini progress bar of cause share */}
+                      {/* Mini progress bar of cause share with cause color */}
                       <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mb-2">
                         <div 
-                          className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                          style={{ width: `${Math.min(100, sharePct)}%` }}
+                          className="h-full rounded-full transition-all duration-300"
+                          style={{ 
+                            width: `${Math.min(100, sharePct)}%`,
+                            backgroundColor: meta?.hex || '#10B981'
+                          }}
                         />
                       </div>
                     </div>

@@ -1,18 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-
-const CAUSE_COLORS = {
-  insects_pests: '#DC2626',
-  theft: '#EA580C',
-  stalks_fallen: '#D97706',
-  birds_animals: '#65A30D',
-  harvesting_damage: '#059669',
-  processing: '#0891B2',
-  storage: '#7C3AED',
-  transport: '#DB2777',
-  packaging: '#475569',
-  sale: '#2563EB',
-};
+import { CAUSE_LABELS } from '../../data/staticData';
 
 export default function CauseDonutChart({ breakdownPct, isEstimated = false }) {
   if (!breakdownPct || Object.keys(breakdownPct).length === 0) {
@@ -25,11 +13,16 @@ export default function CauseDonutChart({ breakdownPct, isEstimated = false }) {
 
   const data = Object.entries(breakdownPct)
     .filter(([_, val]) => val > 0)
-    .map(([cause, val]) => ({
-      name: cause.replace('_', ' '),
-      key: cause,
-      value: Number(val),
-    }))
+    .map(([cause, val]) => {
+      const meta = CAUSE_LABELS[cause];
+      return {
+        name: meta?.shortName || meta?.name || cause.replace('_', ' '),
+        fullName: meta?.name || cause.replace('_', ' '),
+        key: cause,
+        value: Number(val),
+        hex: meta?.hex || '#94A3B8',
+      };
+    })
     .sort((a, b) => b.value - a.value);
 
   const topCause = data[0];
@@ -60,7 +53,7 @@ export default function CauseDonutChart({ breakdownPct, isEstimated = false }) {
               {data.map((entry) => (
                 <Cell 
                   key={`cell-${entry.key}`} 
-                  fill={CAUSE_COLORS[entry.key] || '#94A3B8'} 
+                  fill={entry.hex} 
                   stroke="#FFFFFF"
                   strokeWidth={2}
                 />
@@ -72,7 +65,7 @@ export default function CauseDonutChart({ breakdownPct, isEstimated = false }) {
                   const d = payload[0].payload;
                   return (
                     <div className="bg-white/95 border border-black/[0.08] p-2.5 rounded-xl text-xs font-mono text-slate-900 shadow-xl backdrop-blur-md">
-                      <span className="capitalize font-bold text-slate-800">{d.name}</span>: <strong className="text-emerald-700">{d.value}%</strong> of loss
+                      <span className="capitalize font-bold text-slate-800">{d.fullName}</span>: <strong className="text-emerald-700">{d.value}%</strong> of loss
                     </div>
                   );
                 }
@@ -91,7 +84,10 @@ export default function CauseDonutChart({ breakdownPct, isEstimated = false }) {
             <span className="text-base font-mono font-black text-slate-900 block tnum">
               {topCause.value}%
             </span>
-            <span className="text-[9.5px] font-sans capitalize font-bold text-slate-600 block truncate max-w-[90px]">
+            <span 
+              className="text-[9.5px] font-sans capitalize font-bold block truncate max-w-[90px]"
+              style={{ color: topCause.hex }}
+            >
               {topCause.name}
             </span>
           </div>
@@ -105,7 +101,7 @@ export default function CauseDonutChart({ breakdownPct, isEstimated = false }) {
             <div className="flex items-center gap-1.5 truncate">
               <span
                 className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ backgroundColor: CAUSE_COLORS[item.key] || '#94A3B8' }}
+                style={{ backgroundColor: item.hex }}
               />
               <span className="capitalize text-slate-700 truncate text-[10.5px]">{item.name}</span>
             </div>

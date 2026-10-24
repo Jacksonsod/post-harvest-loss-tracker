@@ -117,15 +117,7 @@ export default function CoopHistory({
     }));
 
   const topRecurringCause = cumulativeCauses[0]?.name || 'Storage';
-
-  const causeColorPalette = [
-    'bg-emerald-600',
-    'bg-amber-500',
-    'bg-rose-500',
-    'bg-blue-500',
-    'bg-indigo-500',
-    'bg-slate-400'
-  ];
+  const topCauseMeta = CAUSE_LABELS[cumulativeCauses[0]?.key];
 
   return (
     <div className="space-y-6">
@@ -277,12 +269,21 @@ export default function CoopHistory({
             </div>
 
             {/* Recurring Bottleneck Driver */}
-            <div className="bg-white/95 border border-black/[0.05] p-5 rounded-2xl shadow-2xs">
+            <div 
+              className="p-5 rounded-2xl border shadow-2xs transition-all"
+              style={{
+                backgroundColor: `${topCauseMeta?.hex || '#10B981'}10`,
+                borderColor: `${topCauseMeta?.hex || '#10B981'}30`,
+              }}
+            >
               <span className="text-[10.5px] font-mono text-slate-400 font-bold uppercase block mb-1">PRIMARY BOTTLENECK</span>
-              <span className="text-lg font-mono font-bold text-slate-900 capitalize truncate block">
+              <span 
+                className="text-lg font-mono font-black capitalize truncate block"
+                style={{ color: topCauseMeta?.hex || '#0F172A' }}
+              >
                 {topRecurringCause}
               </span>
-              <span className="text-[10px] text-rose-600 font-medium block mt-1">
+              <span className="text-[10px] text-slate-500 font-medium block mt-1">
                 Leading driver across recorded harvests
               </span>
             </div>
@@ -308,25 +309,37 @@ export default function CoopHistory({
 
               {/* Multi-segment Cumulative Stacked Bar */}
               <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden flex shadow-inner">
-                {cumulativeCauses.map((c, i) => (
-                  <div
-                    key={c.key}
-                    style={{ width: `${c.pct}%` }}
-                    className={`h-full ${causeColorPalette[i % causeColorPalette.length]} transition-all duration-300`}
-                    title={`${c.name}: ${c.pct}% (${(c.kg / 1000).toFixed(1)}t)`}
-                  />
-                ))}
+                {cumulativeCauses.map((c) => {
+                  const cMeta = CAUSE_LABELS[c.key];
+                  return (
+                    <div
+                      key={c.key}
+                      style={{ 
+                        width: `${c.pct}%`,
+                        backgroundColor: cMeta?.hex || '#10B981'
+                      }}
+                      className="h-full transition-all duration-300"
+                      title={`${c.name}: ${c.pct}% (${(c.kg / 1000).toFixed(1)}t)`}
+                    />
+                  );
+                })}
               </div>
 
               {/* Legend Chips */}
               <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
-                {cumulativeCauses.slice(0, 5).map((c, i) => (
-                  <div key={c.key} className="flex items-center gap-1.5">
-                    <span className={`w-2.5 h-2.5 rounded-full ${causeColorPalette[i % causeColorPalette.length]} shrink-0`} />
-                    <span className="text-slate-600 font-medium">{c.name}:</span>
-                    <strong className="text-slate-900">{c.pct}%</strong>
-                  </div>
-                ))}
+                {cumulativeCauses.slice(0, 6).map((c) => {
+                  const cMeta = CAUSE_LABELS[c.key];
+                  return (
+                    <div key={c.key} className="flex items-center gap-1.5">
+                      <span 
+                        className="w-2.5 h-2.5 rounded-full shrink-0" 
+                        style={{ backgroundColor: cMeta?.hex || '#10B981' }} 
+                      />
+                      <span className="text-slate-600 font-medium">{c.name}:</span>
+                      <strong className="text-slate-900">{c.pct}%</strong>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

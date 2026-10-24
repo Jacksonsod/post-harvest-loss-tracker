@@ -1,5 +1,6 @@
 import React from 'react';
 import CauseDonutChart from './CauseDonutChart';
+import { CAUSE_LABELS } from '../../data/staticData';
 import { 
   ShieldCheck, 
   AlertTriangle, 
@@ -276,12 +277,21 @@ export default function ResultCard({
         </div>
 
         {/* Dominant Loss Cause */}
-        <div className="bg-white p-4 rounded-2xl border border-black/[0.05] shadow-2xs">
-          <span className="text-[11px] text-slate-500 block mb-1">Leading Loss Driver</span>
-          <span className="text-base font-mono font-bold text-slate-900 capitalize block truncate">
-            {result.dominant_cause ? result.dominant_cause.replace('_', ' ') : 'Not Specified'}
+        <div 
+          className="p-4 rounded-2xl border shadow-2xs transition-all"
+          style={{
+            backgroundColor: `${CAUSE_LABELS[result.dominant_cause]?.hex || '#10B981'}10`,
+            borderColor: `${CAUSE_LABELS[result.dominant_cause]?.hex || '#10B981'}30`,
+          }}
+        >
+          <span className="text-[11px] font-mono text-slate-500 block mb-1">Leading Loss Driver</span>
+          <span 
+            className="text-base font-mono font-black capitalize block truncate"
+            style={{ color: CAUSE_LABELS[result.dominant_cause]?.hex || '#0F172A' }}
+          >
+            {CAUSE_LABELS[result.dominant_cause]?.name || result.dominant_cause?.replace('_', ' ') || 'Not Specified'}
           </span>
-          <span className="text-[10px] text-slate-400 block mt-1">
+          <span className="text-[10px] text-slate-400 block mt-1 font-mono">
             {result.dominant_cause_is_estimated 
               ? 'NISR crop average' 
               : 'Itemized entry'}

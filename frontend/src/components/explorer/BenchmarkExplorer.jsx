@@ -25,8 +25,30 @@ import {
   ChevronDown,
   Target,
   ArrowRight,
-  AlertCircle
+  AlertCircle,
+  Scissors,
+  Bug,
+  ShieldAlert,
+  Bird,
+  Cog,
+  Truck,
+  Warehouse,
+  Package,
+  ShoppingBag
 } from 'lucide-react';
+
+const CAUSE_ICONS = {
+  Scissors,
+  Bug,
+  ShieldAlert,
+  TrendingDown,
+  Bird,
+  Cog,
+  Truck,
+  Warehouse,
+  Package,
+  ShoppingBag,
+};
 
 const QUICK_CROPS = [
   { name: 'Maize', icon: '🌽' },
@@ -575,16 +597,25 @@ export default function BenchmarkExplorer({
                     const rwfOn100t = (100000 * (pct / 100) * farmgatePrice);
                     const causeName = meta?.name || causeKey.replace('_', ' ');
                     const threatLevel = pct >= 25 ? 'Critical' : pct >= 15 ? 'High' : pct >= 8 ? 'Moderate' : 'Low';
+                    const IconComp = (meta && CAUSE_ICONS[meta.icon]) || Bug;
 
                     return (
                       <div 
                         key={causeKey} 
-                        className="bg-slate-50/70 p-4 rounded-2xl border border-black/[0.04] hover:border-black/[0.1] transition-all shadow-2xs space-y-2"
+                        className="p-4 rounded-2xl border transition-all shadow-2xs space-y-2 hover:-translate-y-0.5"
+                        style={{
+                          backgroundColor: `${meta?.hex || '#10B981'}08`,
+                          borderColor: `${meta?.hex || '#10B981'}25`,
+                        }}
                       >
                         <div className="flex justify-between items-center text-xs font-mono">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-slate-900 font-bold">{causeName}</span>
-                            <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <IconComp 
+                              className="w-4 h-4 shrink-0" 
+                              style={{ color: meta?.hex || '#64748B' }} 
+                            />
+                            <span className="text-slate-900 font-bold truncate">{causeName}</span>
+                            <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
                               threatLevel === 'Critical' ? 'bg-rose-100 text-rose-800' :
                               threatLevel === 'High' ? 'bg-amber-100 text-amber-800' :
                               threatLevel === 'Moderate' ? 'bg-blue-100 text-blue-800' :
@@ -594,18 +625,24 @@ export default function BenchmarkExplorer({
                             </span>
                           </div>
 
-                          <span className="text-slate-900 font-black tnum">
+                          <span 
+                            className="font-mono font-black tnum text-xs shrink-0"
+                            style={{ color: meta?.hex || '#0F172A' }}
+                          >
                             {metricDisplayMode === 'percent' 
                               ? `${pct}%`
                               : `~${(rwfOn100t / 1000000).toFixed(2)}M RWF`}
                           </span>
                         </div>
 
-                        {/* Progress Bar */}
+                        {/* Progress Bar with Cause Color */}
                         <div className="w-full bg-slate-200/80 rounded-full h-1.5 overflow-hidden">
                           <div 
-                            className="h-full bg-emerald-600 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min(100, pct)}%` }}
+                            className="h-full rounded-full transition-all duration-300"
+                            style={{ 
+                              width: `${Math.min(100, pct)}%`,
+                              backgroundColor: meta?.hex || '#10B981'
+                            }}
                           />
                         </div>
 
