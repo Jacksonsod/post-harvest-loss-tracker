@@ -67,7 +67,7 @@ export default function BentoDispatchCard({ selectedDistrict }) {
         {/* Triggers Feed */}
         {loading ? (
           <div className="h-44 flex items-center justify-center text-xs font-mono text-slate-400 animate-pulse">
-            Analyzing district telemetry & dispatch triggers...
+            Checking district loss trigger conditions...
           </div>
         ) : triggers.length > 0 ? (
           <div className="space-y-2.5">

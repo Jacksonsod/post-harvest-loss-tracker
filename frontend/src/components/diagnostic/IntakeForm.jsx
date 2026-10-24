@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { DISTRICTS, CROPS, SEASONS, CAUSES_ORDER } from '../../data/staticData';
-import { CAUSE_METADATA } from '../../data/nationalMetrics';
+import { DISTRICTS, CROPS, SEASONS, CAUSES_ORDER, CAUSE_LABELS } from '../../data/staticData';
+import { useOptions } from '../../context/OptionsContext';
 import LiveBenchmarkPreview from './LiveBenchmarkPreview';
 import { 
   ClipboardList, 
@@ -21,8 +21,13 @@ export default function IntakeForm({
   isSubmitting,
   error
 }) {
-  const [district, setDistrict] = useState(selectedCoop?.district || DISTRICTS[0]);
-  const [crop, setCrop] = useState('Maize');
+  const options = useOptions();
+  const districtList = options.districts?.length ? options.districts : DISTRICTS;
+  const cropList = options.crops?.length ? options.crops : CROPS;
+  const seasonList = options.seasons?.length ? options.seasons : SEASONS;
+
+  const [district, setDistrict] = useState(selectedCoop?.district || districtList[0] || 'Musanze');
+  const [crop, setCrop] = useState(selectedCoop?.primaryCrop || 'Maize');
   const [season, setSeason] = useState('A');
   const [harvestedQtyKg, setHarvestedQtyKg] = useState('50000');
   
@@ -141,12 +146,12 @@ export default function IntakeForm({
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-800">
-              NISR TELEMETRY INTAKE
+              ASSESSMENT INTAKE
             </span>
           </div>
           <h2 className="text-base font-bold text-slate-900 mt-0.5 flex items-center gap-2">
             <ClipboardList className="w-4 h-4 text-emerald-600" />
-            <span>Harvest Diagnostic Entry</span>
+            <span>Check your harvest losses</span>
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Logging harvest for <strong className="text-slate-800 font-semibold">{selectedCoop?.name || 'Selected Cooperative'}</strong>
@@ -202,7 +207,7 @@ export default function IntakeForm({
               onChange={(e) => setDistrict(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
             >
-              {DISTRICTS.map((d) => (
+              {districtList.map((d) => (
                 <option key={d} value={d}>{d}</option>
               ))}
             </select>
@@ -218,7 +223,7 @@ export default function IntakeForm({
               onChange={(e) => setCrop(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
             >
-              {CROPS.map((c) => (
+              {cropList.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
@@ -234,9 +239,13 @@ export default function IntakeForm({
               onChange={(e) => setSeason(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50/80 border border-black/[0.06] text-slate-900 rounded-xl text-xs font-mono focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 shadow-2xs transition-all"
             >
-              {SEASONS.map((s) => (
-                <option key={s.id} value={s.id}>{s.name} ({s.id})</option>
-              ))}
+              {seasonList.map((s) => {
+                const sId = typeof s === 'string' ? s : s.id;
+                const sName = typeof s === 'string' ? `Season ${s}` : s.name;
+                return (
+                  <option key={sId} value={sId}>{sName}</option>
+                );
+              })}
             </select>
           </div>
 
@@ -357,7 +366,7 @@ export default function IntakeForm({
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {CAUSES_ORDER.map((cKey) => {
-                const meta = CAUSE_METADATA[cKey];
+                const meta = CAUSE_LABELS[cKey];
                 const causeKg = causeLosses[cKey] || 0;
                 const sharePct = currentTotalLoss > 0 
                   ? ((causeKg / currentTotalLoss) * 100).toFixed(0) 
@@ -372,7 +381,7 @@ export default function IntakeForm({
                       <div className="flex items-center justify-between gap-1 mb-1">
                         <label 
                           className="block text-[11px] font-mono text-slate-800 font-semibold truncate" 
-                          title={meta?.name}
+                          title={meta?.name || cKey}
                         >
                           {meta?.name || cKey}
                         </label>
@@ -427,12 +436,12 @@ export default function IntakeForm({
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <Activity className="w-3.5 h-3.5 animate-spin" />
-                <span>Running Risk Engine...</span>
+                <span>Evaluating assessment...</span>
               </span>
             ) : (
               <>
                 <Send className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Submit & Run Diagnostic</span>
+                <span>Submit harvest assessment</span>
               </>
             )}
           </button>
