@@ -2,21 +2,14 @@ import React, { useState } from 'react';
 import IntakeForm from './IntakeForm';
 import ResultCard from './ResultCard';
 import { api } from '../../api/client';
+import { CAUSE_LABELS } from '../../data/staticData';
 import { 
-  Activity, 
-  Sparkles, 
-  TrendingDown, 
+  ClipboardCheck, 
   DollarSign, 
-  ShieldCheck, 
-  AlertTriangle,
   RotateCcw,
   CheckCircle2,
-  Building2,
   Scale,
-  TrendingUp,
-  Tag,
-  ChevronDown,
-  Plus
+  Sparkles
 } from 'lucide-react';
 
 export default function AssessmentEngine({ 
@@ -41,7 +34,7 @@ export default function AssessmentEngine({
       const result = await api.submitAssessment(payload);
       setLatestResult(result);
       setSubmittedMeta({
-        coopName: selectedCoop?.name,
+        coopName: selectedCoop?.name || 'Harvest Evaluation',
         cropName: payload.crop,
         districtName: payload.district,
       });
@@ -56,80 +49,55 @@ export default function AssessmentEngine({
   };
 
   // Projected metrics from live draft
-  const projectedLossRate = liveDraft?.lossRatePct || 12.0;
-  const projectedLossKg = liveDraft?.totalLossKg || 6000;
+  const projectedLossRate = liveDraft?.lossRatePct || 9.4;
+  const projectedLossKg = liveDraft?.totalLossKg || 4700;
   const projectedHarvestedKg = liveDraft?.harvestedQtyKg || 50000;
   const projectedRetainedKg = Math.max(0, projectedHarvestedKg - projectedLossKg);
-  const retainedPct = projectedHarvestedKg > 0 ? ((projectedRetainedKg / projectedHarvestedKg) * 100).toFixed(1) : '88.0';
-  const lostPct = projectedHarvestedKg > 0 ? ((projectedLossKg / projectedHarvestedKg) * 100).toFixed(1) : '12.0';
+  const retainedPct = projectedHarvestedKg > 0 ? ((projectedRetainedKg / projectedHarvestedKg) * 100).toFixed(1) : '90.6';
+  const lostPct = projectedHarvestedKg > 0 ? ((projectedLossKg / projectedHarvestedKg) * 100).toFixed(1) : '9.4';
 
   const pricePerKg = 520; // Official Rwandan farmgate index price
   const projectedLossRwf = projectedLossKg * pricePerKg;
   const projectedRetainedRwf = projectedRetainedKg * pricePerKg;
   const projectedRisk = projectedLossRate <= 10.6 ? 'Low' : projectedLossRate > 14.3 ? 'High' : 'Medium';
 
+  // Compute top bottleneck from live draft
+  const causeEntries = liveDraft?.causeLosses ? Object.entries(liveDraft.causeLosses) : [];
+  const sortedCauses = causeEntries.sort((a, b) => b[1] - a[1]);
+  const topCauseKey = sortedCauses[0]?.[0] || 'storage';
+  const topCauseKg = sortedCauses[0]?.[1] || 0;
+  const topCausePct = projectedLossKg > 0 ? Math.round((topCauseKg / projectedLossKg) * 100) : 0;
+  const topCauseMeta = CAUSE_LABELS[topCauseKey] || { name: 'Storage Spoilage', hex: '#0284C7', shortName: 'Storage' };
+
   return (
     <div className="space-y-6">
-      {/* Executive Cooperative Diagnostic Banner */}
+      {/* Executive Header Banner */}
       <div className="bg-white/95 rounded-[28px] border border-black/[0.06] p-5 lg:p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
-            <Building2 className="w-5 h-5" />
+            <ClipboardCheck className="w-5 h-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2.5 mb-1.5">
-              {/* Interactive Cooperative Selector Dropdown */}
-              <div className="relative inline-flex items-center">
-                <select
-                  value={selectedCoop?.id || ''}
-                  onChange={(e) => {
-                    const coopId = Number(e.target.value);
-                    const found = coops.find((c) => c.id === coopId);
-                    if (found && onSelectCoop) onSelectCoop(found);
-                  }}
-                  className="text-sm sm:text-base font-bold text-slate-900 bg-slate-100/90 hover:bg-slate-200/80 border border-black/[0.08] rounded-xl pl-3 pr-8 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer transition-all shadow-2xs appearance-none"
-                  aria-label="Switch cooperative for diagnostic"
-                >
-                  {coops.map((coop) => (
-                    <option key={coop.id} value={coop.id}>
-                      {coop.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-500 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" />
-              </div>
-
-              {onOpenNewCoopModal && (
-                <button
-                  onClick={onOpenNewCoopModal}
-                  className="text-[10.5px] font-mono font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 px-2.5 py-1 rounded-xl transition-all flex items-center gap-1 shadow-2xs active:scale-95"
-                  title="Register new cooperative"
-                >
-                  <Plus className="w-3 h-3" />
-                  <span>Register Coop</span>
-                </button>
-              )}
-
-              <span className="text-[10.5px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05]">
-                {selectedCoop?.district || liveDraft?.district || 'District Base'}
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 font-mono tracking-tight uppercase">
+                Assess Harvest Loss
+              </h2>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                NISR SAS 2024–2025
               </span>
-              <span className="text-[10.5px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200/60">
-                NISR-COOP-#{String(selectedCoop?.id || '01').padStart(2, '0')}
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-black/[0.05]">
+                {liveDraft?.crop || 'Maize'} in {liveDraft?.district || 'Musanze'} (Season {liveDraft?.season || 'A'})
               </span>
             </div>
-            <p className="text-xs text-slate-500 flex flex-wrap items-center gap-2">
-              <span>Commodity: <strong className="text-slate-800 font-semibold">{liveDraft?.crop || selectedCoop?.primaryCrop || 'Maize'}</strong></span>
-              <span className="text-slate-300">•</span>
-              <span>Season Context: <strong className="text-slate-800 font-semibold">2024 Season {liveDraft?.season || 'A'}</strong></span>
-              <span className="text-slate-300">•</span>
-              <span>Farmgate Reference: <strong className="text-emerald-700 font-mono font-semibold">520 RWF/kg</strong></span>
+            <p className="text-xs text-slate-500 mt-1">
+              Compare actual harvest quantities and losses against official NISR survey benchmarks.
             </p>
           </div>
         </div>
 
         {/* NST2 Alignment Metric Capsule */}
         <div className="flex items-center gap-3 shrink-0 self-start md:self-auto bg-slate-50/80 p-2.5 px-4 rounded-2xl border border-black/[0.05]">
-          <div className="text-left md:text-right">
+          <div>
             <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
               NST2 TARGET STATUS
             </div>
@@ -173,7 +141,7 @@ export default function AssessmentEngine({
                 </span>
                 <button
                   onClick={() => setLatestResult(null)}
-                  className="text-xs font-mono text-slate-500 hover:text-slate-900 flex items-center gap-1 hover:underline"
+                  className="text-xs font-mono text-slate-500 hover:text-slate-900 flex items-center gap-1 hover:underline cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Evaluate Another Harvest</span>
@@ -191,39 +159,26 @@ export default function AssessmentEngine({
             /* Live Real-Time Projection Scorecard (Pre-submission) */
             <div className="bg-white/95 border border-black/[0.06] rounded-[28px] p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] backdrop-blur-xs space-y-5 animate-in fade-in duration-200">
               {/* Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-black/[0.04]">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
-                    <Activity className="w-4 h-4 animate-pulse" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-slate-100 text-slate-700 border border-black/[0.06]">
-                        LIVE DRAFT EVALUATION
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        PRE-SUBMISSION
-                      </span>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 mt-0.5">
-                      Real-Time Diagnostic Scorecard for <span className="text-emerald-700">{selectedCoop?.name || 'Cooperative'}</span>
-                    </h3>
-                  </div>
+              <div className="flex items-center justify-between pb-3 border-b border-black/[0.04]">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-800">
+                    Real-Time Loss Evaluation
+                  </h3>
                 </div>
-
-                <span className="text-[10.5px] font-mono text-slate-400 hidden sm:inline">
-                  Updates as you type
+                <span className="text-[10.5px] font-mono font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full">
+                  {liveDraft?.crop || 'Maize'} in {liveDraft?.district || 'Musanze'}
                 </span>
               </div>
 
-              {/* Risk Continuum Meter Bar */}
+              {/* Loss Rate Position Bar */}
               <div className="bg-slate-50/70 p-4 rounded-2xl border border-black/[0.04]">
                 <div className="flex justify-between items-center text-xs mb-2">
                   <span className="font-mono text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
-                    Projected Risk Position:
+                    Loss Rate Position:
                   </span>
                   <span className="font-mono text-xs font-black text-slate-900">
-                    {projectedLossRate}% Loss Rate
+                    {projectedLossRate}% Loss Rate ({projectedRisk} Risk)
                   </span>
                 </div>
                 <div className="relative w-full h-3 rounded-full bg-slate-200 overflow-hidden flex">
@@ -239,15 +194,15 @@ export default function AssessmentEngine({
                 </div>
               </div>
 
-              {/* Yield Retention Funnel */}
-              <div className="p-4 rounded-2xl bg-slate-50/70 border border-black/[0.04] space-y-2.5">
+              {/* Yield Retention & Financial Balance */}
+              <div className="p-4 rounded-2xl bg-slate-50/70 border border-black/[0.04] space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-mono text-[10.5px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
                     <Scale className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Harvest Yield Retention Funnel</span>
+                    <span>Yield & Financial Balance ({pricePerKg} RWF/kg)</span>
                   </span>
-                  <span className="font-mono text-[11px] text-slate-500">
-                    {projectedHarvestedKg.toLocaleString()} kg Total Gross Yield
+                  <span className="font-mono text-[11px] font-bold text-slate-800">
+                    Gross: {((projectedHarvestedKg * pricePerKg) / 1000000).toFixed(2)}M RWF
                   </span>
                 </div>
 
@@ -256,115 +211,101 @@ export default function AssessmentEngine({
                   <div 
                     className="h-full bg-emerald-600 transition-all duration-300" 
                     style={{ width: `${retainedPct}%` }}
-                    title={`Retained Yield: ${retainedPct}%`}
                   />
                   <div 
                     className="h-full bg-rose-500 transition-all duration-300" 
                     style={{ width: `${lostPct}%` }}
-                    title={`Lost Volume: ${lostPct}%`}
                   />
                 </div>
 
-                <div className="flex justify-between items-center text-xs font-mono pt-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
-                    <span className="text-slate-600">
-                      Retained Volume: <strong className="text-slate-900 font-bold tnum">{projectedRetainedKg.toLocaleString()} kg</strong> ({retainedPct}%)
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
-                    <span className="text-slate-600">
-                      Depleted: <strong className="text-rose-700 font-bold tnum">{projectedLossKg.toLocaleString()} kg</strong> ({lostPct}%)
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Economic Capital Balance Meter */}
-              <div className="p-4 rounded-2xl bg-slate-50/70 border border-black/[0.04] space-y-2.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono text-[10.5px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Economic Capital Balance (520 RWF/kg)</span>
-                  </span>
-                  <span className="font-mono text-[11px] font-bold text-slate-800">
-                    Gross Value: {((projectedHarvestedKg * pricePerKg) / 1000000).toFixed(2)}M RWF
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3 pt-1">
                   <div className="p-3 bg-white rounded-xl border border-emerald-200/80 shadow-2xs">
-                    <span className="text-[10.5px] text-emerald-700 font-semibold block">Commercial Retained Capital</span>
-                    <span className="text-base font-mono font-black text-emerald-800 block mt-0.5">
+                    <span className="text-[10px] text-emerald-700 font-bold font-mono uppercase block">Retained Harvest</span>
+                    <span className="text-lg font-mono font-black text-emerald-800 block mt-0.5">
                       {(projectedRetainedRwf / 1000000).toFixed(2)}M RWF
                     </span>
-                    <span className="text-[9.5px] text-slate-400 block mt-0.5">Marketable harvested volume</span>
+                    <span className="text-[10px] text-slate-500 font-mono block mt-0.5">
+                      {projectedRetainedKg.toLocaleString()} kg ({retainedPct}%)
+                    </span>
                   </div>
 
                   <div className="p-3 bg-white rounded-xl border border-rose-200/80 shadow-2xs">
-                    <span className="text-[10.5px] text-rose-700 font-semibold block">Forfeited Revenue Loss</span>
-                    <span className="text-base font-mono font-black text-rose-800 block mt-0.5">
+                    <span className="text-[10px] text-rose-700 font-bold font-mono uppercase block">Forfeited Revenue Loss</span>
+                    <span className="text-lg font-mono font-black text-rose-800 block mt-0.5">
                       {(projectedLossRwf / 1000000).toFixed(2)}M RWF
                     </span>
-                    <span className="text-[9.5px] text-slate-400 block mt-0.5">Loss to be mitigated via protocols</span>
+                    <span className="text-[10px] text-slate-500 font-mono block mt-0.5">
+                      {projectedLossKg.toLocaleString()} kg ({lostPct}%)
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Projected KPIs */}
+              {/* Dominant Loss Bottleneck & Recommended Action */}
+              <div className="p-4 rounded-2xl bg-white border border-black/[0.06] shadow-2xs space-y-2">
+                <span className="text-[10.5px] font-mono font-bold text-slate-500 uppercase tracking-wider block">
+                  Primary Loss Bottleneck:
+                </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: topCauseMeta.hex }} />
+                    <span className="text-sm font-mono font-bold text-slate-900">{topCauseMeta.name}</span>
+                  </div>
+                  <span 
+                    className="text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full border" 
+                    style={{
+                      backgroundColor: `${topCauseMeta.hex}15`,
+                      color: topCauseMeta.hex,
+                      borderColor: `${topCauseMeta.hex}30`
+                    }}
+                  >
+                    {topCausePct}% of loss ({topCauseKg.toLocaleString()} kg)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 pt-1.5 border-t border-black/[0.04] leading-relaxed">
+                  Key intervention: <strong>Hermetic bag adoption, solar drying cribs, and moisture validation prior to bulk storage.</strong>
+                </p>
+              </div>
+
+              {/* KPI Chips */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-white p-4 rounded-2xl border border-black/[0.05] shadow-2xs">
-                  <span className="text-[11px] text-slate-500 block mb-1">Projected Loss Rate</span>
+                <div className="bg-white p-3.5 rounded-2xl border border-black/[0.05] shadow-2xs">
+                  <span className="text-[10.5px] text-slate-500 block mb-1 font-mono uppercase">Loss Rate</span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-mono font-black text-slate-900 tnum">
+                    <span className="text-xl font-mono font-black text-slate-900 tnum">
                       {projectedLossRate}%
                     </span>
-                    <span className={`text-[10.5px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
-                      projectedLossRate <= 11.8 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-700'
+                    <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full ${
+                      projectedLossRate <= 10.22 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-700'
                     }`}>
-                      {projectedLossRate <= 11.8 ? 'Below Nat’l' : 'Above Nat’l'}
+                      {projectedLossRate <= 10.22 ? 'Below Nat’l' : 'Above Nat’l'}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-400 block mt-1">
-                    vs. 11.82% National Average
+                  <span className="text-[10px] text-slate-400 block mt-1 font-mono">
+                    vs. 10.22% National Benchmark
                   </span>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl border border-black/[0.05] shadow-2xs">
-                  <div className="flex items-center gap-1 text-[11px] text-slate-500 mb-1">
-                    <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Est. Cash Impact</span>
-                  </div>
-                  <span className="text-2xl font-mono font-black text-slate-900 tnum block">
+                <div className="bg-white p-3.5 rounded-2xl border border-black/[0.05] shadow-2xs">
+                  <span className="text-[10.5px] text-slate-500 block mb-1 font-mono uppercase">Cash Loss</span>
+                  <span className="text-xl font-mono font-black text-slate-900 tnum block">
                     ~{(projectedLossRwf / 1000000).toFixed(2)}M RWF
                   </span>
-                  <span className="text-[10px] text-slate-400 block mt-1">
-                    {Math.round(projectedLossKg).toLocaleString()} kg crop depleted
+                  <span className="text-[10px] text-slate-400 block mt-1 font-mono">
+                    {Math.round(projectedLossKg).toLocaleString()} kg depleted
                   </span>
                 </div>
 
-                <div className="bg-white p-4 rounded-2xl border border-black/[0.05] shadow-2xs">
-                  <span className="text-[11px] text-slate-500 block mb-1">Status Classification</span>
+                <div className="bg-white p-3.5 rounded-2xl border border-black/[0.05] shadow-2xs">
+                  <span className="text-[10.5px] text-slate-500 block mb-1 font-mono uppercase">Risk Level</span>
                   <span className={`text-base font-mono font-black uppercase block ${
                     projectedRisk === 'Low' ? 'text-emerald-700' : projectedRisk === 'Medium' ? 'text-amber-700' : 'text-rose-700'
                   }`}>
                     {projectedRisk} Risk
                   </span>
-                  <span className="text-[10px] text-slate-400 block mt-1">
-                    {liveDraft?.crop || 'Maize'} in {liveDraft?.district || selectedCoop?.district || 'District'}
+                  <span className="text-[10px] text-slate-400 block mt-1 font-mono">
+                    {liveDraft?.crop || 'Maize'} in {liveDraft?.district || 'Musanze'}
                   </span>
-                </div>
-              </div>
-
-              {/* Prescriptive Readiness Note */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-black/[0.05] text-xs text-slate-600 flex items-start gap-3">
-                <Sparkles className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <strong className="text-slate-900 block font-semibold">Ready to record official survey entry?</strong>
-                  <p className="text-[11px] leading-relaxed">
-                    Clicking <strong className="text-slate-900 font-semibold">"Submit & Run Diagnostic"</strong> on the left logs an official NISR diagnostic record, activates prescriptive mitigation protocols, and enables the printable Executive Advisory Report.
-                  </p>
                 </div>
               </div>
             </div>

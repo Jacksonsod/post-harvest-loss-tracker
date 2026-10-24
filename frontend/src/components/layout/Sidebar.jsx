@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   Radar, 
-  ClipboardCheck, 
   TrendingDown, 
   Database, 
   FileText,
@@ -26,9 +25,8 @@ export default function Sidebar({
 
   const navItems = [
     { id: 'national_picture', label: 'National picture', icon: Radar },
-    { id: 'check_losses', label: 'Check my losses', icon: ClipboardCheck },
     { id: 'plan_season', label: 'Plan next season', icon: Calculator },
-    { id: 'coop_progress', label: "My cooperative's progress", icon: TrendingDown },
+    { id: 'coop_progress', label: 'Cooperative progress', icon: TrendingDown },
     { id: 'explore_data', label: 'Explore the data', icon: Database },
     { id: 'about_data', label: 'About the data', icon: Info },
   ];

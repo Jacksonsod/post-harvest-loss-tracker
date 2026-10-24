@@ -18,7 +18,8 @@ import {
   Layers,
   ArrowRight,
   ChevronDown,
-  ClipboardList
+  ClipboardList,
+  Calculator
 } from 'lucide-react';
 
 export default function CoopHistory({ 
@@ -26,7 +27,7 @@ export default function CoopHistory({
   selectedCoop, 
   onSelectCoop,
   onOpenNewCoopModal,
-  onNavigateToDiagnostic, 
+  onNavigateToPlanSeason, 
   onViewReport 
 }) {
   const [assessments, setAssessments] = useState([]);
@@ -189,11 +190,11 @@ export default function CoopHistory({
         </div>
 
         <button
-          onClick={onNavigateToDiagnostic}
-          className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all active:scale-[0.98] shadow-sm flex items-center gap-2 self-start md:self-auto shrink-0"
+          onClick={onNavigateToPlanSeason}
+          className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition-all active:scale-[0.98] shadow-sm shadow-emerald-700/20 flex items-center gap-2 self-start md:self-auto shrink-0 cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Log New Season Harvest</span>
+          <Calculator className="w-3.5 h-3.5 text-emerald-200" />
+          <span>Plan Season Mitigation</span>
         </button>
       </div>
 
@@ -209,18 +210,18 @@ export default function CoopHistory({
           </div>
           <div className="max-w-md mx-auto space-y-1.5">
             <h3 className="text-sm font-mono font-bold text-slate-900">
-              No harvest records yet for {selectedCoop?.name || 'this cooperative'}
+              No historical records yet for {selectedCoop?.name || 'this cooperative'}
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Submit a harvest loss assessment to establish a performance baseline, calculate savings dividends, and compare against NISR survey benchmarks.
+              Explore predictive yield simulations and storage infrastructure dividends for upcoming seasons.
             </p>
           </div>
           <button
-            onClick={onNavigateToDiagnostic}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all shadow-sm active:scale-95"
+            onClick={onNavigateToPlanSeason}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition-all shadow-sm shadow-emerald-700/20 active:scale-95 cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Check losses for this cooperative</span>
+            <Calculator className="w-3.5 h-3.5 text-emerald-200" />
+            <span>Plan season mitigation</span>
           </button>
         </div>
       ) : (

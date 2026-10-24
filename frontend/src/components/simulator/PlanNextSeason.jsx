@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import BentoPreHarvestSimulator from '../situation_room/BentoPreHarvestSimulator';
 import BentoStorageComparison from '../situation_room/BentoStorageComparison';
 import BentoDispatchCard from '../situation_room/BentoDispatchCard';
-import { Calculator, Sparkles, ShieldCheck, ArrowRight, Info, CheckCircle2 } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 
-export default function PlanNextSeason({ selectedCoop, onNavigateToCheckLosses }) {
+export default function PlanNextSeason({ selectedCoop }) {
   const [selectedDistrict, setSelectedDistrict] = useState(selectedCoop?.district || 'Musanze');
 
   return (
@@ -32,14 +32,6 @@ export default function PlanNextSeason({ selectedCoop, onNavigateToCheckLosses }
             </p>
           </div>
         </div>
-
-        {selectedCoop && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-black/[0.06] text-xs font-mono">
-            <span className="text-slate-400">Context:</span>
-            <span className="font-bold text-slate-800">{selectedCoop.name}</span>
-            <span className="text-emerald-700 font-semibold">({selectedCoop.district})</span>
-          </div>
-        )}
       </div>
 
       {/* Main 12-Column Responsive Layout */}
@@ -56,25 +48,6 @@ export default function PlanNextSeason({ selectedCoop, onNavigateToCheckLosses }
           <BentoStorageComparison />
           <BentoDispatchCard selectedDistrict={selectedDistrict} />
         </div>
-      </div>
-
-      {/* Guidance Footer Bar */}
-      <div className="bg-slate-50 border border-black/[0.05] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
-        <div className="flex items-center gap-2">
-          <Info className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>
-            Already completed harvest collection? Record your actual losses to benchmark against this season's targets.
-          </span>
-        </div>
-        {onNavigateToCheckLosses && (
-          <button
-            onClick={onNavigateToCheckLosses}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all shrink-0 active:scale-95"
-          >
-            <span>Check my losses</span>
-            <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
-          </button>
-        )}
       </div>
     </div>
   );
