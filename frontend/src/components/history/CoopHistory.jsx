@@ -135,9 +135,6 @@ export default function CoopHistory({
               <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-black/[0.05] font-semibold">
                 {selectedCoop?.district} District
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
-                NISR-COOP-#{String(selectedCoop?.id || '01').padStart(2, '0')}
-              </span>
             </div>
 
             {/* Performance Status & Trajectory */}

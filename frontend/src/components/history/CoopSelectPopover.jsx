@@ -119,7 +119,6 @@ export default function CoopSelectPopover({ coops = [], selectedCoop, onSelectCo
                         <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-black/[0.04]">
                           {coop.district} District
                         </span>
-                        <span>NISR-COOP-#{String(coop.id).padStart(2, '0')}</span>
                       </div>
                     </div>
 
