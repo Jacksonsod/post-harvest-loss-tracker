@@ -42,7 +42,6 @@ Most cooperatives have no simple way to know whether their losses are normal, wh
 | Page | Who it's for | What you do there |
 |---|---|---|
 | **National picture** | Planners, policymakers | Filter the district map by season and crop. See the highest-loss districts, vulnerable crops, suggested interventions and the NST2 comparison. |
-| **Check my losses** | Cooperatives | Enter a harvest and its losses, either by cause or as a single total. Get the risk level, main cause, recommendation and value lost. Export a short field-ready summary. |
 | **Plan next season** | Cooperatives | Enter an expected harvest to see the expected loss in kg and RWF, and compare loss rates by storage type. |
 | **Cooperative progress** | Cooperatives | See a cooperative's past assessments and its loss trend over time. |
 | **Explore the data** | Everyone | Browse the benchmarks by district, crop and season. |
@@ -160,6 +159,7 @@ python predict_loss_risk.py --input ../data/processed/cleaned_production.csv --o
 - Sample cooperatives are fictional and labelled as such. Their results use the real benchmarks.
 - The survey-derived national rate (10.22%) is our own calculation, not an official statistic. It's shown separately from the official NST2 figures.
 - The hosted database is SQLite. Data entered on the live app is kept, but the app is a prototype, not a production system.
+- There is no national dataset of individual cooperatives’ harvests and losses, so the app doesn’t ask users to type records one by one. Cooperatives import their own records as a CSV file (template provided). Each record is then scored against the NISR benchmarks with the same logic, giving a risk level, main cause, recommendation and value lost.
 
 ## Declaration
 
