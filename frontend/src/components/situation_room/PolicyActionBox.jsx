@@ -71,7 +71,7 @@ export default function PolicyActionBox({ onNavigateToPlanSeason }) {
             <span className="text-xs text-slate-400 font-medium">loss</span>
           </div>
           <span className="text-[10px] text-slate-500 block mt-1 font-sans">
-            Source: Rwanda NST2 (presented to Parliament, August 2026)
+            Source: Rwanda NST2 (presented to Parliament, August 2025)
           </span>
         </div>
 

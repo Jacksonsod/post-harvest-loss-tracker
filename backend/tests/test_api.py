@@ -221,7 +221,7 @@ def test_b2_national_summary(client):
     assert [t["district"] for t in top[:3]] == ["Nyagatare", "Kamonyi", "Gatsibo"]
     assert top[0] == {"district": "Nyagatare", "avg_loss_rate_pct": 15.76, "n_records": 6472}
     assert body["nst2"] == {"baseline_2023_pct": 13.8, "target_2029_pct": 5.0,
-                            "source": "Rwanda NST2 (presented to Parliament, August 2026)"}
+                            "source": "Rwanda NST2 (presented to Parliament, August 2025)"}
 
 
 def test_b3_map_no_filters(client):

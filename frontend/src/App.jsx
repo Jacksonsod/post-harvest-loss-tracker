@@ -129,6 +129,7 @@ export default function App() {
                 selectedCoop={selectedCoop}
                 onSelectCoop={setSelectedCoop}
                 onNavigateToPlanSeason={() => setActiveTab('plan_season')}
+                onNavigateToAboutData={() => setActiveTab('about_data')}
                 onViewReport={(assessment) => {
                   setLatestAssessmentResult(assessment);
                   setIsReportModalOpen(true);

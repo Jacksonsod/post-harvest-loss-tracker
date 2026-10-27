@@ -71,7 +71,7 @@ export default function AssessmentTable({ assessments = [], onViewDetails, onVie
         </div>
         <h4 className="text-sm font-bold text-slate-900 font-mono">No Harvest Assessments Recorded Yet</h4>
         <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 leading-relaxed">
-          No historical records logged for this cooperative yet. Use "Plan next season" to forecast post-harvest risks and evaluate storage technology dividends.
+          No harvest records yet for this cooperative. Import your records as a CSV file in "About the data" to see risk levels, main causes and recommendations here.
         </p>
       </div>
     );

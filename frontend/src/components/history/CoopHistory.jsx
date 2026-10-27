@@ -22,8 +22,9 @@ export default function CoopHistory({
   coops = [],
   selectedCoop, 
   onSelectCoop,
-  onNavigateToPlanSeason, 
-  onViewReport 
+  onNavigateToPlanSeason,
+  onNavigateToAboutData,
+  onViewReport
 }) {
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -182,15 +183,15 @@ export default function CoopHistory({
               No historical records yet for {selectedCoop?.name || 'this cooperative'}
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Explore predictive yield simulations and storage infrastructure dividends for upcoming seasons.
+              Import your records as a CSV file in "About the data" to see risk levels, main causes and recommendations here.
             </p>
           </div>
           <button
-            onClick={onNavigateToPlanSeason}
+            onClick={onNavigateToAboutData}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition-all shadow-sm shadow-emerald-700/20 active:scale-95 cursor-pointer"
           >
-            <Calculator className="w-3.5 h-3.5 text-emerald-200" />
-            <span>Plan season mitigation</span>
+            <ClipboardList className="w-3.5 h-3.5 text-emerald-200" />
+            <span>Import harvest records</span>
           </button>
         </div>
       ) : (

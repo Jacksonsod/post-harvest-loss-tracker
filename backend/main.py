@@ -144,13 +144,13 @@ _INTERVENTION: dict = {
 
 # ---------------------------------------------------------------------------
 # Policy-alignment constants  (Task 6)
-# Cited from Rwanda NST2, presented to Parliament August 2026.
+# Cited from Rwanda NST2, presented to Parliament August 2025.
 # These are official figures — NOT derived from the survey data.
 # ---------------------------------------------------------------------------
 
 _NST2_BASELINE_2023_PCT: float = 13.8
 _NST2_TARGET_2029_PCT: float = 5.0
-_NST2_SOURCE: str = "Rwanda NST2 (presented to Parliament, August 2026)"
+_NST2_SOURCE: str = "Rwanda NST2 (presented to Parliament, August 2025)"
 
 
 # ===========================================================================

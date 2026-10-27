@@ -413,7 +413,7 @@ Cooperative Jyambere Huye,Huye,Cassava,A,2025,8500,680,680,,storage,Elevated and
                 </div>
 
                 <div className="pt-2 border-t border-emerald-200/60 flex items-center gap-3 text-[11px] text-emerald-800">
-                  <span>Data is now live in Cooperative Progress and Situation Room analytics.</span>
+                  <span>Data is now live in Cooperative Progress and National picture.</span>
                   <button
                     type="button"
                     onClick={handleResetImport}

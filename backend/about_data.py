@@ -46,6 +46,6 @@ SOURCES: List[Dict[str, str]] = [
     {
         "name": "Rwanda NST2 post-harvest loss target",
         "note": "Official baseline 13.8% (2023), target below 5% by 2029. "
-                "Presented to Parliament, August 2026.",
+                "Presented to Parliament, August 2025.",
     },
 ]
