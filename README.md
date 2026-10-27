@@ -1,4 +1,5 @@
 # Cooperative Post-Harvest Loss Tracker
+Live App: https://harvestloss-rw.vercel.app/
 
 Built for the **NISR 2026 Big Data Hackathon** — Track 1: Agricultural Productivity.
 
